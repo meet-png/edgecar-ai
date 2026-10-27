@@ -86,6 +86,10 @@ CREATE TABLE IF NOT EXISTS trips (
     road_type VARCHAR,
     provenance VARCHAR
 );
+
+-- Fault-scenario trips replay a real trip on another date; energy and distance statistics must not count them twice.
+CREATE OR REPLACE VIEW trips_analytics AS SELECT * FROM trips WHERE provenance NOT LIKE 'sim:scenario%';
+CREATE OR REPLACE VIEW frames_energy AS SELECT * FROM frames WHERE provenance NOT LIKE 'sim:scenario%';
 """
 
 # Speed bands used everywhere "city" and "highway" are mentioned (km/h).

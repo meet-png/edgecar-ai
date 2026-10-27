@@ -16,6 +16,7 @@ from edgecar.detect import detect_all
 from edgecar.fleet import VEHICLES
 from edgecar.prep import tum, ved
 from edgecar.protocols.can import CanCodec, read_log, segment_trips, write_log
+from edgecar.sim import adas, thermal
 from edgecar.store import Store
 
 VED_VEHICLES = {"leaf-455": 455, "leaf-010": 10, "phev-457": 457}
@@ -73,8 +74,26 @@ def build(data_dir: Path, out: Path) -> None:
     n = store.append_frames(frames, str(VEHICLES["i3-tum"].provenance))
     print(f"{'i3-tum':10s} {n:>9,} frames")
 
+    scenario_frames, scenario_events = thermal.battery_overheat(store)
+    store.append_frames(scenario_frames, thermal.PROVENANCE)
+    print(
+        f"scenario   {len(scenario_frames):>9,} frames ({thermal.SCENARIO_TRIP}: battery overheat, "
+        f"{len(scenario_events)} ground-truth events)"
+    )
+
     print(f"trips: {store.rebuild_trips():,}   minute roll-ups: {store.rebuild_rollups():,}")
     print(f"events detected from real signals: {detect_all(store):,}")
+    store.append_events(scenario_events)
+
+    baton, td2d = data_dir / "raw" / "baton", data_dir / "raw" / "td2d"
+    if (baton / "takeover_events_or.csv").exists() and td2d.exists():
+        cal = adas.load_calibration(baton, td2d)
+        ev = adas.simulate(store, cal)
+        store.append_events(ev)
+        print(
+            f"ADAS events simulated (BATON timing, TD2D takeovers): {len(ev):,} — "
+            + ", ".join(f"{k} {v}" for k, v in ev["code"].value_counts().items())
+        )
     store.con.execute("CHECKPOINT")
     store.close()
     print(f"store: {out} ({out.stat().st_size / 1e6:.1f} MB) in {time.perf_counter() - t0:.1f} s")

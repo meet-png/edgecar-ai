@@ -22,6 +22,19 @@ The real datasets carry no ADAS, diagnostic-trouble-code, SOME/IP, VHAL or QNX c
 3. Generation is **seeded per trip**, so rebuilding the store reproduces identical events.
 4. Every simulated row carries `provenance = sim:*`, and the UI shows it.
 
+## Calibration and findings (2026-10-27)
+
+- **ADAS timing is measured, not invented.** Episode lengths and re-engagement delays are sampled from BATON's
+  3,593 real handovers (565 drives, 150 drivers, 99 models). Real-data triggers end an episode early only for clear
+  cases: deceleration beyond what ACC commands (≤ −3.5 m/s², the driver braked) or standing still beyond a 30 s
+  stop-and-go hold. An earlier version that disengaged below 30 km/h and at −2 m/s² produced 83–176 disengagements
+  per engaged hour; the calibrated version gives 42 (BATON: 20.2), the remaining gap coming from short urban trips.
+  BATON has no cause labels, so the cause mix for sampled episode ends is a stated prior.
+- **The overheat scenario obeys physics.** Joule heating on the base trip's real current shows that a coolant-pump
+  failure alone would only reach 35–38 °C on that drive. The scenario therefore pairs the pump failure with a
+  degraded cell group (0.15 Ω, 20 kJ/K): the hottest sensor crosses 40 °C at 10 min, 50 °C at 16 min and 55 °C
+  (driver warning) at 20.6 min. The six ground-truth events arrive via QNX slog2, UDS, CAN, SOME/IP and VHAL.
+
 ## Consequences
 
 - Questions such as "Show all ADAS disengagements from yesterday" and "What happened before the battery

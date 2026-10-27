@@ -55,11 +55,21 @@ def test_list_events_filters_by_kind(store):
     assert r.evidence == ["e3"]
 
 
-def test_events_before_returns_preceding_timeline(store):
+def test_events_before_finds_root_cause_and_drops_unrelated_events(store):
     r = engine(store).run(Query(intent="events_before", event="battery_overheat_warning", lookback_min=15))
     assert r.facts["anchor_code"] == "BATT_OVERTEMP_WARNING"
-    assert r.evidence[0] == "e2"
-    assert set(r.evidence[1:]) == {"e1", "e3"}  # both happened within 15 minutes before
+    assert r.evidence == ["e2", "e1"]  # the ADAS event (e3) is unrelated to a thermal warning
+    assert r.facts["root_cause_code"] == "P0C73"
+    assert r.facts["root_cause_lead_min"] == pytest.approx(10.0)
+    assert r.details[0].startswith("Likely root cause: Coolant pump A control fault")
+
+
+def test_list_events_explains_an_empty_period(store):
+    r = engine(store).run(Query(intent="list_events", event="dtc", window=TimeWindow(kind="today")))
+    assert r.facts["count"] == 0
+    assert r.facts["drove"] is False
+    assert "not driven" in r.details[0]
+    assert r.evidence == ["e1"]  # points to the most recent matching event instead
 
 
 def test_status_uses_latest_frame(store):

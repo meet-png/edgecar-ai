@@ -94,10 +94,8 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
 
 ## 9. Next steps
 
-1. Wire ADAS sim + battery-overheat scenario (base: real hot-day trip `i3-tum:A07`) into the build.
-   ADAS source of truth: **BATON-Sample is ACCEPTED** — needs only `benchmark/takeover_events_or.csv`,
-   `benchmark/activation_events_or.csv`, `benchmark/routes.csv` (< 0.5 MB) via token or manual browser download
-   into `data/raw/baton/`. Fallback: TD2D/NHTSA-calibrated simulator (already written).
+1. ~~Wire ADAS sim + battery-overheat scenario~~ ✅ done (2026-10-27). BATON event tables fetched from the
+   **public GitHub repo's Git LFS** (no HF token needed). All 5 brief questions now answer from data.
 2. ~~Leaf DBC CAN encode/decode~~ ✅ done (2026-10-27). Next protocols: SOME/IP, VHAL, QNX slog2, UDS (R2 unless
    cheap); CAN-FD via a generated reference DBC for the i3.
 3. API + car-style dashboard (screenshot for the slide).
@@ -132,6 +130,12 @@ python -m edgecar.bench.e2e --threads 2 --profile edge     # latency + memory, a
 - Engine unit test recovers injected factors exactly (heating +4.0, cold +2.0 kWh/100 km).
 - **Real CAN:** both Leafs reach the store as decoded Leaf CAN frames (860 k frames for Leaf 455, 9.8 s);
   round trip within ½ LSB; VED data calibrates the DBC's uncertain heater scaling (250 W/bit, not 300).
+- **ADAS:** 6,037 simulated events timed from BATON's 3,593 real handovers (engaged 44 % vs 55 % real).
+- **Overheat answer (i3, Wed 24 Jul 2019):** "Likely root cause: coolant pump A PWM feedback lost at 13:11:00,
+  14.5 min before, confirmed by DTC P0C73" → rise-rate warning (CAN) → > 40 °C (BMS) → power derate (SOME/IP) →
+  driver warning 13:25:33 (VHAL); battery 32 → 55 °C at up to 3.7 °C/min.
+- Physics finding: a pump failure alone would only reach 35–38 °C on that trip → scenario adds a degraded cell
+  group (0.15 Ω) — documented in ADR-0004.
 
 ---
 

@@ -56,12 +56,22 @@ Legend: ✅ in use · 🟡 evaluating · ⛔ access-gated · ❌ rejected
 - **Source:** <https://huggingface.co/datasets/HenryYHW/ADAS-TO_longitudinal> · paper arXiv:2603.06986
 - **Licence:** MIT · **Access:** Hugging Face gate with *manual* approval (requested by the author of this repo).
 
-### ⛔ BATON-Sample (OpenLKA)
-- **What:** 43 real routes from comma devices: `vehicle_dynamics.csv` (speed, steering, pedals, driving-assist
-  status), `radar.csv` (lead distance / relative speed), `planning.csv`, `gps.csv`, takeover / activation labels.
-- **Source:** <https://huggingface.co/datasets/HenryYHW/BATON-Sample> · paper arXiv:2604.07263
-- **Licence:** CC BY-NC 4.0 (academic, non-commercial) · **Access:** Hugging Face gate with *automatic* approval.
-- **Planned use:** real ADAS engage/disengage sequences and lead-vehicle context; only CSVs are fetched.
+### ✅ BATON (OpenLKA) — real ADAS handover events
+- **What:** the full BATON benchmark tables: **565 real routes, 162.1 h, 150 drivers, 99 vehicle models**
+  (comma devices running openpilot), with **1,800 activations and 1,793 takeovers**, each timestamped, plus
+  per-route ADAS share. ADAS-active = lateral control active OR cruise enabled (1 s debounce).
+- **Source:** the `benchmark_v2/` tables in the public GitHub repository
+  <https://github.com/OpenLKA/BATON> (Git LFS, no login needed; SHA-256 verified against the LFS pointers).
+  The per-route signal files (≈ 145 MB each) and video stay on the gated Hugging Face mirror
+  (`HenryYHW/BATON-Sample`, access granted 2026-10-27).
+- **Licence:** CC BY-NC 4.0 for data and labels (MIT for code) → used non-commercially with attribution, never
+  redistributed. Paper: arXiv:2604.07263.
+- **Profiled:** ADAS active 55 % of driving; **20.2 takeovers per ADAS-active hour**; engaged episodes median
+  53 s (p10 6 s, p90 6.4 min, mean 160 s); re-engagement delay median 15 s (p10 3 s, p90 1.7 min).
+- **Used for:** the ADAS simulator draws episode lengths and re-engagement delays from these empirical
+  distributions. Validation on our real trips: engaged share 44 % (BATON 55 %); 42 disengagements per engaged hour
+  (BATON 20.2) — higher because VED/TUM trips are short urban trips, which complete short episodes and truncate
+  long ones (the highway-heavy i3: 28 per hour).
 
 ### ✅ NHTSA Standing General Order — Level 2 ADAS incident reports
 - **What:** Public US incident reports for crashes involving Level-2 ADAS (system engaged, roadway, weather,

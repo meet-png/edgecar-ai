@@ -7,6 +7,7 @@ chart data for the UI, and the ids of the trips/events used as evidence.
 
 from __future__ import annotations
 
+import json
 import math
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
@@ -24,6 +25,16 @@ MIN_TRIP_KM = 0.5  # shorter "trips" are parking manoeuvres / logger noise
 MODEL_MIN_KM = 2.0  # trips used to fit the consumption model
 MIN_DAY_KM = 5.0  # days with less driving are skipped for per-km metrics
 ADAPTIVE_TRIPS = 8  # explain_change falls back to "last N trips vs the N before" when a window is too sparse
+
+# Event categories that can plausibly lead up to an event of a given category ("what happened before …").
+RELATED_CATEGORIES = {
+    "thermal": {"thermal", "dtc", "system", "charging", "hvac"},
+    "dtc": {"dtc", "system", "thermal"},
+    "system": {"system", "dtc"},
+    "adas": {"adas", "driving"},
+    "driving": {"driving", "adas"},
+    "charging": {"charging", "thermal", "dtc"},
+}
 RATIO_METRICS = {"energy_consumption", "energy_efficiency", "range", "fuel_consumption", "fuel_efficiency"}
 
 
@@ -106,8 +117,8 @@ class Engine:
 
     def _trips(self, start: datetime, end: datetime) -> pd.DataFrame:
         return self.store.sql(
-            "SELECT * FROM trips WHERE vehicle_id = ? AND start_ts >= ? AND start_ts < ? AND distance_km >= ? "
-            "ORDER BY start_ts",
+            "SELECT * FROM trips_analytics WHERE vehicle_id = ? AND start_ts >= ? AND start_ts < ? "
+            "AND distance_km >= ? ORDER BY start_ts",
             [self.vehicle_id, start, end, MIN_TRIP_KM],
         )
 
@@ -115,7 +126,7 @@ class Engine:
         spec = METRICS[metric]
         if spec.trip_sql:
             sql = (
-                f"SELECT {self._trip_expr(spec)} AS v FROM trips WHERE vehicle_id = ? AND start_ts >= ? "
+                f"SELECT {self._trip_expr(spec)} AS v FROM trips_analytics WHERE vehicle_id = ? AND start_ts >= ? "
                 f"AND start_ts < ? AND distance_km >= ?"
             )
             params = [self.vehicle_id, start, end, MIN_TRIP_KM]
@@ -129,8 +140,9 @@ class Engine:
         if spec.trip_sql:
             sql = (
                 f"SELECT date_trunc('day', start_ts) AS day, {self._trip_expr(spec)} AS v, "
-                f"sum(distance_km) AS km, count(*) AS trips FROM trips WHERE vehicle_id = ? AND start_ts >= ? "
-                f"AND start_ts < ? AND distance_km >= ? GROUP BY day ORDER BY day"
+                f"sum(distance_km) AS km, count(*) AS trips FROM trips_analytics "
+                f"WHERE vehicle_id = ? AND start_ts >= ? AND start_ts < ? AND distance_km >= ? "
+                f"GROUP BY day ORDER BY day"
             )
             params = [self.vehicle_id, start, end, MIN_TRIP_KM]
         else:
@@ -305,7 +317,8 @@ class Engine:
                 out["electric"] = _num(
                     self.store.sql(
                         "SELECT 100 * sum(speed_kmh) FILTER (WHERE coalesce(fuel_rate_lph, 0) < 0.05) "
-                        "/ nullif(sum(speed_kmh), 0) AS p FROM frames WHERE vehicle_id = ? AND ts >= ? AND ts < ?",
+                        "/ nullif(sum(speed_kmh), 0) AS p FROM frames_energy "
+                        "WHERE vehicle_id = ? AND ts >= ? AND ts < ?",
                         [self.vehicle_id, s, e],
                     )["p"][0]
                 )
@@ -367,7 +380,7 @@ class Engine:
                             WHEN speed_kmh >= {HIGHWAY_MIN_KMH} THEN 'highway' ELSE 'suburban' END AS segment,
                        sum(speed_kmh) / 3600 AS km, sum(batt_power_kw) / 3600 AS kwh,
                        sum(fuel_rate_lph) / 3600 AS fuel_l, avg(ambient_temp_c) AS ambient
-                FROM frames WHERE vehicle_id = ? AND ts >= ? AND ts < ? AND speed_kmh IS NOT NULL
+                FROM frames_energy WHERE vehicle_id = ? AND ts >= ? AND ts < ? AND speed_kmh IS NOT NULL
                 GROUP BY segment""",
                 [self.vehicle_id, s, e],
             )
@@ -385,7 +398,7 @@ class Engine:
                             WHEN ambient_c < 20 THEN '10–20 °C' ELSE '20 °C and above' END AS segment,
                        sum(distance_km) AS km, sum(energy_kwh) AS kwh, sum(fuel_l) AS fuel_l,
                        avg(ambient_c) AS ambient, min(ambient_c) AS lo
-                FROM trips WHERE vehicle_id = ? AND start_ts >= ? AND start_ts < ? AND distance_km >= ?
+                FROM trips_analytics WHERE vehicle_id = ? AND start_ts >= ? AND start_ts < ? AND distance_km >= ?
                   AND ambient_c IS NOT NULL
                 GROUP BY segment ORDER BY lo""",
                 [self.vehicle_id, s, e, MIN_TRIP_KM],
@@ -468,7 +481,7 @@ class Engine:
 
     def _fit_traction_model(self) -> tuple[np.ndarray, list[str]] | None:
         t = self.store.sql(
-            "SELECT distance_km, traction_kwh, mean_v2, ambient_c, stops_per_km FROM trips "
+            "SELECT distance_km, traction_kwh, mean_v2, ambient_c, stops_per_km FROM trips_analytics "
             "WHERE vehicle_id = ? AND distance_km >= ? AND mean_v2 IS NOT NULL AND ambient_c IS NOT NULL "
             "AND start_ts < ?",
             [self.vehicle_id, MODEL_MIN_KM, self.now],
@@ -642,7 +655,24 @@ class Engine:
         ev = self._events(kind, start, end)
         name = kind.replace("_", " ").replace("adas", "ADAS").replace("dtc", "diagnostic trouble code")
         if ev.empty:
-            return Result("list_events", f"No {name} events {q.window.phrase()}.", {"count": 0}, window=(start, end))
+            drove = len(self._trips(start, end)) > 0
+            details = [] if drove else [f"The car was not driven {q.window.phrase()}."]
+            last = self.store.sql(
+                f"SELECT * FROM events WHERE vehicle_id = ? AND ts < ? AND {self._EVENT_FILTER[kind]} "
+                "ORDER BY ts DESC LIMIT 3",
+                [self.vehicle_id, start],
+            )
+            if not last.empty:
+                details.append(f"The most recent {name} events were on {_d(last['ts'].iloc[0])}:")
+                details += [f"{r.ts:%H:%M:%S} — {r.title} ({r.source})" for r in last.itertuples()]
+            return Result(
+                "list_events",
+                f"No {name} events {q.window.phrase()}.",
+                {"count": 0, "kind": kind, "drove": drove},
+                details,
+                evidence=list(last["event_id"]),
+                window=(start, end),
+            )
         table = [
             {
                 "time": r.ts.strftime("%Y-%m-%d %H:%M:%S"),
@@ -680,6 +710,9 @@ class Engine:
         t0 = t1 - lookback
         prior = self._events("any", t0, t1 + timedelta(seconds=1))
         prior = prior[prior["event_id"] != anchor["event_id"]]
+        # keep what can plausibly relate to the anchor (same subsystem family); unrelated noise is left out
+        related = RELATED_CATEGORIES.get(anchor["category"], {anchor["category"]})
+        prior = prior[prior["category"].isin(related)]
         sig = self.store.sql(
             """
             SELECT ts, speed_kmh, batt_power_kw, coalesce(batt_temp_max_c, batt_temp_c) AS batt_temp,
@@ -691,13 +724,13 @@ class Engine:
             {"time": r.ts.strftime("%H:%M:%S"), "kind": "event", "code": r.code, "text": r.title, "source": r.source}
             for r in prior.itertuples()
         ]
-        details: list[str] = []
         facts: dict[str, Any] = {
             "anchor_time": t1,
             "anchor_code": anchor["code"],
             "lookback_min": lookback.total_seconds() / 60,
             "prior_events": len(prior),
         }
+        signal_lines: list[str] = []
         if not sig.empty:
             for col, label, unit in [
                 ("batt_temp", "Battery temperature", "°C"),
@@ -705,17 +738,48 @@ class Engine:
                 ("speed_kmh", "Speed", "km/h"),
             ]:
                 s = sig[col].dropna()
-                if s.empty:
+                if s.empty or s.max() == s.min():
                     continue
                 facts[f"{col}_start"], facts[f"{col}_end"] = float(s.iloc[0]), float(s.iloc[-1])
                 facts[f"{col}_max"] = float(s.max())
-                details.append(f"{label}: {s.iloc[0]:.1f} → {s.iloc[-1]:.1f} {unit} (peak {s.max():.1f} {unit}).")
+                line = f"{label}: {s.iloc[0]:.1f} → {s.iloc[-1]:.1f} {unit} (peak {s.max():.1f} {unit})"
+                if col == "batt_temp" and len(s) > 60:
+                    rise = float(s.diff(60).max())  # °C per minute
+                    facts["batt_temp_max_rise_c_per_min"] = rise
+                    line += f", rising up to {rise:.1f} °C/min"
+                signal_lines.append(line + ".")
+        # likely root cause: the earliest fault (diagnostic code or system error) in the window
+        faults = prior[prior["category"].isin(["dtc", "system"]) & prior["severity"].isin(["warning", "critical"])]
+        cause_line = None
+        if not faults.empty:
+            first = faults.iloc[0]
+            lead = (t1 - pd.Timestamp(first["ts"]).to_pydatetime()).total_seconds() / 60
+            facts |= {"root_cause_code": first["code"], "root_cause_time": first["ts"], "root_cause_lead_min": lead}
+            cause_line = f"Likely root cause: {first['title']} at {first['ts']:%H:%M:%S}, {lead:.1f} min before"
+            # corroboration: a diagnostic code stored within a minute of the first fault
+            dtcs = faults[
+                (faults["category"] == "dtc")
+                & (faults["event_id"] != first["event_id"])
+                & ((faults["ts"] - first["ts"]).abs() <= pd.Timedelta(minutes=1))
+            ]
+            if not dtcs.empty:
+                facts["root_cause_dtc"] = dtcs["code"].iloc[0]
+                cause_line += f", confirmed by diagnostic trouble code {dtcs['code'].iloc[0]}"
+            cause_line += "."
+        elif isinstance(anchor["detail"], str) and '"cause"' in anchor["detail"]:
+            cause = json.loads(anchor["detail"]).get("cause", "")
+            facts["recorded_cause"] = cause
+            cause_line = f"Cause recorded by the system: {cause.replace('_', ' ')}."
         headline = (
             f"In the {lookback.total_seconds() / 60:.0f} minutes before the {anchor['title'].lower()} at "
             f"{t1:%H:%M:%S} on {_d(t1)}, {len(prior)} related event{'s' if len(prior) != 1 else ''} "
             f"occurred."
         )
-        details = [f"{e['time']} — {e['text']} ({e['source']})" for e in timeline[:10]] + details
+        details = (
+            ([cause_line] if cause_line else [])
+            + [f"{e['time']} — {e['text']} ({e['source']})" for e in timeline[:8]]
+            + signal_lines
+        )
         chart = None
         if not sig.empty:
             chart = {
@@ -741,7 +805,8 @@ class Engine:
     def _anomalies(self, q: Query) -> Result:
         start, end = self._window(q)
         hist = self.store.sql(
-            "SELECT * FROM trips WHERE vehicle_id = ? AND distance_km >= ? AND start_ts < ? ORDER BY start_ts",
+            "SELECT * FROM trips_analytics WHERE vehicle_id = ? AND distance_km >= ? AND start_ts < ? "
+            "ORDER BY start_ts",
             [self.vehicle_id, MODEL_MIN_KM, end],
         )
         model = self._fit_traction_model()
