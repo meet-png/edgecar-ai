@@ -255,7 +255,7 @@ def build(template: Path, out: Path, results: Path) -> None:
         bw / 2 - 0.05,
         0.7,
         "SLM for the long tail",
-        "Qwen2.5-1.5B · llama.cpp · grammar-locked 2–6 token command",
+        "Qwen2.5-1.5B — best of 6 SLMs tested (85 % vs ≤ 51 %) · llama.cpp · grammar-locked command",
         CYAN,
     )
     arrow(s, cx + cw / 2, 5.22, cx + cw / 2, 5.36)
