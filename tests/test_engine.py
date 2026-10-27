@@ -1,0 +1,67 @@
+import pytest
+from conftest import CAPACITY_KWH, NOW
+
+from edgecar.analytics import Engine
+from edgecar.query import Query, TimeWindow
+
+
+def engine(store) -> Engine:
+    return Engine(store, "ev-1", now=NOW)
+
+
+def test_trip_summary_physics(store):
+    t = store.sql("SELECT * FROM trips ORDER BY start_ts")
+    assert len(t) == 28
+    first, last = t.iloc[0], t.iloc[-1]
+    assert first.distance_km == pytest.approx(50 * 1200 / 3600, rel=1e-6)
+    assert first.kwh_per_100km == pytest.approx(14.0, rel=1e-6)
+    assert last.kwh_per_100km == pytest.approx(20.0, rel=1e-6)
+    assert last.heater_kwh == pytest.approx(2.0 * 1200 / 3600, rel=1e-6)
+
+
+def test_explain_change_recovers_injected_factors(store):
+    r = engine(store).run(Query(intent="explain_change", metric="range", window=TimeWindow(kind="last_days", days=14)))
+    assert r.facts["consumption_before"] == pytest.approx(14.0, rel=1e-6)
+    assert r.facts["consumption_after"] == pytest.approx(20.0, rel=1e-6)
+    assert r.facts["range_before_km"] == pytest.approx(CAPACITY_KWH * 100 / 14.0, rel=1e-6)
+    assert r.facts["range_after_km"] == pytest.approx(CAPACITY_KWH * 100 / 20.0, rel=1e-6)
+    factors = {f["factor"]: f["delta_kwh_100km"] for f in r.facts["factors"]}
+    assert factors["Cabin heating and A/C"] == pytest.approx(4.0, abs=0.01)
+    assert factors["Colder air, battery and tyres"] == pytest.approx(2.0, abs=0.01)
+    assert sum(factors.values()) == pytest.approx(6.0, abs=0.01)
+    assert "fell" in r.headline
+
+
+def test_compare_by_temperature(store):
+    r = engine(store).run(
+        Query(intent="compare", metric="energy_consumption", compare_by="temperature", window=TimeWindow(kind="all"))
+    )
+    seg = {s["segment"]: s["value"] for s in r.facts["segments"]}
+    assert seg["0–10 °C"] == pytest.approx(20.0, rel=1e-3)
+    assert seg["10–20 °C"] == pytest.approx(14.0, rel=1e-3)
+
+
+def test_fuel_question_on_bev_is_answered_in_energy_terms(store):
+    r = engine(store).run(Query(intent="summary", metric="fuel_efficiency", window=TimeWindow(kind="all")))
+    assert r.facts["metric"] == "energy_efficiency"
+    assert any("battery-electric" in n for n in r.notes)
+
+
+def test_list_events_filters_by_kind(store):
+    r = engine(store).run(
+        Query(intent="list_events", event="adas_disengagement", window=TimeWindow(kind="last_days", days=7))
+    )
+    assert r.facts["count"] == 1
+    assert r.evidence == ["e3"]
+
+
+def test_events_before_returns_preceding_timeline(store):
+    r = engine(store).run(Query(intent="events_before", event="battery_overheat_warning", lookback_min=15))
+    assert r.facts["anchor_code"] == "BATT_OVERTEMP_WARNING"
+    assert r.evidence[0] == "e2"
+    assert set(r.evidence[1:]) == {"e1", "e3"}  # both happened within 15 minutes before
+
+
+def test_status_uses_latest_frame(store):
+    r = engine(store).run(Query(intent="status"))
+    assert r.facts["soc_pct"] == pytest.approx(80.0, abs=0.01)

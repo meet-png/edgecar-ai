@@ -1,0 +1,122 @@
+{"id": "brief-1", "q": "Why has my driving range reduced over the last two weeks?", "gold": ["explain_change metric=range window=last_14d"]}
+{"id": "brief-2", "q": "When did fuel efficiency show the largest drop?", "gold": ["extreme metric=fuel_efficiency window=all dir=drop", "extreme metric=fuel_consumption window=all dir=rise"]}
+{"id": "brief-3", "q": "Show all ADAS disengagement events from yesterday.", "gold": ["list_events window=yesterday event=adas_disengagement"]}
+{"id": "brief-4", "q": "What happened before the battery overheating warning?", "gold": ["events_before window=all event=battery_overheat_warning"]}
+{"id": "brief-5", "q": "Compare energy consumption between city and highway driving.", "gold": ["compare metric=energy_consumption window=all by=road_type"]}
+{"id": "exp-1", "q": "Why is my range lower than it was a couple of weeks ago?", "gold": ["explain_change metric=range window=last_14d"]}
+{"id": "exp-2", "q": "What's making my range shrink this month?", "gold": ["explain_change metric=range window=this_month"]}
+{"id": "exp-3", "q": "My estimated range dropped recently. Why?", "gold": ["explain_change metric=range window=last_14d"]}
+{"id": "exp-4", "q": "Why am I using more energy per km lately?", "gold": ["explain_change metric=energy_consumption window=last_14d"]}
+{"id": "exp-5", "q": "Explain the increase in my energy consumption over the past 3 weeks", "gold": ["explain_change metric=energy_consumption window=last_21d"]}
+{"id": "exp-6", "q": "Why did my efficiency get worse last month?", "gold": ["explain_change metric=energy_efficiency window=last_month", "explain_change metric=energy_consumption window=last_month"]}
+{"id": "exp-7", "q": "Why is the car less efficient this week?", "gold": ["explain_change metric=energy_efficiency window=this_week", "explain_change metric=energy_consumption window=this_week"]}
+{"id": "exp-8", "q": "how come my range went down over the last 10 days", "gold": ["explain_change metric=range window=last_10d"]}
+{"id": "exp-9", "q": "reason for the drop in range in the past fortnight?", "gold": ["explain_change metric=range window=last_14d"]}
+{"id": "exp-10", "q": "What's causing the higher consumption over the last 30 days?", "gold": ["explain_change metric=energy_consumption window=last_30d"]}
+{"id": "exp-11", "q": "why doesn't my battery last as long as it used to", "gold": ["explain_change metric=range window=last_14d"]}
+{"id": "exp-12", "q": "Why did my fuel economy fall this month?", "gold": ["explain_change metric=fuel_efficiency window=this_month", "explain_change metric=fuel_consumption window=this_month"]}
+{"id": "exp-13", "q": "range dropped from 160 to 150 km, explain", "gold": ["explain_change metric=range window=last_14d"]}
+{"id": "exp-14", "q": "Why is my car consuming more power these days?", "gold": ["explain_change metric=energy_consumption window=last_14d"]}
+{"id": "ext-1", "q": "Which day had the largest drop in energy efficiency?", "gold": ["extreme metric=energy_efficiency window=all dir=drop", "extreme metric=energy_consumption window=all dir=rise"]}
+{"id": "ext-2", "q": "When was my energy consumption highest?", "gold": ["extreme metric=energy_consumption window=all dir=max"]}
+{"id": "ext-3", "q": "When did the battery temperature peak?", "gold": ["extreme metric=battery_temp window=all dir=max"]}
+{"id": "ext-4", "q": "What was the coldest day I drove?", "gold": ["extreme metric=ambient_temp window=all dir=min"]}
+{"id": "ext-5", "q": "On which day did my range drop the most?", "gold": ["extreme metric=range window=all dir=drop"]}
+{"id": "ext-6", "q": "When did my consumption spike the most this month?", "gold": ["extreme metric=energy_consumption window=this_month dir=rise"]}
+{"id": "ext-7", "q": "Which day did I drive the farthest?", "gold": ["extreme metric=distance window=all dir=max"]}
+{"id": "ext-8", "q": "When was my average speed the highest last month?", "gold": ["extreme metric=speed window=last_month dir=max"]}
+{"id": "ext-9", "q": "When was my fuel consumption at its peak?", "gold": ["extreme metric=fuel_consumption window=all dir=max"]}
+{"id": "ext-10", "q": "biggest efficiency drop in the last 2 months - when was it?", "gold": ["extreme metric=energy_efficiency window=last_60d dir=drop"]}
+{"id": "ext-11", "q": "When did I use the most heating?", "gold": ["extreme metric=hvac_energy window=all dir=max"]}
+{"id": "ext-12", "q": "When was the battery level lowest this week?", "gold": ["extreme metric=soc window=this_week dir=min"]}
+{"id": "ext-13", "q": "What day had the most hard braking?", "gold": ["extreme metric=hard_brakes window=all dir=max"]}
+{"id": "ext-14", "q": "When did my mileage drop the most?", "gold": ["extreme metric=fuel_efficiency window=all dir=drop"]}
+{"id": "ext-15", "q": "which day saw the sharpest rise in energy use per km over the last 3 months", "gold": ["extreme metric=energy_consumption window=last_90d dir=rise"]}
+{"id": "cmp-1", "q": "City vs highway efficiency?", "gold": ["compare metric=energy_efficiency window=all by=road_type"]}
+{"id": "cmp-2", "q": "Do I use more energy on the highway or in town?", "gold": ["compare metric=energy_consumption window=all by=road_type"]}
+{"id": "cmp-3", "q": "How does cold weather affect my consumption?", "gold": ["compare metric=energy_consumption window=all by=temperature"]}
+{"id": "cmp-4", "q": "Compare my efficiency in winter and summer", "gold": ["compare metric=energy_efficiency window=all by=temperature"]}
+{"id": "cmp-5", "q": "Is my energy use this week higher than last week?", "gold": ["compare metric=energy_consumption window=this_week by=previous_period"]}
+{"id": "cmp-6", "q": "Compare this month's consumption with last month", "gold": ["compare metric=energy_consumption window=this_month by=previous_period"]}
+{"id": "cmp-7", "q": "How much worse is my efficiency when it's freezing?", "gold": ["compare metric=energy_efficiency window=all by=temperature", "compare metric=energy_consumption window=all by=temperature"]}
+{"id": "cmp-8", "q": "fuel consumption highway versus city", "gold": ["compare metric=fuel_consumption window=all by=road_type"]}
+{"id": "cmp-9", "q": "Does highway driving cost me more fuel than city driving?", "gold": ["compare metric=fuel_consumption window=all by=road_type"]}
+{"id": "cmp-10", "q": "urban or motorway: which is more efficient for my car", "gold": ["compare metric=energy_efficiency window=all by=road_type"]}
+{"id": "cmp-11", "q": "Compare consumption on freezing days vs warm days over the last 3 months", "gold": ["compare metric=energy_consumption window=last_90d by=temperature"]}
+{"id": "cmp-12", "q": "how does temperature change my efficiency", "gold": ["compare metric=energy_efficiency window=all by=temperature"]}
+{"id": "cmp-13", "q": "Am I driving more efficiently than in the previous two weeks?", "gold": ["compare metric=energy_efficiency window=last_14d by=previous_period"]}
+{"id": "cmp-14", "q": "Compare city and highway consumption this month", "gold": ["compare metric=energy_consumption window=this_month by=road_type"]}
+{"id": "evt-1", "q": "List ADAS disengagements this week", "gold": ["list_events window=this_week event=adas_disengagement"]}
+{"id": "evt-2", "q": "Were there any takeover requests today?", "gold": ["list_events window=today event=adas_takeover_request"]}
+{"id": "evt-3", "q": "Show me the fault codes from last month", "gold": ["list_events window=last_month event=dtc"]}
+{"id": "evt-4", "q": "Any DTCs in the past 7 days?", "gold": ["list_events window=last_7d event=dtc"]}
+{"id": "evt-5", "q": "Show my charging sessions this week", "gold": ["list_events window=this_week event=charging"]}
+{"id": "evt-6", "q": "How many hard braking events did I have yesterday?", "gold": ["list_events window=yesterday event=hard_brake", "summary metric=hard_brakes window=yesterday"]}
+{"id": "evt-7", "q": "List all battery overheating warnings ever", "gold": ["list_events window=all event=battery_overheat_warning"]}
+{"id": "evt-8", "q": "Did lane keeping switch off at any point today?", "gold": ["list_events window=today event=adas_disengagement"]}
+{"id": "evt-9", "q": "Show ADAS events from last week", "gold": ["list_events window=last_week event=adas_any"]}
+{"id": "evt-10", "q": "Any thermal warnings this month?", "gold": ["list_events window=this_month event=thermal_any"]}
+{"id": "evt-11", "q": "Show the system log events from yesterday", "gold": ["list_events window=yesterday event=system"]}
+{"id": "evt-12", "q": "list every time adaptive cruise disengaged in the last 3 days", "gold": ["list_events window=last_3d event=adas_disengagement"]}
+{"id": "evt-13", "q": "Show me everything that was logged today", "gold": ["list_events window=today event=any"]}
+{"id": "evt-14", "q": "What diagnostic trouble codes were logged this week?", "gold": ["list_events window=this_week event=dtc"]}
+{"id": "evt-15", "q": "Show takeover requests from the past month", "gold": ["list_events window=last_30d event=adas_takeover_request"]}
+{"id": "evt-16", "q": "Did the car log any error codes yesterday?", "gold": ["list_events window=yesterday event=dtc"]}
+{"id": "evt-17", "q": "when did I plug in to charge this month", "gold": ["list_events window=this_month event=charging"]}
+{"id": "evt-18", "q": "were there any harsh braking moments in the last 2 weeks", "gold": ["list_events window=last_14d event=hard_brake"]}
+{"id": "bef-1", "q": "What led up to the overheating alert?", "gold": ["events_before window=all event=battery_overheat_warning"]}
+{"id": "bef-2", "q": "Show me the 5 minutes before the battery overheat warning", "gold": ["events_before window=all event=battery_overheat_warning lookback=5m"]}
+{"id": "bef-3", "q": "What happened right before the last ADAS disengagement?", "gold": ["events_before window=all event=adas_disengagement"]}
+{"id": "bef-4", "q": "What preceded the takeover request?", "gold": ["events_before window=all event=adas_takeover_request"]}
+{"id": "bef-5", "q": "What was going on before the fault code appeared?", "gold": ["events_before window=all event=dtc"]}
+{"id": "bef-6", "q": "Events leading up to the last hard brake", "gold": ["events_before window=all event=hard_brake"]}
+{"id": "bef-7", "q": "What happened in the 20 minutes prior to the thermal warning?", "gold": ["events_before window=all event=thermal_any lookback=20m", "events_before window=all event=battery_overheat_warning lookback=20m"]}
+{"id": "bef-8", "q": "What triggered the battery overheating warning?", "gold": ["events_before window=all event=battery_overheat_warning"]}
+{"id": "bef-9", "q": "timeline before the battery overheat", "gold": ["events_before window=all event=battery_overheat_warning"]}
+{"id": "bef-10", "q": "what sequence of events came before the over-temperature fault", "gold": ["events_before window=all event=battery_overheat_warning", "events_before window=all event=dtc"]}
+{"id": "ano-1", "q": "Is anything unusual with my car this month?", "gold": ["anomalies window=this_month"]}
+{"id": "ano-2", "q": "Any anomalies in the last two weeks?", "gold": ["anomalies window=last_14d"]}
+{"id": "ano-3", "q": "Did the car behave abnormally last week?", "gold": ["anomalies window=last_week"]}
+{"id": "ano-4", "q": "Is something wrong with my car?", "gold": ["anomalies window=last_30d"]}
+{"id": "ano-5", "q": "Find outlier trips from the past month", "gold": ["anomalies window=last_30d"]}
+{"id": "ano-6", "q": "Has anything strange happened in the last 10 days?", "gold": ["anomalies window=last_10d"]}
+{"id": "ano-7", "q": "Check for problems this week", "gold": ["anomalies window=this_week"]}
+{"id": "ano-8", "q": "Any unusual energy use yesterday?", "gold": ["anomalies window=yesterday"]}
+{"id": "trd-1", "q": "How has my energy consumption changed over the past 2 months?", "gold": ["trend metric=energy_consumption window=last_60d"]}
+{"id": "trd-2", "q": "Show the battery temperature trend this month", "gold": ["trend metric=battery_temp window=this_month"]}
+{"id": "trd-3", "q": "Plot my range over the last 30 days", "gold": ["trend metric=range window=last_30d"]}
+{"id": "trd-4", "q": "How has my efficiency evolved over the past year?", "gold": ["trend metric=energy_efficiency window=last_365d", "trend metric=energy_efficiency window=all"]}
+{"id": "trd-5", "q": "Graph outside temperature for the last 3 weeks", "gold": ["trend metric=ambient_temp window=last_21d"]}
+{"id": "trd-6", "q": "How has my average speed changed this month?", "gold": ["trend metric=speed window=this_month"]}
+{"id": "trd-7", "q": "trend of heating energy over the past month", "gold": ["trend metric=hvac_energy window=last_30d"]}
+{"id": "trd-8", "q": "Show my battery level over the last week", "gold": ["trend metric=soc window=last_7d"]}
+{"id": "trd-9", "q": "How did my fuel consumption change during the last 2 months?", "gold": ["trend metric=fuel_consumption window=last_60d"]}
+{"id": "trd-10", "q": "chart distance driven per day this month", "gold": ["trend metric=distance window=this_month"]}
+{"id": "trd-11", "q": "Is my consumption getting better or worse over the last 6 weeks?", "gold": ["trend metric=energy_consumption window=last_42d"]}
+{"id": "trd-12", "q": "regen energy trend over the last 14 days", "gold": ["trend metric=regen_energy window=last_14d"]}
+{"id": "sum-1", "q": "How far did I drive last week?", "gold": ["summary metric=distance window=last_week"]}
+{"id": "sum-2", "q": "What was my average energy consumption this month?", "gold": ["summary metric=energy_consumption window=this_month"]}
+{"id": "sum-3", "q": "How much energy did I use yesterday?", "gold": ["summary metric=energy_used window=yesterday"]}
+{"id": "sum-4", "q": "What's my average speed over the last 7 days?", "gold": ["summary metric=speed window=last_7d"]}
+{"id": "sum-5", "q": "How many trips did I take this week?", "gold": ["summary metric=trip_count window=this_week"]}
+{"id": "sum-6", "q": "Total distance in the past month?", "gold": ["summary metric=distance window=last_30d"]}
+{"id": "sum-7", "q": "How much energy did regenerative braking recover last week?", "gold": ["summary metric=regen_energy window=last_week"]}
+{"id": "sum-8", "q": "What was my fuel consumption over the last 30 days?", "gold": ["summary metric=fuel_consumption window=last_30d"]}
+{"id": "sum-9", "q": "How much did the heater use this week?", "gold": ["summary metric=hvac_energy window=this_week"]}
+{"id": "sum-10", "q": "What was the average outside temperature on my drives this month?", "gold": ["summary metric=ambient_temp window=this_month"]}
+{"id": "sum-11", "q": "How hot did the battery get yesterday?", "gold": ["summary metric=battery_temp window=yesterday"]}
+{"id": "sum-12", "q": "How many hard brakes this month?", "gold": ["summary metric=hard_brakes window=this_month", "list_events window=this_month event=hard_brake"]}
+{"id": "sum-13", "q": "What was my efficiency last week?", "gold": ["summary metric=energy_efficiency window=last_week"]}
+{"id": "sum-14", "q": "km driven today", "gold": ["summary metric=distance window=today"]}
+{"id": "sum-15", "q": "What range have I been getting over the last 7 days?", "gold": ["summary metric=range window=last_7d"]}
+{"id": "sts-1", "q": "What's my battery level?", "gold": ["status"]}
+{"id": "sts-2", "q": "How much range do I have right now?", "gold": ["status"]}
+{"id": "sts-3", "q": "What is the current state of charge?", "gold": ["status"]}
+{"id": "sts-4", "q": "Battery status please", "gold": ["status"]}
+{"id": "sts-5", "q": "Is the battery warm at the moment?", "gold": ["status"]}
+{"id": "sts-6", "q": "How's the car doing right now?", "gold": ["status"]}
+{"id": "oos-1", "q": "Play some music", "gold": ["unsupported"]}
+{"id": "oos-2", "q": "What's the weather forecast for tomorrow?", "gold": ["unsupported"]}
+{"id": "oos-3", "q": "Book a service appointment for next Monday", "gold": ["unsupported"]}
+{"id": "oos-4", "q": "Tell me a joke", "gold": ["unsupported"]}
+{"id": "oos-5", "q": "Navigate to the nearest airport", "gold": ["unsupported"]}

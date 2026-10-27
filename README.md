@@ -44,6 +44,24 @@ The language model never computes numbers. It translates the question into a typ
 a deterministic engine computes every figure from stored data; the answer cites its evidence.
 Rationale: [ADR-0001](docs/adr/0001-slm-as-semantic-parser.md).
 
+## Measured, not claimed
+
+All numbers come from scripts in this repository (`edgecar.bench`), with the language model loaded and limited to
+**2 CPU threads**:
+
+| | Result |
+|---|---|
+| Question → query accuracy, **held-out set** (70 questions never used for tuning) | **95.7 %** |
+| End-to-end latency over 192 questions | p50 **6.5 ms** · p95 **573 ms** · max 702 ms — **100 % under 2 s** |
+| Peak resident memory (assistant + model server) | **1.28 GB** |
+| Analytics query time | p50 3.4 ms · p95 13 ms |
+| Weeks of history on disk | 4 vehicles, ~1 year each: 36 MB |
+
+Most questions never touch the model: a deterministic fast path answers them in milliseconds. The rest go to
+Qwen2.5-1.5B-Instruct (4-bit, llama.cpp), which writes a 2–6-token command under a grammar; time windows are read
+by code, never by the model. See [ADR-0005](docs/adr/0005-hybrid-language-understanding.md). *(Measured on an x86
+laptop restricted to 2 threads; ARM measurements are next.)*
+
 ## Real data, not just simulation
 
 The demo replays **real vehicle datasets** as genuine protocol traffic — a year of Nissan Leaf driving in

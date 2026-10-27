@@ -18,9 +18,12 @@ On-Device SLM/LLM"), and maintained as a portfolio project.
 
 ## 2. Deadlines
 
+Team **"sidemen"** (registered, confirmed): Meet Kabra + Aditya Mishra, JECRC University. Meet builds solo.
+The registration page shows the ongoing round deadline as **31 Oct 2026** — treat that as the hard deadline.
+
 | Round | What | Window |
 |---|---|---|
-| R1 — Idea | **1 content slide** (+ title slide) in the official template | 23 Sep → **1 Nov 2026, 23:59 IST** |
+| R1 — Idea | **1 content slide** (+ title slide) in the official template | 23 Sep → **31 Oct (portal) / 1 Nov 2026, 23:59 IST** |
 | R2 — Detailed | 10-slide PPT + prototype/multimedia (shortlisted teams; PPO/PPI chance) | 14 Nov → 13 Dec 2026 |
 | R3 — Finale | Present to Tata Elxsi senior leaders | TBA |
 
@@ -46,6 +49,7 @@ scalability), privacy & security, innovation & practicality.
 | ADR-0002 | **Real data first.** Replay real vehicle datasets as genuine protocol traffic; simulate only what has no public real source, with injected ground-truth scenarios. | Accuracy can be *measured* against known truth; differentiates from the competitor. |
 | ADR-0003 | **One embedded DuckDB file**, tiers: 1 Hz `frames` → `frames_1min` roll-ups → `trips` + `events` (lifetime). Memory/threads capped. | Window aggregations dominate; columnar + pre-computed trips = 2–13 ms queries. |
 | ADR-0004 | **Simulation sits on top of real trips, never alters them.** ADAS from real speed profiles + TD2D takeover stats; fault scenarios as labelled derived trips; seeded; `sim:*` provenance. | Ground truth for events without contaminating real energy/thermal data. |
+| ADR-0005 | **Hybrid NLU:** rules fast path → Qwen2.5-1.5B writes only a 2–6-token verb-aligned command (`why range`, `show dtc`) under a per-verb GBNF grammar → windows/minutes extracted by code. `edge` llama-server profile (`--no-repack`, ctx 2048). | JSON output: 48 % (1.5B). Verb format + deterministic slots: 82 % model-only, **95.7 % hybrid on held-out**; RSS 1.28 GB. |
 
 ## 5. Datasets (full registry in `docs/DATASETS.md`)
 
@@ -80,23 +84,32 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
 
 ## 8. Open items / blockers
 
-- [ ] Meet: request ADAS-TO_longitudinal access on HF (manual approval).
-- [ ] Meet: accept BATON-Sample terms on HF; save a **read** token to `C:\Users\ACER\.cache\huggingface\token`
-      (never paste tokens in chat) so scripts can fetch CSVs only.
-- [ ] Meet: team details for the title slide (name, college, email) — needed before R1 submission.
+- [x] ADAS-TO_longitudinal access requested (PENDING, manual). BATON-Sample **ACCEPTED** (2026-10-27).
+- [ ] Meet: save a Hugging Face **read** token to `C:\Users\ACER\.cache\huggingface\token` (never paste tokens in
+      chat) so scripts can fetch BATON-Sample CSVs only (the full sample is 92.8 GB, mostly video).
+- [x] Team details received (names + university only go on the slide; never store phone numbers).
 - [ ] Optional (R2): install WSL2 + Docker Desktop for the 2 GB / 2-CPU container benchmark.
-
-- [ ] **Meet: approve llama.cpp download** (official `ggml-org/llama.cpp` release `b11577`, Windows CPU build +
-      Ubuntu ARM64 build). Auto mode blocked downloading/running the external binary; needed for the SLM parser.
+- [x] llama.cpp **b11577** approved by Meet and installed in `tools/llama.cpp/` (SHA-256 verified against the
+      GitHub release digest). Models in `models/` (SHA-256 verified against Hugging Face).
 
 ## 9. Next steps
 
 1. Wire ADAS sim + battery-overheat scenario (base: real hot-day trip `i3-tum:A07`) into the build.
-2. NLU: fast-path parser (no model) → SLM parser via `llama-server` + JSON-schema-constrained decoding
-   (Qwen2.5-0.5B Q4_K_M downloaded to `models/`).
-3. Protocol layer: Leaf DBC CAN encode/decode round-trip; SOME/IP, VHAL, QNX slog2, UDS codecs.
-4. Eval set (~150 paraphrased questions with ground truth) + latency/RSS benchmark at 2 threads.
-5. API + car-style dashboard; then R1 slide.
+2. Protocol layer: Leaf DBC CAN encode/decode round-trip; SOME/IP, VHAL, QNX slog2, UDS codecs.
+3. API + car-style dashboard (screenshot for the slide).
+4. R1 slide in the official template (due 31 Oct); make repo public at submission.
+5. R2: LoRA fine-tune (maybe lets 0.5B replace 1.5B), ARM measurement (Graviton/QEMU), new held-out test v2,
+   BATON real ADAS data, Docker 2 GB container.
+
+## How to reproduce the numbers
+
+```bash
+python -m edgecar.prep.build                       # data/edgecar.duckdb from data/raw/*
+python -m pytest -q                                # 32 tests (engine ground-truth recovery, NLU)
+python -m edgecar.bench.nlu_eval --questions eval/test.jsonl --mode hybrid \
+       --model models/qwen2.5-1.5b-instruct-q4_k_m.gguf      # held-out accuracy
+python -m edgecar.bench.e2e --threads 2 --profile edge     # latency + memory, all 192 questions
+```
 
 ## Verified results so far (for the slide)
 
@@ -107,6 +120,12 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
 - Leaf, all year: below 0 °C 21.2 kWh/100 km vs 10–20 °C 11.6 (+83 %); city 16.4 vs highway 15.3 kWh/100 km.
 - i3: highway 17.7 vs city 9.2 kWh/100 km; below 0 °C 19.7 vs 10–20 °C 10.1 kWh/100 km.
 - Store: 4 vehicles, 540 k frames, 814 trips, 1,176 detected events → 36 MB; build 20 s; queries 2–13 ms.
+- **NLU held-out (70 q, never tuned on): 95.7 % hybrid** (fast path 73 % coverage @ 98.0 %; SLM 89.5 % on the
+  rest). Dev set 93.4 %. Rules only 75.7 %; with Qwen2.5-0.5B 80.0 %.
+- **End-to-end, 192 questions, 2 threads, edge profile:** p50 6.5 ms, p95 573 ms, max 702 ms, 100 % < 2 s;
+  peak RSS 1.28 GB (llama-server 1,157 MB / 227 MB private + assistant 120 MB). Boot 12 s (prompt warm-up).
+- Machine: Intel Raptor Lake laptop (10 cores) limited to 2 threads — **not ARM yet**.
+- Engine unit test recovers injected factors exactly (heating +4.0, cold +2.0 kWh/100 km).
 
 ---
 
@@ -127,3 +146,9 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
   sparse windows fall back to "last 8 trips vs 8 before"; PHEV fuel answers now report electric-only share.
 - Gotchas: pip to files.pythonhosted.org stalls (IPv6) but completes; Windows console needs
   `PYTHONIOENCODING=utf-8`; pandas NaN must be converted to SQL NULL on insert.
+- NLU: fast path + llama-server SLM parser; eval harness (dev 122 q, held-out 70 q) and e2e benchmark.
+  Findings: Qwen2.5-0.5B few-shot too weak (24–33 %); JSON-ish output invites surface copying and arithmetic
+  errors → verb-aligned 2–6-token output + code-extracted windows. llama.cpp weight repacking costs ~630 MB
+  private RAM → `--no-repack` edge profile (accuracy unchanged, +~30 % latency).
+- Held-out failure modes (do NOT fix against test.jsonl; write test v2 first): "since the start of the month"
+  window, "biggest hit" → max not drop, bare "fuel" on the fast path.
