@@ -46,7 +46,7 @@ scalability), privacy & security, innovation & practicality.
 | # | Decision | Why |
 |---|---|---|
 | ADR-0001 | SLM is a **semantic parser**, not an oracle. NL → typed query (grammar-constrained JSON) → deterministic analytics → SLM phrases the facts. Fast-path intent cache bypasses the SLM for common questions. | 2 s budget on 2 ARM cores allows only ~20–40 generated tokens; SLMs hallucinate numbers. |
-| ADR-0002 | **Real data first.** Replay real vehicle datasets as genuine protocol traffic; simulate only what has no public real source, with injected ground-truth scenarios. | Accuracy can be *measured* against known truth; differentiates from the competitor. |
+| ADR-0002 | **Real data first.** Replay real vehicle datasets as genuine protocol traffic; simulate only what has no public real source, with injected ground-truth scenarios. | Accuracy can be *measured* against known truth. |
 | ADR-0003 | **One embedded DuckDB file**, tiers: 1 Hz `frames` → `frames_1min` roll-ups → `trips` + `events` (lifetime). Memory/threads capped. | Window aggregations dominate; columnar + pre-computed trips = 2–13 ms queries. |
 | ADR-0004 | **Simulation sits on top of real trips, never alters them.** ADAS from real speed profiles + TD2D takeover stats; fault scenarios as labelled derived trips; seeded; `sim:*` provenance. | Ground truth for events without contaminating real energy/thermal data. |
 | ADR-0005 | **Hybrid NLU:** rules fast path → Qwen2.5-1.5B writes only a 2–6-token verb-aligned command (`why range`, `show dtc`) under a per-verb GBNF grammar → windows/minutes extracted by code. `edge` llama-server profile (`--no-repack`, ctx 2048). | JSON output: 48 % (1.5B). Verb format + deterministic slots: 82 % model-only, **95.7 % hybrid on held-out**; RSS 1.28 GB. |
@@ -58,8 +58,8 @@ scalability), privacy & security, innovation & practicality.
 | VED (Ann Arbor, 383 vehicles, Nov 2017–Nov 2018) | Real | ✅ downloaded + extracted (54 weekly CSVs, 3.2 GB) | EV range/energy over a full year (Leaf **VehId 455**: 293 trips/191 days; VehId 10: 201 trips), PHEV fuel (VehId 457/550/569 have Fuel Rate), city vs highway |
 | TUM BMW i3 (72 trips, Jun 2019–Feb 2020, 10 Hz) | Real | ✅ downloaded (70 trip CSVs: 32 summer "A", 38 winter "B") | Battery temperature, heating power, summer-vs-winter range drop |
 | Nissan Leaf DBC (dalathegreat) | Real | ✅ downloaded (GPL-3.0 → fetched, never committed) | Encoding replayed signals as real CAN frames |
-| ADAS-TO longitudinal (HF, MIT) | Real | ⛔ gated (manual approval) — Meet to request | ADAS takeovers |
-| BATON-Sample (HF, CC BY-NC 4.0, 43 routes) | Real | ⛔ gated (auto-approve) — needs Meet's HF login/token | ADAS engage/disengage + lead radar + takeover labels |
+| ADAS-TO longitudinal (HF, MIT) | Real | ⏳ access requested (manual approval) — not needed | ADAS takeovers |
+| BATON benchmark tables (GitHub LFS, CC BY-NC 4.0) | Real | ✅ 565 drives, 3,593 handovers (public GitHub LFS, no login) | ADAS episode/re-engagement timing |
 | TD2D (Zenodo, CC BY 4.0, CARLA L2 takeovers) | Simulated (CARLA) | ✅ 500 takeover files fetched via HTTP range requests (not the 16.7 GB zip) | Takeover reaction time (median 948 ms) + outcome (36 % fail) for ADAS sim |
 | NHTSA SGO Level-2 ADAS incident CSV | Real | ✅ downloaded (2,574 incidents) | ADAS incident priors / wording |
 | CA DMV disengagement reports | Real | ❌ L3+ only; pages 404 | — |
@@ -67,13 +67,13 @@ scalability), privacy & security, innovation & practicality.
 | ADAS-TO full / BATON full | Real | ❌ manual gate + 40 GB+ | — |
 | DTC / SOME/IP / VHAL / QNX logs | — | No open real time-series exists → simulate to spec | — |
 
-## 6. Competitor watch
+## 6. Prior art that shaped the design
 
-`github.com/Reshma-1717/VehicleGPT` targets the same case study (49 commits, React UI, all adapters, SQLite
-tiers, "deterministic engine + LLM explains"). Gaps per its README: LLM not in the benchmark loop
-(12–47 ms / 40 MB RSS are impossible with a model loaded), synthetic-only data, no NL-understanding eval.
-**Our edge:** real datasets, end-to-end latency/RSS *with the model loaded*, paraphrase eval with an accuracy %,
-fast path. Do not use the name "VehicleGPT".
+- Mercedes-Benz R&D, *Optimizing Small Language Models for In-Vehicle Function-Calling* (arXiv:2501.02342):
+  pruned Phi-3 to 1.8B, < 2 GB RAM, ~11 tok/s on a 7-core ARM head unit, 0.86–0.88 function-calling accuracy
+  after fine-tuning — validates "small model + structured output" and points to LoRA as the next step.
+- Arm, *Building an on-device multimodal assistant for automobiles*: pre-computing the system-prompt KV cache
+  gave a ~2× end-to-end speed-up — adopted via llama-server prompt caching.
 
 ## 7. Environment
 
@@ -168,7 +168,7 @@ python -m edgecar.bench.e2e --threads 2 --profile edge     # latency + memory, a
 
 ### 2026-10-27 — Session 1: brief, research, data acquisition
 - Read the case-study PDF and the R1 submission template; confirmed R1 = one content slide due 1 Nov.
-- Researched prior art: competitor repo, Mercedes-Benz in-vehicle SLM paper (arXiv 2501.02342: pruned
+- Researched prior art: Mercedes-Benz in-vehicle SLM paper (arXiv 2501.02342: pruned
   Phi-3 1.8B, <2 GB RAM, ~11 tok/s on 7-core ARM head unit), Arm on-device assistant blog (system-prompt KV
   cache precompute ≈ 2× latency win), Pi 5 llama.cpp numbers (0.5B ≈ 17–20 tok/s, 1.5B ≈ 10–15 tok/s).
 - Downloaded + profiled VED, TUM BMW i3, Leaf DBCs. Found ADAS-TO/BATON gated, OpenLKA Dropbox dead.

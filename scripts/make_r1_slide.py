@@ -286,7 +286,7 @@ def build(template: Path, out: Path, results: Path) -> None:
         (f"{heldout['accuracy']:.1%}", "question → query accuracy on a held-out set (70 questions never tuned on)"),
         (
             f"p95 {lat['p95'] / 1000:.2f} s",
-            f"end-to-end, model loaded, 2 threads; {lat['under_2s_pct']:.0f} % of "
+            f"end-to-end, model loaded, x86 laptop capped at 2 threads; {lat['under_2s_pct']:.0f} % of "
             f"{e2e['questions']} questions under 2 s",
         ),
         (f"{e2e['peak_rss_mb']['total'] / 1000:.2f} GB", "peak RAM, assistant + model server (2 GB budget)"),
