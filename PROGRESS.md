@@ -95,7 +95,11 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
 ## 9. Next steps
 
 1. Wire ADAS sim + battery-overheat scenario (base: real hot-day trip `i3-tum:A07`) into the build.
-2. Protocol layer: Leaf DBC CAN encode/decode round-trip; SOME/IP, VHAL, QNX slog2, UDS codecs.
+   ADAS source of truth: **BATON-Sample is ACCEPTED** — needs only `benchmark/takeover_events_or.csv`,
+   `benchmark/activation_events_or.csv`, `benchmark/routes.csv` (< 0.5 MB) via token or manual browser download
+   into `data/raw/baton/`. Fallback: TD2D/NHTSA-calibrated simulator (already written).
+2. ~~Leaf DBC CAN encode/decode~~ ✅ done (2026-10-27). Next protocols: SOME/IP, VHAL, QNX slog2, UDS (R2 unless
+   cheap); CAN-FD via a generated reference DBC for the i3.
 3. API + car-style dashboard (screenshot for the slide).
 4. R1 slide in the official template (due 31 Oct); make repo public at submission.
 5. R2: LoRA fine-tune (maybe lets 0.5B replace 1.5B), ARM measurement (Graviton/QEMU), new held-out test v2,
@@ -126,6 +130,8 @@ python -m edgecar.bench.e2e --threads 2 --profile edge     # latency + memory, a
   peak RSS 1.28 GB (llama-server 1,157 MB / 227 MB private + assistant 120 MB). Boot 12 s (prompt warm-up).
 - Machine: Intel Raptor Lake laptop (10 cores) limited to 2 threads — **not ARM yet**.
 - Engine unit test recovers injected factors exactly (heating +4.0, cold +2.0 kWh/100 km).
+- **Real CAN:** both Leafs reach the store as decoded Leaf CAN frames (860 k frames for Leaf 455, 9.8 s);
+  round trip within ½ LSB; VED data calibrates the DBC's uncertain heater scaling (250 W/bit, not 300).
 
 ---
 

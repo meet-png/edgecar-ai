@@ -65,9 +65,13 @@ laptop restricted to 2 threads; ARM measurements are next.)*
 ## Real data, not just simulation
 
 The demo replays **real vehicle datasets** as genuine protocol traffic — a year of Nissan Leaf driving in
-Michigan (VED), summer and winter BMW i3 trips with full battery-thermal channels (TU Munich), real Nissan Leaf
-CAN encodings — and simulates only channels with no open real-world source, injecting scenarios with ground
-truth so accuracy can be measured. See [docs/DATASETS.md](docs/DATASETS.md) and
+Michigan (VED), summer and winter BMW i3 trips with full battery-thermal channels (TU Munich) — and simulates only
+channels with no open real-world source, injecting scenarios with ground truth so accuracy can be measured.
+
+The Leaf data reaches the store **as real CAN frames**: it is encoded with the Leaf's DBC into candump logs
+(860 k frames for one car-year), decoded by the ingestion layer, and segmented into trips from bus silence. The
+round trip is exact to half a bit on every signal — and the real data even settles an open question in the
+community DBC (the heater scale is 250 W/bit, not the guessed 300). See [docs/DATASETS.md](docs/DATASETS.md) and
 [ADR-0002](docs/adr/0002-real-data-first.md).
 
 ## Repository layout

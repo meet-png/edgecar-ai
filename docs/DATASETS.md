@@ -42,6 +42,13 @@ Legend: ✅ in use · 🟡 evaluating · ⛔ access-gated · ❌ rejected
 - **Licence:** GPL-3.0 → fetched at setup time, never vendored.
 - **Used for:** re-encoding replayed real signals into genuine CAN frames so the ingestion layer decodes real
   bus traffic, not CSV rows.
+- **Calibration finding (2026-10-27):** VED's Leaf readings match this DBC's resolutions exactly — current 0.5 A,
+  voltage 0.5 V, outside temperature 0.5 °C, A/C power 50 W — so VED was evidently decoded from these signals.
+  The DBC marks the heater scaling as uncertain (`"300W/bit?"`); 100 % of VED heater readings are multiples of
+  250 W (only 73 % of 300 W), so EdgeCar maps the heater at **250 W/bit**.
+- **Replay result:** Leaf 455 → 860,105 frames (candump log, 40.6 MB) in 9.8 s; decoded values are within half an
+  LSB of the source on every signal; trips segmented from bus silence (> 120 s): 297 vs 293 dataset trips
+  (Leaf 010: 201 vs 201).
 
 ### ⛔ ADAS-TO longitudinal (OpenLKA / Univ. of Wisconsin)
 - **What:** Real openpilot ADAS takeover windows (−3 s … +1 s at 10 Hz) with gap, relative speed, ego speed and
