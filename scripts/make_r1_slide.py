@@ -215,7 +215,7 @@ def build(template: Path, out: Path, results: Path) -> None:
         INK,
     )
     arrow(s, cx + cw / 2, 3.1, cx + cw / 2, 3.24)
-    box(bx, 3.24, bw / 2 - 0.05, 0.62, "Ingest & decode", "real DBCs · ISO-TP · pcap · ~15 ms to queryable")
+    box(bx, 3.24, bw / 2 - 0.05, 0.62, "Ingest & decode", "DBC decoding · ISO-TP · pcap · ~15 ms to queryable")
     box(
         bx + bw / 2 + 0.05, 3.24, bw / 2 - 0.05, 0.62, "Encrypted store", "DuckDB AES-256 · 1 Hz → 1 min → trips/events"
     )
@@ -349,7 +349,7 @@ def build(template: Path, out: Path, results: Path) -> None:
 
     # ---- column 3: sample answers ----------------------------------------------------------------------
     ax, aw = 9.25, 3.75
-    heading(s, ax, 1.78, aw, "Real answers (BMW i3 · Nissan Leaf)")
+    heading(s, ax, 1.78, aw, "Prototype answers")
     text(
         s,
         ax,
@@ -380,6 +380,12 @@ def build(template: Path, out: Path, results: Path) -> None:
             [
                 ("Likely root cause: ", {"bold": True, "color": RED, "size": 9}),
                 ("coolant pump ‘A’ fault (DTC P0C73), 14.5 min before the warning.", {"size": 9}),
+            ],
+            [
+                (
+                    "Injected fault on a real BMW i3 trip; all 9 events recovered from the wire.",
+                    {"size": 8, "color": GREY, "italic": True},
+                )
             ],
         ],
         margin=0.04,
