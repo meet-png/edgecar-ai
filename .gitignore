@@ -1,0 +1,40 @@
+# Datasets are fetched, never committed (licences: GPL / CC BY-NC / unstated)
+data/raw/
+data/processed/
+data/*.csv
+data/*.duckdb
+data/*.duckdb.wal
+
+# Model weights
+models/*.gguf
+models/*.bin
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# Node (dashboard)
+node_modules/
+.next/
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets
+.env
+.env.*
+!.env.example
