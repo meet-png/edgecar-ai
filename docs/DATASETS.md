@@ -30,6 +30,9 @@ Legend: ✅ in use · 🟡 evaluating · ⛔ access-gated · ❌ rejected
   (DOI 10.21227/6jr9-5235) — free IEEE account required; download `Measurement Data.zip` (36 MB) manually.
 - **Licence:** "Open Access", terms unstated → not redistributed.
 - **Used for:** battery thermal behaviour, heating load, summer-vs-winter consumption.
+- **Data-quality findings:** trips A24/A25 and A30/A31 overlap in time according to `Overview.xlsx` (A30 and A31
+  share a start time) — the later trip of each pair is excluded; trip B02 contains heater readings up to 39.9 kW
+  (the heater peaks at ~7 kW) and 49 samples report throttle above 100 % — removed by plausibility ranges.
 - **Profiled (2026-10-27, trips > 5 km, distance-weighted, from `Overview.xlsx`):** summer (A, 30 trips,
   mean ambient 22.3 °C) **0.553 % SoC/km**; winter (B, 37 trips, mean ambient 3.9 °C) **0.749 % SoC/km** —
   ≈ 35 % more energy per km, ≈ 26 % less range. Caveat: route mix differs (summer mostly urban Munich East;

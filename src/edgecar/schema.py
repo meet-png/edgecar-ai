@@ -20,6 +20,32 @@ class Signal:
     rollup: str = "mean"
 
 
+# Physically plausible ranges. Ingestion discards samples outside them as sensor or logger glitches
+# (e.g. a 39.9 kW reading from the BMW i3's ~7 kW cabin heater, or a 135 % accelerator position).
+VALID_RANGE: dict[str, tuple[float, float]] = {
+    "speed_kmh": (0, 250),
+    "soc_pct": (0, 100),
+    "batt_voltage_v": (50, 1000),
+    "batt_current_a": (-1000, 1000),
+    "batt_power_kw": (-500, 500),
+    "batt_temp_c": (-40, 90),
+    "batt_temp_max_c": (-40, 90),
+    "ambient_temp_c": (-50, 60),
+    "cabin_temp_c": (-40, 80),
+    "hvac_heater_kw": (0, 8),
+    "hvac_ac_kw": (0, 8),
+    "elevation_m": (-500, 9000),
+    "accel_mps2": (-15, 15),
+    "throttle_pct": (0, 100),
+    "motor_torque_nm": (-1000, 1000),
+    "regen_active": (0, 1),
+    "lat_deg": (-90, 90),
+    "lon_deg": (-180, 180),
+    "fuel_rate_lph": (0, 100),
+    "engine_rpm": (0, 10000),
+}
+
+
 SIGNALS: dict[str, Signal] = {
     s.name: s
     for s in [

@@ -46,6 +46,26 @@ LEAF_SIGNALS: tuple[SignalMap, ...] = (
 
 LEAF_DBC_FILES = {"evcan": "EV-can_AZE0.dbc", "carcan": "CAR-can_AZE0.dbc"}
 
+# BMW i3 signals carried in the EdgeCar reference CAN FD database (the OEM database is proprietary).
+REFERENCE_DBC_DIR = Path(__file__).parent / "dbc"
+I3_FD_DBC_FILES = {"canfd": "edgecar_reference_fd.dbc"}
+I3_FD_SIGNALS: tuple[SignalMap, ...] = (
+    SignalMap("batt_voltage_v", "canfd", "BMS_Status_FD", "PackVoltage"),
+    SignalMap("batt_current_a", "canfd", "BMS_Status_FD", "PackCurrent"),
+    SignalMap("soc_pct", "canfd", "BMS_Status_FD", "SoC"),
+    SignalMap("batt_temp_c", "canfd", "BMS_Status_FD", "CellTempAvg"),
+    SignalMap("batt_temp_max_c", "canfd", "BMS_Status_FD", "CellTempMax"),
+    SignalMap("hvac_heater_kw", "canfd", "BMS_Status_FD", "HeaterPower"),
+    SignalMap("hvac_ac_kw", "canfd", "BMS_Status_FD", "AcPower"),
+    SignalMap("cabin_temp_c", "canfd", "BMS_Status_FD", "CabinTemp"),
+    SignalMap("thermal_warning", "canfd", "BMS_Status_FD", "ThermalWarning"),
+    SignalMap("motor_torque_nm", "canfd", "PT_Status_FD", "MotorTorque"),
+    SignalMap("throttle_pct", "canfd", "PT_Status_FD", "Throttle"),
+    SignalMap("accel_mps2", "canfd", "PT_Status_FD", "LongAccel"),
+    SignalMap("regen_active", "canfd", "PT_Status_FD", "RegenActive"),
+    SignalMap("elevation_m", "canfd", "PT_Status_FD", "Elevation"),
+)
+
 TRIP_GAP_S = 120  # bus silence longer than this ends a trip (ignition off)
 
 
@@ -55,6 +75,24 @@ class Frame:
     channel: str
     arbitration_id: int
     data: bytes
+    fd: bool = False  # CAN FD frame (up to 64 data bytes)
+
+
+def _invalid_raw(sig) -> int | None:
+    """All-ones raw value, reserved for "signal not available" (the highest positive value if signed).
+
+    Not used for enumerations (every raw value has a meaning, e.g. ThermalWarning 3 = OverTemp) or for fields
+    shorter than 4 bits (a 1-bit flag has no spare value).
+    """
+    if sig.choices or sig.length < 4:
+        return None
+    return (1 << (sig.length - 1)) - 1 if sig.is_signed else (1 << sig.length) - 1
+
+
+def _raw_limits(sig) -> tuple[int, int]:
+    """Smallest and largest raw value a real reading may use (the reserved invalid value excluded)."""
+    lo, hi = (-(1 << (sig.length - 1)), (1 << (sig.length - 1)) - 1) if sig.is_signed else (0, (1 << sig.length) - 1)
+    return lo, hi - (1 if _invalid_raw(sig) is not None else 0)
 
 
 class CanCodec:
@@ -87,13 +125,19 @@ class CanCodec:
                 payload = dict(base)
                 for j, m in enumerate(m for m in maps if m.canonical in frames):
                     v = values[i, j]
-                    if np.isnan(v):
+                    sig = msg.get_signal_by_name(m.signal)
+                    if np.isnan(v):  # a missing value travels as the reserved "not available" raw value
+                        invalid = _invalid_raw(sig)
+                        if invalid is not None:
+                            payload[m.signal] = invalid * sig.scale + sig.offset
                         continue
                     phys = (-v if m.invert else v) / m.scale
-                    sig = msg.get_signal_by_name(m.signal)
-                    # quantise to the signal's resolution so encoding never fails on float noise
-                    payload[m.signal] = round((phys - sig.offset) / sig.scale) * sig.scale + sig.offset
-                yield Frame(float(ts[i]), bus, msg.frame_id, msg.encode(payload, strict=False))
+                    # quantise to the signal's resolution, and saturate at the field's limits (an ECU clamps a
+                    # reading that exceeds its encoding range; it never wraps around or fails)
+                    raw = round((phys - sig.offset) / sig.scale)
+                    lo, hi = _raw_limits(sig)
+                    payload[m.signal] = min(max(raw, lo), hi) * sig.scale + sig.offset
+                yield Frame(float(ts[i]), bus, msg.frame_id, msg.encode(payload, strict=False), msg.is_fd)
 
     # ------------------------------------------------------------------------------------------------- decode
 
@@ -105,9 +149,15 @@ class CanCodec:
             if key is None:
                 continue  # a frame this application does not use: ignored, never answered
             bus, msg_name = key
-            decoded = self.db[bus].get_message_by_name(msg_name).decode(f.data, decode_choices=False)
+            msg = self.db[bus].get_message_by_name(msg_name)
+            decoded = msg.decode(f.data, decode_choices=False)
             row = rows[round(f.ts, 3)]
             for m in self.by_message[key]:
+                sig = msg.get_signal_by_name(m.signal)
+                invalid = _invalid_raw(sig)
+                if invalid is not None and round((float(decoded[m.signal]) - sig.offset) / sig.scale) == invalid:
+                    row[m.canonical] = float("nan")
+                    continue
                 v = float(decoded[m.signal]) * m.scale
                 row[m.canonical] = -v if m.invert else v
         df = pd.DataFrame.from_dict(rows, orient="index").sort_index()
@@ -133,11 +183,16 @@ def segment_trips(df: pd.DataFrame, vehicle_id: str, gap_s: int = TRIP_GAP_S) ->
 
 
 def write_log(frames: Iterable[Frame], path: Path) -> int:
-    """Write frames in candump ``-L`` format: ``(1509526283.123456) evcan 1DB#00112233445566FF``."""
+    """Write frames in candump ``-L`` format.
+
+    Classic CAN: ``(1509526283.123456) evcan 1DB#00112233445566FF``; CAN FD: ``… canfd 3A0##0<64 data bytes>``
+    (``##`` followed by the FD flags nibble).
+    """
     n = 0
     with open(path, "w", encoding="ascii", newline="\n") as fh:
         for f in sorted(frames, key=lambda f: (f.ts, f.channel, f.arbitration_id)):
-            fh.write(f"({f.ts:.6f}) {f.channel} {f.arbitration_id:03X}#{f.data.hex().upper()}\n")
+            sep = "##0" if f.fd else "#"
+            fh.write(f"({f.ts:.6f}) {f.channel} {f.arbitration_id:03X}{sep}{f.data.hex().upper()}\n")
             n += 1
     return n
 
@@ -146,5 +201,6 @@ def read_log(path: Path) -> Iterator[Frame]:
     with open(path, encoding="ascii") as fh:
         for line in fh:
             ts, channel, frame = line.split()
-            can_id, data = frame.split("#")
-            yield Frame(float(ts.strip("()")), channel, int(can_id, 16), bytes.fromhex(data))
+            fd = "##" in frame
+            can_id, data = frame.split("##") if fd else frame.split("#")
+            yield Frame(float(ts.strip("()")), channel, int(can_id, 16), bytes.fromhex(data[1:] if fd else data), fd)

@@ -708,7 +708,7 @@ class Engine:
         t1 = pd.Timestamp(anchor["ts"]).to_pydatetime()
         lookback = timedelta(minutes=q.lookback_min or 15)
         t0 = t1 - lookback
-        prior = self._events("any", t0, t1 + timedelta(seconds=1))
+        prior = self._events("any", t0, t1 + timedelta(microseconds=1))  # up to and including the anchor time
         prior = prior[prior["event_id"] != anchor["event_id"]]
         # keep what can plausibly relate to the anchor (same subsystem family); unrelated noise is left out
         related = RELATED_CATEGORIES.get(anchor["category"], {anchor["category"]})
@@ -755,17 +755,21 @@ class Engine:
             first = faults.iloc[0]
             lead = (t1 - pd.Timestamp(first["ts"]).to_pydatetime()).total_seconds() / 60
             facts |= {"root_cause_code": first["code"], "root_cause_time": first["ts"], "root_cause_lead_min": lead}
-            cause_line = f"Likely root cause: {first['title']} at {first['ts']:%H:%M:%S}, {lead:.1f} min before"
-            # corroboration: a diagnostic code stored within a minute of the first fault
+            # a diagnostic code stored within a minute of the first fault names it in readable terms
             dtcs = faults[
                 (faults["category"] == "dtc")
                 & (faults["event_id"] != first["event_id"])
                 & ((faults["ts"] - first["ts"]).abs() <= pd.Timedelta(minutes=1))
             ]
-            if not dtcs.empty:
-                facts["root_cause_dtc"] = dtcs["code"].iloc[0]
-                cause_line += f", confirmed by diagnostic trouble code {dtcs['code'].iloc[0]}"
-            cause_line += "."
+            if not dtcs.empty and first["category"] != "dtc":
+                dtc = dtcs.iloc[0]
+                facts["root_cause_dtc"] = dtc["code"]
+                cause_line = (
+                    f"Likely root cause: {dtc['title'].removeprefix('DTC ')}, first logged by {first['source']} at "
+                    f"{first['ts']:%H:%M:%S} ({first['title']}) — {lead:.1f} min before the warning."
+                )
+            else:
+                cause_line = f"Likely root cause: {first['title']} at {first['ts']:%H:%M:%S}, {lead:.1f} min before."
         elif isinstance(anchor["detail"], str) and '"cause"' in anchor["detail"]:
             cause = json.loads(anchor["detail"]).get("cause", "")
             facts["recorded_cause"] = cause

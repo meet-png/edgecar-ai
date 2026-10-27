@@ -13,7 +13,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from edgecar.prep.resample import despike, to_1hz
+from edgecar.prep.resample import despike, sanitize, to_1hz
 
 VED_EPOCH = pd.Timestamp("2017-11-01 00:00:00")
 
@@ -74,7 +74,7 @@ def to_canonical(raw: pd.DataFrame, vehicle_id: str) -> pd.DataFrame:
     sig = sig.dropna(axis=1, how="all")
     frames = []
     for trip_no, trip in sig.groupby("trip", sort=True):
-        f = to_1hz(despike(trip.drop(columns="trip").sort_values("ts")))
+        f = to_1hz(despike(sanitize(trip.drop(columns="trip").sort_values("ts"))))
         f.insert(1, "vehicle_id", vehicle_id)
         f.insert(2, "trip_id", f"{vehicle_id}:{int(trip_no):05d}")
         frames.append(f)

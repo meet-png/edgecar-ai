@@ -96,8 +96,8 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
 
 1. ~~Wire ADAS sim + battery-overheat scenario~~ ✅ done (2026-10-27). BATON event tables fetched from the
    **public GitHub repo's Git LFS** (no HF token needed). All 5 brief questions now answer from data.
-2. ~~Leaf DBC CAN encode/decode~~ ✅ done (2026-10-27). Next protocols: SOME/IP, VHAL, QNX slog2, UDS (R2 unless
-   cheap); CAN-FD via a generated reference DBC for the i3.
+2. ~~Protocols~~ ✅ done (2026-10-27, ADR-0006): CAN (Leaf DBC), CAN FD (reference DBC), Android VHAL (AOSP IDs
+   verified), SOME/IP (pcap), UDS over ISO-TP, QNX slog2. Simulators emit wire traffic only; adapters create events.
 3. API + car-style dashboard (screenshot for the slide).
 4. R1 slide in the official template (due 31 Oct); make repo public at submission.
 5. R2: LoRA fine-tune (maybe lets 0.5B replace 1.5B), ARM measurement (Graviton/QEMU), new held-out test v2,

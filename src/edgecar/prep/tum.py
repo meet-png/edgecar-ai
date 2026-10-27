@@ -12,7 +12,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from edgecar.prep.resample import despike, to_1hz
+from edgecar.prep.resample import despike, sanitize, to_1hz
 
 # Normalised source header → canonical signal. Headers differ slightly between files (e.g. "Velocity [km/h]]]").
 _MAP = {
@@ -66,8 +66,29 @@ def to_canonical(tum_dir: Path, vehicle_id: str = "i3-tum") -> pd.DataFrame:
         sig["batt_current_a"] = -sig["batt_current_a"]  # canonical: positive = discharging
         sig["batt_power_kw"] = sig["batt_voltage_v"] * sig["batt_current_a"] / 1000.0
         sig.insert(0, "ts", row["start"] + pd.to_timedelta(raw["Time [s]"], unit="s"))
-        f = to_1hz(despike(sig))
+        f = to_1hz(despike(sanitize(sig)))
         f.insert(1, "vehicle_id", vehicle_id)
         f.insert(2, "trip_id", f"{vehicle_id}:{trip_name[4:]}")  # e.g. i3-tum:A01
         frames.append(f)
-    return pd.concat(frames, ignore_index=True).sort_values("ts").reset_index(drop=True)
+    return drop_overlapping_trips(pd.concat(frames, ignore_index=True))
+
+
+def drop_overlapping_trips(frames: pd.DataFrame) -> pd.DataFrame:
+    """One vehicle cannot drive two trips at once: drop any trip that starts before the previous one ended.
+
+    In ``Overview.xlsx``, A30 and A31 share a start time and A25's recording runs past the next trip's start — start
+    times that cannot all be right. The later trip of each overlapping pair is excluded rather than re-timed by guess.
+    """
+    spans = frames.groupby("trip_id")["ts"].agg(["min", "max"]).sort_values("min")
+    keep, last_end, dropped = [], pd.Timestamp.min, []
+    for trip_id, span in spans.iterrows():
+        if span["min"] <= last_end:
+            dropped.append(trip_id)
+            continue
+        keep.append(trip_id)
+        last_end = span["max"]
+    if dropped:
+        print(
+            f"  TUM: excluded {len(dropped)} trip(s) whose start time overlaps the previous trip: {', '.join(dropped)}"
+        )
+    return frames[frames["trip_id"].isin(keep)].sort_values("ts").reset_index(drop=True)

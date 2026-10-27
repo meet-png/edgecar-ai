@@ -1,0 +1,38 @@
+VERSION ""
+
+
+NS_ :
+
+BS_:
+
+BU_: BMS VCU HPC
+
+
+BO_ 928 BMS_Status_FD: 64 BMS
+ SG_ PackVoltage : 0|16@1+ (0.05,0) [0|3276.75] "V" HPC
+ SG_ PackCurrent : 16|16@1- (0.05,0) [-1638.4|1638.35] "A" HPC
+ SG_ SoC : 32|10@1+ (0.1,0) [0|102.3] "%" HPC
+ SG_ CellTempAvg : 48|8@1+ (0.5,-40) [-40|87.5] "degC" HPC
+ SG_ CellTempMax : 56|8@1+ (0.5,-40) [-40|87.5] "degC" HPC
+ SG_ HeaterPower : 64|12@1+ (0.002,0) [0|8.19] "kW" HPC
+ SG_ AcPower : 80|12@1+ (0.002,0) [0|8.19] "kW" HPC
+ SG_ CabinTemp : 96|8@1+ (0.5,-40) [-40|87.5] "degC" HPC
+ SG_ ThermalWarning : 104|2@1+ (1,0) [0|3] "" HPC
+
+BO_ 432 PT_Status_FD: 64 VCU
+ SG_ MotorTorque : 0|16@1- (0.1,0) [-3276.8|3276.7] "Nm" HPC
+ SG_ Throttle : 16|8@1+ (0.5,0) [0|127.5] "%" HPC
+ SG_ LongAccel : 24|16@1- (0.001,0) [-32.768|32.767] "m/s2" HPC
+ SG_ RegenActive : 40|1@1+ (1,0) [0|1] "" HPC
+ SG_ Elevation : 48|16@1- (0.1,0) [-3276.8|3276.7] "m" HPC
+
+
+
+CM_ "EdgeCar reference CAN FD database. Not an OEM database: the BMW i3's own DBC is proprietary, so the i3's real
+signals are carried in these two 64-byte CAN FD frames to exercise the CAN FD ingestion path.";
+CM_ SG_ 928 ThermalWarning "Battery management thermal warning level";
+BA_DEF_ BO_  "VFrameFormat" ENUM  "StandardCAN","ExtendedCAN","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","reserved","StandardCAN_FD","ExtendedCAN_FD";
+BA_DEF_DEF_  "VFrameFormat" "StandardCAN";
+BA_ "VFrameFormat" BO_ 928 14;
+BA_ "VFrameFormat" BO_ 432 14;
+VAL_ 928 ThermalWarning 0 "None" 1 "RiseRate" 2 "HighTemp" 3 "OverTemp" ;

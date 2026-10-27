@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from edgecar.schema import SIGNALS
+from edgecar.schema import SIGNALS, VALID_RANGE
 
 # Short sensor dropouts are bridged by linear interpolation; longer gaps stay empty.
 MAX_GAP_S = 5
@@ -12,6 +12,15 @@ MAX_GAP_S = 5
 # Temperatures of large thermal masses cannot jump: a sample this far from its local median is a sensor glitch.
 SLOW_SIGNALS = ("batt_temp_c", "batt_temp_max_c", "cabin_temp_c", "ambient_temp_c")
 SPIKE_C = 5.0
+
+
+def sanitize(df: pd.DataFrame) -> pd.DataFrame:
+    """Blank out samples outside each signal's physically plausible range."""
+    df = df.copy()
+    for c, (lo, hi) in VALID_RANGE.items():
+        if c in df:
+            df.loc[~df[c].between(lo, hi), c] = float("nan")
+    return df
 
 
 def despike(df: pd.DataFrame, window: int = 21) -> pd.DataFrame:
