@@ -98,12 +98,32 @@ HIGHWAY_MIN_KMH = 80.0
 HARD_BRAKE_MPS2 = -3.0
 
 
+KEY_ENV = "EDGECAR_DB_KEY"  # on the vehicle: released by the secure element / Android Keystore, never stored on disk
+
+
 class Store:
+    """The vehicle's store. With ``key`` the file is encrypted at rest (AES-256-GCM, DuckDB built-in)."""
+
     def __init__(
-        self, path: str | Path, *, threads: int = 2, memory_limit: str = "256MB", read_only: bool = False
+        self,
+        path: str | Path,
+        *,
+        threads: int = 2,
+        memory_limit: str = "256MB",
+        read_only: bool = False,
+        key: str | None = None,
     ) -> None:
         self.path = Path(path)
-        self.con = duckdb.connect(str(self.path), read_only=read_only)
+        self.encrypted = key is not None
+        if key is None:
+            self.con = duckdb.connect(str(self.path), read_only=read_only)
+        else:
+            self.con = duckdb.connect()
+            options = ", READ_ONLY" if read_only else ""
+            quoted_key = key.replace("'", "''")
+            path_sql = str(self.path).replace("'", "''")
+            self.con.execute(f"ATTACH '{path_sql}' AS vehicle (ENCRYPTION_KEY '{quoted_key}'{options})")
+            self.con.execute("USE vehicle")
         self.con.execute(f"SET threads = {int(threads)}")
         self.con.execute(f"SET memory_limit = '{memory_limit}'")
         if not read_only:

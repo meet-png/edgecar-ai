@@ -10,6 +10,7 @@ from edgecar.analytics import Engine, Result
 from edgecar.nlu import command
 from edgecar.nlu.pipeline import understand
 from edgecar.nlu.slm import SlmParser
+from edgecar.privacy import Role, redact
 from edgecar.query import Query
 from edgecar.store import Store
 
@@ -34,9 +35,17 @@ UNPARSED_REPLY = (
 
 
 class Assistant:
-    def __init__(self, store: Store, vehicle_id: str, slm: SlmParser | None = None, now: datetime | None = None):
+    def __init__(
+        self,
+        store: Store,
+        vehicle_id: str,
+        slm: SlmParser | None = None,
+        now: datetime | None = None,
+        role: Role | str = Role.DRIVER,
+    ):
         self.engine = Engine(store, vehicle_id, now)
         self.slm = slm
+        self.role = Role(role)
 
     def ask(self, question: str) -> Answer:
         t0 = time.perf_counter()
@@ -48,7 +57,7 @@ class Assistant:
                 question, UNPARSED_REPLY, u.path, timings_ms=timings, slm_tokens=u.tokens, model_line=u.model_line
             )
         t1 = time.perf_counter()
-        result = self.engine.run(u.query)
+        result = redact(self.engine.run(u.query), self.role)
         timings["engine"] = (time.perf_counter() - t1) * 1000
         timings["total"] = (time.perf_counter() - t0) * 1000
         text = " ".join([*result.notes, result.headline, *result.details])
