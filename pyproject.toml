@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "edgecar-ai"
+version = "0.1.0"
+description = "Offline, on-device small-language-model assistant that answers natural-language questions about vehicle data."
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+authors = [{ name = "Meet Kabra" }]
+keywords = ["automotive", "sdv", "edge-ai", "slm", "can-bus", "llama.cpp", "duckdb"]
+# Runtime dependencies are what ships on the vehicle; keep this list short.
+dependencies = [
+    "duckdb==1.5.6",
+    "numpy>=2.0",
+    "pydantic==2.14.1",
+    "fastapi==0.143.0",
+    "uvicorn==0.54.0",
+    "httpx==0.28.1",
+    "cantools==44.2.1",
+    "python-can==4.6.1",
+    "psutil>=6.0",
+]
+
+[project.optional-dependencies]
+# Offline data preparation (dataset conversion) — not needed on the vehicle.
+prep = ["pandas>=2.2", "openpyxl>=3.1"]
+dev = ["pytest==9.1.1", "ruff==0.17.0"]
+
+[project.scripts]
+edgecar = "edgecar.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/edgecar"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -44,6 +44,8 @@ scalability), privacy & security, innovation & practicality.
 |---|---|---|
 | ADR-0001 | SLM is a **semantic parser**, not an oracle. NL → typed query (grammar-constrained JSON) → deterministic analytics → SLM phrases the facts. Fast-path intent cache bypasses the SLM for common questions. | 2 s budget on 2 ARM cores allows only ~20–40 generated tokens; SLMs hallucinate numbers. |
 | ADR-0002 | **Real data first.** Replay real vehicle datasets as genuine protocol traffic; simulate only what has no public real source, with injected ground-truth scenarios. | Accuracy can be *measured* against known truth; differentiates from the competitor. |
+| ADR-0003 | **One embedded DuckDB file**, tiers: 1 Hz `frames` → `frames_1min` roll-ups → `trips` + `events` (lifetime). Memory/threads capped. | Window aggregations dominate; columnar + pre-computed trips = 2–13 ms queries. |
+| ADR-0004 | **Simulation sits on top of real trips, never alters them.** ADAS from real speed profiles + TD2D takeover stats; fault scenarios as labelled derived trips; seeded; `sim:*` provenance. | Ground truth for events without contaminating real energy/thermal data. |
 
 ## 5. Datasets (full registry in `docs/DATASETS.md`)
 
@@ -54,9 +56,9 @@ scalability), privacy & security, innovation & practicality.
 | Nissan Leaf DBC (dalathegreat) | Real | ✅ downloaded (GPL-3.0 → fetched, never committed) | Encoding replayed signals as real CAN frames |
 | ADAS-TO longitudinal (HF, MIT) | Real | ⛔ gated (manual approval) — Meet to request | ADAS takeovers |
 | BATON-Sample (HF, CC BY-NC 4.0, 43 routes) | Real | ⛔ gated (auto-approve) — needs Meet's HF login/token | ADAS engage/disengage + lead radar + takeover labels |
-| TD2D (Zenodo, CC BY 4.0, CARLA L2 takeovers, 16.7 GB zip) | Simulated (CARLA) | 🔍 listing zip remotely to fetch only driving CSVs | CARLA takeover scenarios (brief names CARLA) |
-| NHTSA SGO Level-2 ADAS incident CSV | Real | 🔍 URL confirmed open | Real-world ADAS incident taxonomy |
-| CA DMV disengagement reports | Real | 🔍 page found | Real disengagement-cause vocabulary |
+| TD2D (Zenodo, CC BY 4.0, CARLA L2 takeovers) | Simulated (CARLA) | ✅ 500 takeover files fetched via HTTP range requests (not the 16.7 GB zip) | Takeover reaction time (median 948 ms) + outcome (36 % fail) for ADAS sim |
+| NHTSA SGO Level-2 ADAS incident CSV | Real | ✅ downloaded (2,574 incidents) | ADAS incident priors / wording |
+| CA DMV disengagement reports | Real | ❌ L3+ only; pages 404 | — |
 | OpenLKA (Dropbox) | Real | ❌ Dropbox links return error page | — |
 | ADAS-TO full / BATON full | Real | ❌ manual gate + 40 GB+ | — |
 | DTC / SOME/IP / VHAL / QNX logs | — | No open real time-series exists → simulate to spec | — |
@@ -84,11 +86,27 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
 - [ ] Meet: team details for the title slide (name, college, email) — needed before R1 submission.
 - [ ] Optional (R2): install WSL2 + Docker Desktop for the 2 GB / 2-CPU container benchmark.
 
+- [ ] **Meet: approve llama.cpp download** (official `ggml-org/llama.cpp` release `b11577`, Windows CPU build +
+      Ubuntu ARM64 build). Auto mode blocked downloading/running the external binary; needed for the SLM parser.
+
 ## 9. Next steps
 
-1. Push repo skeleton to GitHub (private until R1 submission, then public).
-2. Finish ADAS source evaluation (TD2D listing, BATON once token exists).
-3. Data pipeline: unified signal/event schema; VED + BMW i3 → canonical store; CAN replay via Leaf DBC.
+1. Wire ADAS sim + battery-overheat scenario (base: real hot-day trip `i3-tum:A07`) into the build.
+2. NLU: fast-path parser (no model) → SLM parser via `llama-server` + JSON-schema-constrained decoding
+   (Qwen2.5-0.5B Q4_K_M downloaded to `models/`).
+3. Protocol layer: Leaf DBC CAN encode/decode round-trip; SOME/IP, VHAL, QNX slog2, UDS codecs.
+4. Eval set (~150 paraphrased questions with ground truth) + latency/RSS benchmark at 2 threads.
+5. API + car-style dashboard; then R1 slide.
+
+## Verified results so far (for the slide)
+
+- Leaf (VED 455), last 14 days to 4 Nov 2018: range 161 → 151 km (−6 %); consumption 13.2 → 14.1 kWh/100 km;
+  top factors: colder air/battery/tyres (+0.6 kWh/100 km ≈ 7 km) and heating (+0.4 ≈ 5 km); 6.9 °C vs 10.8 °C.
+- Leaf worst efficiency day: Sun 7 Jan 2018, −14.2 °C, 2.77 vs typical 5.93 km/kWh (−53 %); heating
+  16.9 vs 9.6 kWh/100 km.
+- Leaf, all year: below 0 °C 21.2 kWh/100 km vs 10–20 °C 11.6 (+83 %); city 16.4 vs highway 15.3 kWh/100 km.
+- i3: highway 17.7 vs city 9.2 kWh/100 km; below 0 °C 19.7 vs 10–20 °C 10.1 kWh/100 km.
+- Store: 4 vehicles, 540 k frames, 814 trips, 1,176 detected events → 36 MB; build 20 s; queries 2–13 ms.
 
 ---
 
@@ -100,4 +118,12 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
   Phi-3 1.8B, <2 GB RAM, ~11 tok/s on 7-core ARM head unit), Arm on-device assistant blog (system-prompt KV
   cache precompute ≈ 2× latency win), Pi 5 llama.cpp numbers (0.5B ≈ 17–20 tok/s, 1.5B ≈ 10–15 tok/s).
 - Downloaded + profiled VED, TUM BMW i3, Leaf DBCs. Found ADAS-TO/BATON gated, OpenLKA Dropbox dead.
-- Created repo skeleton, this log, dataset registry, first two ADRs.
+- Created repo skeleton, this log, dataset registry, first two ADRs. Pushed to private GitHub repo.
+- Fetched TD2D takeover files (500) via exact HTTP range requests; NHTSA SGO ADAS CSV.
+- Built: canonical schema, fleet, VED/TUM converters (1 Hz resample, despike), DuckDB store with trips/roll-ups,
+  real-signal event detectors (charging, hard braking, battery temperature), typed `Query`, analytics engine
+  (summary/trend/extreme/compare/explain_change/list_events/events_before/anomalies/status), ADAS simulator.
+- Data-quality fixes found by testing: TUM A10 max-battery-temp spike (60.9 °C) removed by despike;
+  sparse windows fall back to "last 8 trips vs 8 before"; PHEV fuel answers now report electric-only share.
+- Gotchas: pip to files.pythonhosted.org stalls (IPv6) but completes; Windows console needs
+  `PYTHONIOENCODING=utf-8`; pandas NaN must be converted to SQL NULL on insert.

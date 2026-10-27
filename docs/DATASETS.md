@@ -56,27 +56,35 @@ Legend: ✅ in use · 🟡 evaluating · ⛔ access-gated · ❌ rejected
 - **Licence:** CC BY-NC 4.0 (academic, non-commercial) · **Access:** Hugging Face gate with *automatic* approval.
 - **Planned use:** real ADAS engage/disengage sequences and lead-vehicle context; only CSVs are fetched.
 
-### 🟡 NHTSA Standing General Order — Level 2 ADAS incident reports
+### ✅ NHTSA Standing General Order — Level 2 ADAS incident reports
 - **What:** Public US incident reports for crashes involving Level-2 ADAS (system engaged, roadway, weather,
-  pre-crash speed, narrative). Monthly CSV.
+  pre-crash speed and movement, narrative). 116 columns; updated monthly.
 - **Source:** <https://static.nhtsa.gov/odi/ffdd/sgo-2021-01/SGO-2021-01_Incident_Reports_ADAS.csv>
 - **Licence:** US government work (public domain).
-- **Candidate use:** realistic ADAS incident taxonomy and wording for event logs.
+- **Profiled (file dated 15 Oct 2026):** 2,574 incidents; 96 % "verified engaged"; known roadway types are 62 %
+  highway/freeway; median pre-crash speed 39 mph (IQR 22–61); "lane/road departure" is the second most common
+  pre-crash movement after "proceeding straight".
+- **Used for:** priors for the ADAS event generator (road type, speed, movement) and incident wording.
 
-### 🟡 California DMV — autonomous-vehicle disengagement reports
-- **What:** Annual CSVs of disengagements (date, location type, cause description) filed by AV test permit holders.
-- **Source:** <https://www.dmv.ca.gov/portal/vehicle-industry-services/autonomous-vehicles/>
-- **Candidate use:** real disengagement-cause vocabulary for the ADAS event generator.
+### ❌ California DMV — autonomous-vehicle disengagement reports
+- Covers SAE Level 3+ test fleets only (not in-car Level-2 ADAS); report pages returned "Page not found"
+  on 2026-10-27. Not used.
 
 ## Simulated data
 
-### 🟡 TD2D — Takeover during Distracted L2 Driving (Kangwon National University)
+### ✅ TD2D — Takeover during Distracted L2 Driving (Kangwon National University)
 - **What:** 50 drivers × 10 secondary-task conditions = 500 takeover cases in a modified **CARLA 0.9.11**
-  simulator, with takeover performance, workload, physiological and eye-tracking data.
+  simulator, with takeover outcome, reaction time, NASA-TLX workload, physiological and eye-tracking data.
 - **Source:** <https://zenodo.org/records/14185964> · paper: *Scientific Data* (2025) s41597-025-04781-8
-- **Licence:** CC BY 4.0 · 16.7 GB single zip — only the driving-performance files are fetched, via HTTP range
-  requests.
-- **Candidate use:** CARLA-generated takeover scenarios (the brief explicitly names CARLA).
+- **Licence:** CC BY 4.0. The archive is a single 16.7 GB zip (98 % eye-tracking video); only the 500
+  `takeoverScenarioInformations.csv` files (< 200 kB in total) and `driverInformation.csv` are fetched, each with
+  one exact HTTP range request.
+- **Profiled:** critical events = right pedestrian 174, front vehicle 171, left pedestrian 155. Reaction time
+  median **948 ms** (IQR 796–1,208, range 515–2,000). Failure rate **36 %** overall: 14 % at baseline (median
+  821 ms) vs. ~60 % under visual-manual distraction (texting 1,303 ms, gaming 1,190 ms, e-book 1,169 ms).
+  Front-vehicle events are hardest (median 1,217 ms, 44 % failure).
+- **Used for:** calibrating takeover-request timing and outcome distributions in the ADAS event generator.
+  There are no vehicle-dynamics time series in the archive.
 
 ### Synthetic channels (no open real time-series exists)
 | Channel | Why synthetic | Generated to |

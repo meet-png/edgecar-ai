@@ -55,9 +55,25 @@ truth so accuracy can be measured. See [docs/DATASETS.md](docs/DATASETS.md) and
 ## Repository layout
 
 ```
-docs/          architecture decisions (adr/) and dataset registry
-data/          fetched datasets (git-ignored)
-PROGRESS.md    build log, decisions and next steps
+src/edgecar/
+  schema.py       canonical signals, units, event categories
+  fleet.py        the demo vehicles (each a real vehicle from a public dataset)
+  query.py        the typed query the language layer produces
+  store/          DuckDB storage: frames, roll-ups, trips, events
+  analytics/      deterministic engine: trends, comparisons, change attribution, events
+  detect.py       event detectors over real signals (charging, hard braking, battery temperature)
+  sim/            simulated channels layered on real trips (ADAS, fault scenarios)
+  prep/           offline dataset conversion (VED, TU Munich BMW i3) and store build
+docs/             architecture decisions (adr/) and dataset registry
+PROGRESS.md       build log, decisions and next steps
+```
+
+## Quick start
+
+```bash
+python -m venv .venv && .venv/Scripts/pip install -e ".[prep,dev]"   # Linux/macOS: .venv/bin/pip
+# fetch the datasets listed in docs/DATASETS.md into data/raw/, then:
+python -m edgecar.prep.build --data data --out data/edgecar.duckdb
 ```
 
 ## License
