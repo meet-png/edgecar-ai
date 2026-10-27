@@ -15,7 +15,7 @@ GDPR / India's DPDP Act. Fleet operators get counts and rates, not per-event det
 
 from __future__ import annotations
 
-import copy
+import dataclasses
 import re
 from dataclasses import dataclass
 from enum import StrEnum
@@ -56,8 +56,11 @@ _RAW_LOG_QUOTE = re.compile(r" \([a-z_]+: [^)]*\)")  # a quoted raw log line, e.
 
 
 def redact(result: Result, role: Role | str, consent_behaviour: bool = False) -> Result:
+    if Role(role) == Role.DRIVER and not consent_behaviour:
+        return result  # the owner sees everything: nothing to redact, nothing to copy
     policy = POLICIES[Role(role)]
-    r = copy.deepcopy(result)
+    # every step below rebinds a field instead of mutating it, so a shallow copy keeps the original intact
+    r = dataclasses.replace(result)
     hide_behaviour = not policy.behaviour and not consent_behaviour
 
     def line(text: str) -> str:

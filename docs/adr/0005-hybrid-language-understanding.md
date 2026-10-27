@@ -51,6 +51,24 @@ End-to-end over all 192 questions, store + model loaded: latency p50 **6.5 ms**,
 private, assistant 120 MB). Qwen2.5-0.5B reached only 80.0 % hybrid / 31.6 % on fall-through questions, so the 1.5B
 model is chosen; it fits the budget only with the edge profile.
 
+## Model comparison (2026-10-28)
+
+Six candidates, same prompt (each in its own chat template via llama-server `/apply-template`), same grammar, same
+`edge` server profile, 2 threads:
+
+| Model (GGUF) | Model-only, 192 q | Hybrid, held-out 70 q | p50 / p95 | RSS (private) |
+|---|---|---|---|---|
+| Qwen2.5-0.5B-Instruct Q4_K_M | 34.4 % | 81.4 % | 223 / 375 ms | 519 MB (167) |
+| Qwen3-0.6B Q8_0 | 5.2 % | 75.7 % | 340 / 558 ms | 968 MB (378) |
+| Llama-3.2-1B-Instruct Q4_K_M | 35.9 % | 82.9 % | 408 / 602 ms | 992 MB (214) |
+| Gemma-3-1B-it Q4_K_M | 39.6 % | 85.7 % | 493 / 679 ms | 980 MB (229) |
+| **Qwen2.5-1.5B-Instruct Q4_K_M** | **85.4 %** | **95.7 %** | 510 / 713 ms | 1,158 MB (225) |
+| SmolLM2-1.7B-Instruct Q4_K_M | 50.5 % | 84.3 % | 960 / 1,351 ms | 1,534 MB (513) |
+
+Qwen2.5-1.5B leads model-only accuracy by 35 points at latency close to the 1B models and the same private memory
+(its weights are a shared memory map). Final end-to-end run with this model: p50 6.1 ms, p95 549 ms, max 684 ms over
+192 questions; peak RSS 1.28 GB.
+
 ## Consequences
 
 - Accuracy and latency are reproducible: `python -m edgecar.bench.nlu_eval` and `python -m edgecar.bench.e2e`.

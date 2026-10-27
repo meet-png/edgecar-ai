@@ -1,0 +1,68 @@
+[
+  {
+    "model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+    "file_mb": 491,
+    "slm_only_accuracy_192": 0.344,
+    "hybrid_heldout_accuracy_70": 0.814,
+    "slm_p50_ms": 223.0,
+    "slm_p95_ms": 375.0,
+    "rss_mb": 519,
+    "private_mb": 167,
+    "prefix_tokens": 1187
+  },
+  {
+    "model": "Qwen3-0.6B-Q8_0.gguf",
+    "file_mb": 639,
+    "slm_only_accuracy_192": 0.052,
+    "hybrid_heldout_accuracy_70": 0.757,
+    "slm_p50_ms": 340.0,
+    "slm_p95_ms": 558.0,
+    "rss_mb": 968,
+    "private_mb": 378,
+    "prefix_tokens": 1187
+  },
+  {
+    "model": "Llama-3.2-1B-Instruct-Q4_K_M.gguf",
+    "file_mb": 808,
+    "slm_only_accuracy_192": 0.359,
+    "hybrid_heldout_accuracy_70": 0.829,
+    "slm_p50_ms": 408.0,
+    "slm_p95_ms": 602.0,
+    "rss_mb": 992,
+    "private_mb": 214,
+    "prefix_tokens": 1205
+  },
+  {
+    "model": "gemma-3-1b-it-Q4_K_M.gguf",
+    "file_mb": 806,
+    "slm_only_accuracy_192": 0.396,
+    "hybrid_heldout_accuracy_70": 0.857,
+    "slm_p50_ms": 493.0,
+    "slm_p95_ms": 679.0,
+    "rss_mb": 980,
+    "private_mb": 229,
+    "prefix_tokens": 1216
+  },
+  {
+    "model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+    "file_mb": 1117,
+    "slm_only_accuracy_192": 0.854,
+    "hybrid_heldout_accuracy_70": 0.957,
+    "slm_p50_ms": 510.0,
+    "slm_p95_ms": 713.0,
+    "rss_mb": 1158,
+    "private_mb": 225,
+    "prefix_tokens": 1187
+  },
+  {
+    "model": "smollm2-1.7b-instruct-q4_k_m.gguf",
+    "file_mb": 1056,
+    "slm_only_accuracy_192": 0.505,
+    "hybrid_heldout_accuracy_70": 0.843,
+    "slm_p50_ms": 960.0,
+    "slm_p95_ms": 1351.0,
+    "rss_mb": 1534,
+    "private_mb": 513,
+    "prefix_tokens": 1276
+  }
+]

@@ -102,11 +102,17 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
    ✅ Live ingestion (`python -m edgecar.ingest.live`): 7 days of Leaf traffic replayed message by message;
    each 1 s batch queryable in p50 14 ms / p95 16 ms; 67× real time on 2 threads; CAN decode 268 k frames/s,
    filter of unused IDs 16.7 M frames/s (a busy bus is ~2 k frames/s).
-   ⏳ NEXT SESSION: model comparison — Llama-3.2-1B, Gemma-3-1B, SmolLM2-1.7B, Qwen3-0.6B downloading to
-   `models/` (hash-checked; background task). SlmParser hardcodes ChatML → switch to llama-server
-   `/apply-template` so non-Qwen chat templates work; then run nlu_eval (held-out) + RSS per model.
-   Then: final `bench.e2e` rerun → slide. 61 tests passing.
+   ✅ Model comparison (2026-10-28, `bench.models`): Qwen2.5-1.5B wins — 85.4 % model-only vs ≤ 50.5 % for
+   Qwen2.5-0.5B, Qwen3-0.6B, Llama-3.2-1B, Gemma-3-1B, SmolLM2-1.7B; hybrid held-out 95.7 %. Prompts now use each
+   model's own chat template (llama-server `/apply-template`). Table in README + ADR-0005.
+   ✅ Final e2e (2026-10-28): p50 6.1 ms · p95 549 ms · max 684 ms · 100 % < 2 s; RSS 1.28 GB. Redaction used
+   deepcopy (doubled analytics time) → shallow copy; analytics+redact p50 4.3 ms. 61 tests passing.
 3b. API + car-style dashboard (R2 unless time allows; slide can use an answer card).
+4. **R1 slide**: `python scripts/make_r1_slide.py --template "<Downloads>/Teliport S4_Submission Template.pptx"`
+   → `build/EdgeCar_TELIPORT_R1.pptx` (git-ignored; organiser's branding). v2 rendered and reviewed
+   2026-10-27: 3 columns (architecture · measured tiles · real answers) + footer. Numbers are read from
+   `eval/results/e2e-qwen1.5b-edge-t2.json` and `test-hybrid-qwen2.5-1.5b-instruct-q4_k_m.json` —
+   re-run both after the model comparison so they reflect the `/apply-template` prompt path.
 4. R1 slide in the official template (due 31 Oct); make repo public at submission.
 5. R2: LoRA fine-tune (maybe lets 0.5B replace 1.5B), ARM measurement (Graviton/QEMU), new held-out test v2,
    BATON real ADAS data, Docker 2 GB container.
@@ -148,6 +154,17 @@ python -m edgecar.bench.e2e --threads 2 --profile edge     # latency + memory, a
 ---
 
 ## Session log
+
+### 2026-10-28 — Session 2: closing gaps before the slide
+- Gap audit against the brief (protocols, live streaming, privacy, model rationale) → all closed except ARM
+  hardware measurement and a UI (R2).
+- Protocols on the wire (ADR-0006): CAN FD reference DBC, Android VHAL (AOSP IDs verified), SOME/IP pcap,
+  UDS over ISO-TP, QNX slog2. Simulators emit traffic only; adapters create events. Overheat scenario: 9/9.
+- Data quality: TUM overlapping trips A24/A31 excluded; plausibility ranges (i3 heater 39.9 kW, throttle > 100 %).
+- Encoder bugs caught by tests: 2-bit enum value 3 (OverTemp) read as "not available"; crash on out-of-range
+  values → reserved invalid value only for ≥ 4-bit non-enum fields; saturation.
+- Encryption at rest (DuckDB AES-256-GCM) + driver/service/fleet privacy roles; live ingestion (14 ms per 1 s batch).
+- Six-model comparison → Qwen2.5-1.5B confirmed. Final benchmarks re-run. R1 slide v2 generated and reviewed.
 
 ### 2026-10-27 — Session 1: brief, research, data acquisition
 - Read the case-study PDF and the R1 submission template; confirmed R1 = one content slide due 1 Nov.
