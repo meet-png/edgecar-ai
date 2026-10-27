@@ -84,11 +84,14 @@ EXAMPLES: tuple[tuple[str, str], ...] = (
 )
 
 
-def _turn(role: str, text: str) -> str:
-    return f"<|im_start|>{role}\n{text}<|im_end|>\n"
+_SENTINEL = "␞question␞"  # placeholder used once to split the formatted prompt around the question
 
 
-PROMPT_PREFIX = _turn("system", INSTRUCTIONS) + "".join(_turn("user", q) + _turn("assistant", a) for q, a in EXAMPLES)
+def messages(question: str) -> list[dict]:
+    msgs = [{"role": "system", "content": INSTRUCTIONS}]
+    for q, a in EXAMPLES:
+        msgs += [{"role": "user", "content": q}, {"role": "assistant", "content": a}]
+    return [*msgs, {"role": "user", "content": question}]
 
 
 @dataclass
@@ -109,10 +112,23 @@ class SlmParser:
         self.url = url.rstrip("/")
         self.timeout_s = timeout_s
         self._grammar = command.model_grammar()
+        self._frame: tuple[str, str] | None = None  # (prefix, suffix) in the served model's own chat template
 
-    @staticmethod
-    def prompt(question: str) -> str:
-        return PROMPT_PREFIX + _turn("user", question.strip()) + "<|im_start|>assistant\n"
+    def _post(self, path: str, body: dict) -> dict:
+        req = urllib.request.Request(
+            f"{self.url}{path}", data=json.dumps(body).encode(), headers={"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=self.timeout_s) as r:
+            return json.load(r)
+
+    def prompt(self, question: str) -> str:
+        """The full prompt in the model's chat template (fetched once from the server, then reused)."""
+        if self._frame is None:
+            formatted = self._post("/apply-template", {"messages": messages(_SENTINEL)})["prompt"]
+            prefix, suffix = formatted.split(_SENTINEL)
+            self._frame = (prefix, suffix)
+        prefix, suffix = self._frame
+        return prefix + question.strip() + suffix
 
     def parse(self, question: str) -> ParseOutput:
         body = {
@@ -121,14 +137,10 @@ class SlmParser:
             "n_predict": 16,
             "temperature": 0.0,
             "cache_prompt": True,
-            "stop": ["\n", "<|im_end|>"],
+            "stop": ["\n"],
         }
         t0 = time.perf_counter()
-        req = urllib.request.Request(
-            f"{self.url}/completion", data=json.dumps(body).encode(), headers={"Content-Type": "application/json"}
-        )
-        with urllib.request.urlopen(req, timeout=self.timeout_s) as r:
-            out = json.load(r)
+        out = self._post("/completion", body)
         total = (time.perf_counter() - t0) * 1000
         tm = out.get("timings", {})
         return ParseOutput(
