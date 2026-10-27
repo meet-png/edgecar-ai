@@ -162,17 +162,20 @@ class Store:
 
     # ----------------------------------------------------------- derivations
 
-    def rebuild_trips(self) -> int:
-        """Recompute the per-trip summary table from 1 Hz frames."""
-        self.con.execute("DELETE FROM trips")
-        self.con.execute(f"""
+    def rebuild_trips(self, trip_ids: list[str] | None = None) -> int:
+        """Recompute per-trip summaries from 1 Hz frames — all trips, or only ``trip_ids`` (live ingestion)."""
+        where = "" if trip_ids is None else "WHERE list_contains(?, trip_id)"
+        params = [] if trip_ids is None else [list(trip_ids)]
+        self.con.execute(f"DELETE FROM trips {where}", params)
+        self.con.execute(
+            f"""
             INSERT INTO trips
             WITH f AS (
                 SELECT *,
                        coalesce(accel_mps2,
                                 (speed_kmh - lag(speed_kmh) OVER w) / 3.6) AS a,
                        CASE WHEN speed_kmh < 1 AND lag(speed_kmh) OVER w >= 1 THEN 1 ELSE 0 END AS stop_start
-                FROM frames
+                FROM frames {where}
                 WINDOW w AS (PARTITION BY trip_id ORDER BY ts)
             ),
             f2 AS (
@@ -212,12 +215,15 @@ class Store:
                 any_value(provenance)
             FROM f2
             GROUP BY trip_id
-        """)
+            """,
+            params,
+        )
         self.con.execute("""
             UPDATE trips SET road_type = CASE
                 WHEN share_highway >= 0.5 THEN 'highway'
                 WHEN share_city >= 0.6 THEN 'city'
                 ELSE 'mixed' END
+            WHERE road_type IS NULL
         """)
         return self.con.execute("SELECT count(*) FROM trips").fetchone()[0]
 

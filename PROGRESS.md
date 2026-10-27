@@ -98,7 +98,15 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
    **public GitHub repo's Git LFS** (no HF token needed). All 5 brief questions now answer from data.
 2. ~~Protocols~~ ✅ done (2026-10-27, ADR-0006): CAN (Leaf DBC), CAN FD (reference DBC), Android VHAL (AOSP IDs
    verified), SOME/IP (pcap), UDS over ISO-TP, QNX slog2. Simulators emit wire traffic only; adapters create events.
-3. API + car-style dashboard (screenshot for the slide).
+3. ✅ Encryption at rest (DuckDB AES-256-GCM, 0.44 vs 0.40 ms/query) + role privacy (driver/service/fleet).
+   ✅ Live ingestion (`python -m edgecar.ingest.live`): 7 days of Leaf traffic replayed message by message;
+   each 1 s batch queryable in p50 14 ms / p95 16 ms; 67× real time on 2 threads; CAN decode 268 k frames/s,
+   filter of unused IDs 16.7 M frames/s (a busy bus is ~2 k frames/s).
+   ⏳ NEXT SESSION: model comparison — Llama-3.2-1B, Gemma-3-1B, SmolLM2-1.7B, Qwen3-0.6B downloading to
+   `models/` (hash-checked; background task). SlmParser hardcodes ChatML → switch to llama-server
+   `/apply-template` so non-Qwen chat templates work; then run nlu_eval (held-out) + RSS per model.
+   Then: final `bench.e2e` rerun → slide. 61 tests passing.
+3b. API + car-style dashboard (R2 unless time allows; slide can use an answer card).
 4. R1 slide in the official template (due 31 Oct); make repo public at submission.
 5. R2: LoRA fine-tune (maybe lets 0.5B replace 1.5B), ARM measurement (Graviton/QEMU), new held-out test v2,
    BATON real ADAS data, Docker 2 GB container.
