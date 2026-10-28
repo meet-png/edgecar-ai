@@ -52,7 +52,9 @@ scalability), privacy & security, innovation & practicality.
 | ADR-0005 | **Hybrid NLU:** rules → Qwen2.5-1.5B writes a 2–6-token verb command under a GBNF grammar → windows by code; `edge` llama-server profile. | 95.7 % held-out (x86), 94.3 % on ARM; best of 6 models. |
 | ADR-0006 | **Every source through its wire protocol**; read-only by construction; UDS decoded passively from the gateway's own polls. | Data integration is real, not CSV rows. |
 | ADR-0007 | **Root cause = fault-propagation map + causal order**, measured on 200 random scenarios with decoys. | 197/200 vs 34/200 for "earliest fault". |
-| ADR-0008 | **Decline instead of guessing**: action guard, not-recorded catalogue, grounding check. | Refusal 29/40 → 40/40 with no loss in accuracy. |
+| ADR-0008 | **Decline instead of guessing**: action guard, not-recorded catalogue, grounding check. | Refusal 29/40 → 39/40 (40/40 before a cue-matching bug was fixed, see the ADR). |
+| ADR-0009 | **Our own command model**: LoRA on Qwen2.5-0.5B/1.5B, synthetic data checked for overlap with every eval set, GGUF. | 0.5B: 2.3× faster, 2.3× smaller, within one held-out question; 1.5B: most accurate (95.7 %, refusals 60/60). |
+| ADR-0010 | **In-car app + on-device speech**: one CSP-locked page, evidence cards, driver/service/fleet views, Moonshine + Piper. | A demo people can see and use; nothing leaves the machine. |
 
 ## 5. Datasets (full registry in `docs/DATASETS.md`; `python -m edgecar.prep.fetch all`)
 
@@ -85,25 +87,42 @@ free Arm64 runner (public repo): `gh workflow run arm-bench.yml`, results via `g
 AWS: Meet's account (free plan, $100 credits, region ap-southeast-2). AWS CLI v2.39 installed (winget); credentials
 come from `aws login` (browser sign-in, temporary credentials, no access keys). Graviton runs use a throwaway
 t4g.small + key pair + IP-restricted security group, all deleted afterwards (`scripts/graviton/run.sh`).
+Laptop: i7-13620H (10 cores), 32 GB RAM, **RTX 3050 Laptop 6 GB** (driver 555.99, CUDA 12.5). Fine-tuning runs in a
+separate venv `.venv-train` (torch 2.13.0+cu126, transformers 5.21, peft 0.21; `pip install -e .`), base weights in
+`models/hf/` (Qwen2.5-0.5B/1.5B-Instruct, HF revisions recorded in the download log), outputs in `models/tuned/`.
+The 1.5B needs `--grad-ckpt` to stay inside 6 GB (otherwise Windows spills to shared memory, ~5× slower). Speech:
+`pip install sherpa-onnx==1.13.8` (2.0 dropped the espeak-ng phonemiser Piper needs) and `prep.fetch voice`. App
+screenshots: `scripts/screenshots.py` drives the installed Edge through Playwright (`pip install playwright`).
 
 ## 8. Open items / blockers
 
 - [x] Repo public (2026-10-28), topics set. Old history still contains removed competitor notes and a 6 MB VED extract
       — rewrite only if Meet asks (force-push).
-- [ ] Meet: review `build/EdgeCar_TELIPORT_R1.pptx` (+ PDF) and upload on the portal **before 31 Oct**.
-- [ ] Optional: a 2-minute demo recording (screen capture of `edgecar brief`) linked from the README.
+- [x] R1 slide uploaded by Meet (2026-10-29). Shortlist expected before R2 opens on 14 Nov.
 - [ ] Teammate/outsiders: write a fresh paraphrase + refusal question set (the current sets are author-written).
 
-## 9. Next steps (R2, if shortlisted: 14 Nov → 13 Dec)
+## 9. Roadmap after R1
 
-1. Fresh evaluation sets written by people outside the project (paraphrases, refusals, ambiguous follow-ups).
-   Known false refusal to include: "Has the battery been running hotter lately?" is declined (model + grounding).
-2. Headroom on the slowest tier: Graviton2 model-path max is 1.90 s (budget 2 s). Levers: weight repacking (1.7×
-   prompt speed measured on N1, +~0.6 GB), Qwen2.5-0.5B for the entry tier, LoRA fine-tuning, an NPU.
-3. IVI-style UI with push-to-talk (on-device ASR), evidence cards; service-engineer timeline + export.
-4. DuckDB FTS over log text; camera perception metadata (object lists, visibility flags) + clip references.
-5. Weighted fault-propagation links (FMEA likelihoods); more fault families (charging, ADAS sensor degradation).
-6. 10-slide R2 deck; demo video.
+Goal: turn the competition entry into something people can see and use, that is measurably better than the
+few-shot baseline, checked by people outside the project, and that works on real cars. Every item ends in a number
+or an artefact.
+
+| # | Track | Deliverable | Proof | Needs Meet |
+|---|---|---|---|---|
+| 1 | Model | ✅ x86, ARM next — **Our own fine-tuned model**: LoRA on Qwen2.5-0.5B and 1.5B, synthetic training set checked for overlap with every eval set, GGUF Q4 | accuracy on dev, held-out and the outside set · Graviton2 model-path p95 (1.89 s today) · memory | approve publishing the weights |
+| 2 | Credibility | ⏳ form ready — **Outside question set**: teammate + classmates write questions and trick requests in a form, frozen before any run | blind accuracy, reported whatever it is | share the form |
+| 3 | Product | ✅ built, live panel next — **In-car app** (`edgecar serve`): push-to-talk with on-device speech in and out, answers with evidence (charts, root-cause timeline, event tables), driver / service / fleet views, live bus panel; no CDN, no cloud speech | voice round trip + memory on ARM | — |
+| 4 | Visibility | 2-minute demo video + README GIF; one-command Docker image (amd64 + arm64) | — | voice-over; approve publishing |
+| 5 | Real cars | **OBD-II**: own ELM327 reader + Torque Pro / Car Scanner log import — any OBD-II car (every BS-VI car in India) with a ~₹400 dongle; an ELM327 emulator replaying real VED trips for CI | a real drive | a car + dongle |
+| 6 | Give back | Upstream the Leaf DBC heater-scale finding (PR with evidence); question sets + scorer as an open benchmark; write-up | merged PR, benchmark page | approve PRs and posts |
+| 7 | R2 | 10-slide deck generated from results; prototype demo; stretch: Android Automotive emulator with a VHAL bridge | — | — |
+
+Order: 1 and 2 now (training runs on the laptop's RTX 3050 while people write questions); 3 next — a smaller model
+frees memory for speech on the 2 GB tier; then 4–6; 7 from 14 Nov if shortlisted.
+
+Carried over: weight repacking (1.7× prompt speed on N1, +~0.6 GB) as another latency lever; DuckDB FTS over log
+text; camera perception metadata + clip references; weighted fault links (FMEA likelihoods) and more fault families;
+the known false refusal "Has the battery been running hotter lately?".
 
 ## How to reproduce the numbers
 
@@ -120,7 +139,23 @@ python -m edgecar.bench.storage                                   # tier sizes, 
 edgecar brief                                                     # the five brief questions, route + latency
 ```
 
-## Verified results (for the slide)
+## Verified results
+
+**Fine-tuned command models (2026-10-29, x86 laptop, 2 threads, after the decline-check fix; `eval/results/rerun/`):**
+
+| | Qwen2.5-1.5B few-shot | edgecar-0.5b | edgecar-1.5b |
+|---|---|---|---|
+| Held-out (70): rules + model · model alone | 94.3 % · 90.0 % | 92.9 % · 94.3 % | 95.7 % · 97.1 % |
+| Dev (122): rules + model · model alone | 100 % · 82.8 % | 100 % · 99.2 % | 100 % · 99.2 % |
+| Refusal test (40) · dev (20) | 39 · 19 | 39 · 19 | 40 · 20 |
+| Model path p50 / p95 (e2e, 192 q) | 470 / 669 ms | 205 / 295 ms | 393 / 562 ms |
+| llama-server RSS (private) · file · start-up | 1,157 (228) · 1,117 MB · 12.4 s | 499 (162) · 398 MB · 1.0 s | 1,122 (221) · 986 MB · 1.6 s |
+
+Training: 3,795 questions (417 hand-written seeds + templates; 576 dropped for overlapping an eval set), LoRA r=16,
+3 epochs, RTX 3050 6 GB: 0.5B 5.2 min, 1.5B 13.9 min (gradient checkpointing). Epoch chosen on dev. Speech (laptop):
+recognition 37–49 ms per spoken question, synthesis 0.4–0.6 s per sentence. **Not yet on ARM.**
+
+**R1 numbers (as submitted on the slide):**
 
 **AWS t4g.small** (2 Graviton2 cores = Neoverse-N1, 2 GiB total incl. OS, no swap, stock Ubuntu; files in
 `eval/results/graviton/`): 100 % of 192 < 2 s; rules p50 10 ms / p95 24 ms; model p50 1.46 s / p95 1.89 s / max
@@ -185,6 +220,23 @@ plus slide-design notes. What was done:
 ---
 
 ## Session log
+
+### 2026-10-29 — Session 4: after R1 — our own model, the in-car app, two real bugs
+- Meet submitted the R1 slide. New goal: make the project matter beyond the competition — roadmap in §9.
+- **Fine-tuned command models** (ADR-0009): `edgecar/train/` builds 3,795 overlap-checked synthetic questions, trains
+  LoRA on the laptop's RTX 3050 (loss on answer tokens only — full-vocabulary logits spilled out of 6 GB), exports
+  GGUF with llama.cpp's converter. edgecar-0.5b: 2.3× faster and smaller than the few-shot 1.5B, held-out 92.9 %
+  vs 94.3 %; edgecar-1.5b: 95.7 %, refusals 60/60. Weights not published yet (needs Meet's go-ahead).
+- **In-car app** (ADR-0010): `edgecar serve` — CSP-locked single page, SVG evidence (waterfall, trends, root-cause
+  timeline), driver/service/fleet views, push-to-talk with Moonshine Tiny + Piper via sherpa-onnx 1.13.8 (2.0 drops
+  the espeak-ng phonemiser; espeak-ng is GPL-3.0 — flagged for production). Screenshots: `scripts/screenshots.py`.
+- **Bug: dead multi-word cues in the decline checks** (`re.escape` escapes spaces). Found because the tuned model's
+  correct `now` for "What's my battery level?" was declined. Fixed + regression test; re-measured: dev 93.4 → 100 %,
+  held-out 95.7 → 94.3 %, refusals 40/40 → 39/40. README and ADR-0008 carry the corrected numbers.
+- **Bug: "than before" compared all time with nothing** ("compared with n/a"); now last 30 days vs the 30 before.
+- Outside question set: protocol + form text in `eval/outside/README.md`, labelling rules in `eval/LABELLING.md`.
+- CI can benchmark any model (`MODEL=` through `arm_bench.sh`); fine-tuned models need hosted weights first.
+- 95 tests.
 
 ### 2026-10-28 — Session 3b: AWS Graviton2 (the reviewer's t4g.small)
 - Meet created an AWS account (free plan). AWS CLI installed; `aws login` (browser, temporary credentials).

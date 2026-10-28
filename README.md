@@ -4,6 +4,13 @@
 
 [![ARM64 edge benchmark](https://github.com/meet-png/edgecar-ai/actions/workflows/arm-bench.yml/badge.svg)](https://github.com/meet-png/edgecar-ai/actions/workflows/arm-bench.yml)
 
+![The in-car app answering "What happened before the battery overheating warning?"](docs/img/app-root-cause.png)
+
+*The in-car app on a BMW i3 (real TU Munich trips): asked what happened before the battery overheating warning, it
+names the likely root cause — an A/C refrigerant charge loss logged 14.5 minutes earlier — and shows the timeline it
+reconstructed from QNX logs, UDS diagnostics, CAN FD and SOME/IP, with the battery temperature behind it. Rules path,
+20 ms; nothing leaves the machine.*
+
 EdgeCar AI is an on-device assistant for software-defined vehicles. It ingests vehicle data — CAN/CAN-FD, SOME/IP,
 Android Automotive VHAL, QNX logs, ADAS events and UDS diagnostics — keeps a year of history searchable on the vehicle,
 and answers questions such as:
@@ -14,9 +21,9 @@ and answers questions such as:
 - *"What happened before the battery overheating warning?"*
 - *"Compare energy consumption between city and highway driving."*
 
-It runs in **2 GB of RAM on two ARM cores**, needs **no cloud connection**, and cannot act on the vehicle: the AI zone
-only receives mirrored bus traffic and returns text. Built for the Tata Elxsi TELIPORT Season 4 challenge (Case Study 5,
-*Natural Language Vehicle Information using On-Device SLM/LLM*). Build log: [`PROGRESS.md`](PROGRESS.md).
+It runs in **2 GB of RAM on two ARM cores**, needs **no cloud connection**, and cannot act on the vehicle: the AI
+zone only receives mirrored bus traffic and returns text. Built for the Tata Elxsi TELIPORT Season 4 challenge (Case
+Study 5, *Natural Language Vehicle Information using On-Device SLM/LLM*). Build log: [`PROGRESS.md`](PROGRESS.md).
 
 ## The idea
 
@@ -24,6 +31,7 @@ only receives mirrored bus traffic and returns text. Built for the Tata Elxsi TE
 |---|---|---|
 | Who writes the numbers | The model reads rows and writes figures — they can be invented | A small model writes a 2–6-token, read-only command under a grammar; code computes every figure |
 | Common questions | Every question pays for the model | Deterministic rules answer 76 % of questions in milliseconds |
+| The model | A general chat model and a long prompt | Our own fine-tuned 0.5B: 398 MB, 36-token prompt, ready in 1 s |
 | Memory | Several GB | Runs on a 2 GB AWS Graviton2 machine, OS included (670 MiB in use at peak + the model in page cache) |
 | A prompt asking the car to act | Depends on tool access | Impossible: the grammar has no write commands and the zone has no transmit path |
 
@@ -33,24 +41,60 @@ flowchart LR
         CAN[CAN / CAN-FD] & SOMEIP[SOME/IP] & VHAL[Android VHAL] & QNX[QNX slog2] & DIAG[UDS DTCs] & ADAS[ADAS events]
     end
     BUS --> ING[Decode<br/>DBC · ISO-TP · pcap] --> STORE[(Encrypted DuckDB<br/>1 Hz · 1 min · events)]
-    Q[Question] --> GUARD{Act? Data<br/>we lack?} -- no --> FAST{Rules}
+    Q[Question<br/>typed or spoken] --> GUARD{Act? Data<br/>we lack?} -- no --> FAST{Rules}
     GUARD -- yes --> DECLINE[Decline, say why]
-    FAST -- miss --> SLM[Qwen2.5-1.5B<br/>grammar-locked command] --> GROUND{Grounded in<br/>the question?}
+    FAST -- miss --> SLM[Fine-tuned 0.5B<br/>grammar-locked command] --> GROUND{Grounded in<br/>the question?}
     GROUND -- no --> DECLINE
     FAST -- hit --> ENG[Deterministic analytics<br/>trends · anomalies · root cause]
     GROUND -- yes --> ENG
-    STORE --> ENG --> ANS[Answer + evidence]
+    STORE --> ENG --> ANS[Answer + evidence<br/>on screen and spoken]
 ```
 
 Where it sits in a vehicle (hypervisor partitions, freedom from interference, camera, time sync, security, rollout):
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
+## The in-car app
+
+`edgecar serve` runs one page from the AI zone itself — plain HTML, CSS and JavaScript, no build step, no CDN, and a
+Content-Security-Policy that lets the browser load nothing from anywhere else ([ADR-0010](docs/adr/0010-in-car-app-and-voice.md)).
+
+- **Push-to-talk, on the device.** Moonshine Tiny (28 MB) recognises a spoken question in 37–49 ms on the laptop; a
+  Piper voice trained on public-domain recordings (19 MB) reads the answer back.
+- **Every answer shows its evidence**: the route (rules or model) and the time it took, the read-only command that
+  ran, and the chart, waterfall, event table or root-cause timeline behind the sentence.
+- **One answer, three views.** The driver gets one glanceable, spoken sentence with the evidence a tap away; the
+  service engineer and the fleet see everything, after privacy redaction.
+
+| Why the range dropped (service view) | Driver view: events, and a request the assistant declines |
+|---|---|
+| ![Range waterfall](docs/img/app-range.png) | ![Driver view](docs/img/app-driver.png) |
+
+## Our own model
+
+The stock Qwen2.5-1.5B needed a 1,190-token few-shot prompt and, alone, got 82.8 % of the dev questions right. We
+fine-tuned Qwen2.5-0.5B and 1.5B with LoRA on 3,795 synthetic questions — 417 written by hand, the rest from
+templates — after dropping every one that overlapped an evaluation question, on a 6 GB laptop GPU in 5 and 14
+minutes ([ADR-0009](docs/adr/0009-fine-tuned-command-model.md), [`src/edgecar/train/`](src/edgecar/train)).
+
+| x86 laptop, 2 threads | Qwen2.5-1.5B few-shot | **edgecar-0.5b** | **edgecar-1.5b** |
+|---|---|---|---|
+| Held-out (70), rules + model · model alone | 94.3 % · 90.0 % | 92.9 % · 94.3 % | **95.7 % · 97.1 %** |
+| Refusal sets (40 + 20) | 39 + 19 | 39 + 19 | **40 + 20** |
+| Model path p50 / p95 | 470 / 669 ms | **205 / 295 ms** | 393 / 562 ms |
+| llama-server memory · file | 1,157 · 1,117 MB | **499 · 398 MB** | 1,122 · 986 MB |
+| Start-up (prompt warm-up) | 12.4 s | **1.0 s** | 1.6 s |
+
+The 0.5B is 2.3× faster and 2.3× smaller than the model it replaces, within one held-out question of it; the 1.5B
+is the most accurate model we have measured. Both test sets share an author with the training data, so the real test
+is [a set written by people outside the project](eval/outside/README.md). ARM numbers for the fine-tuned models are
+next; the measurements below are for the few-shot model.
+
 ## Measured, not claimed
 
 **On a real 2 GB ARM machine.** AWS EC2 **t4g.small**: 2 Graviton2 cores (Arm Neoverse-N1, the Cortex-A76
 generation), **2 GiB of RAM in total, operating system included, no swap**, stock Ubuntu 24.04. The whole AI zone —
-live CAN/SOME/IP ingestion at real-time pace, DuckDB, the assistant and llama-server — ran on it
-([results and setup](eval/results/graviton/RUN.md), [`scripts/graviton/run.sh`](scripts/graviton/run.sh)).
+live CAN/SOME/IP ingestion at real-time pace, DuckDB, the assistant and llama-server with the few-shot Qwen2.5-1.5B —
+ran on it ([results and setup](eval/results/graviton/RUN.md), [`scripts/graviton/run.sh`](scripts/graviton/run.sh)).
 
 | | Result |
 |---|---|
@@ -60,24 +104,28 @@ live CAN/SOME/IP ingestion at real-time pace, DuckDB, the assistant and llama-se
 | The case study's five example questions | 11–34 ms each, rules path ([brief.json](eval/results/graviton/brief.json)) |
 | Memory, whole machine incl. OS | peak **670 MiB** in use of 1,835 MiB; the model's 1.2 GB stays resident as page cache · 0 OOM |
 | Ignition → first answer | 1.1 s (rules) · model ready in **1.5 s** from the saved prompt cache (81 s to compute it) |
-| Held-out accuracy · refusal set | 94.3 % · 40/40 |
+| Held-out accuracy · refusal set | 94.3 % · 40/40 (measured before the decline-check fix below) |
 
 **On every push.** GitHub's free Arm64 runner (Neoverse-N2, faster cores) pinned to 2 cores, the whole AI zone in
 one cgroup with a hard 1.75 GB limit ([workflow](.github/workflows/arm-bench.yml), [results](eval/results/arm)): rules
 p50 5.7 ms, model path p95 1.35 s, 100 % under 2 s, peak 1.54 GB (0.32 GB anonymous), model ready in 0.8 s.
 
-**Understanding** (rules + model, x86 laptop limited to 2 threads unless noted):
+**Understanding** (rules + few-shot model, x86 laptop, 2 threads):
 
 | | Result |
 |---|---|
-| Question → query accuracy, held-out set (70 questions never used to tune rules or prompt) | **95.7 %** (94.3 % on ARM: one borderline answer flips between CPU architectures) |
-| Control, injection, out-of-scope and missing-data requests declined (40, frozen set) | **40/40** — 29/40 before the decline checks, which were written after seeing those failures |
+| Question → query accuracy, held-out set (70 questions never used to tune rules or prompt) | **94.3 %** |
+| Dev set (122 questions the rules were written against) | 100 % |
+| Control, injection, out-of-scope and missing-data requests declined (40, frozen set) | **39/40** — 29/40 before the decline checks, which were written after seeing those failures |
 | The case study's five example questions | 5/5 on the rules path ([x86](eval/results/brief.json), [Graviton2](eval/results/graviton/brief.json)) |
 
-The question sets were written by the author with an AI pair-programmer; the held-out set was written after the
-rules were frozen and never used to tune them. Its first run with the decline checks scored 92.9 %: it exposed two
-vocabulary gaps (inflections such as "driving"; "worried"), fixed generically — so it is no longer blind for those
-checks. A fresh set from people outside the project is the next step.
+Testing the fine-tuned model exposed a bug in the decline checks: every multi-word cue ("battery level") had been
+compiled with a literal backslash and never matched. Fixed and re-measured
+([ADR-0008](docs/adr/0008-decline-instead-of-guessing.md#correction-2026-10-29), [results](eval/results/rerun)): dev
+93.4 → 100 %, held-out 95.7 → 94.3 %, refusals 40/40 → 39/40 — the bug had declined one wrong answer by luck.
+The question sets were written by the author with an AI pair-programmer; the held-out set was written after the rules
+were frozen, and its first run exposed two vocabulary gaps (fixed generically), so it is no longer blind for those
+checks.
 
 **Analytics and data:**
 
@@ -89,10 +137,10 @@ checks. A fresh set from people outside the project is the next step.
 | Any typical question over that whole year | 3.5–22 ms median |
 | Live ingestion: one second of bus traffic queryable in | p50 14 ms (x86) · 77 ms on Graviton2 while the model is busy |
 
-### Why Qwen2.5-1.5B
+### Choosing the base model
 
-Six small models on the same task, prompt, grammar and 2-thread budget (x86, measured 2026-10-28, before the decline
-checks were added):
+Six small models on the same task, prompt, grammar and 2-thread budget (x86, few-shot, measured 2026-10-28, before
+the decline checks were added):
 
 | Model | Licence | File (4-bit) | Model-only accuracy (192 q) | Hybrid, held-out (70 q) | p50 / p95 | RSS (private) |
 |---|---|---|---|---|---|---|
@@ -103,9 +151,10 @@ checks were added):
 | **Qwen2.5-1.5B-Instruct** | **Apache-2.0** | 1,117 MB | **85.4 %** | **95.7 %** | 510 / 713 ms | 1,158 MB (225) |
 | SmolLM2-1.7B-Instruct | Apache-2.0 | 1,056 MB | 50.5 % | 84.3 % | 960 / 1,351 ms | 1,534 MB (513) |
 
-Qwen2.5-1.5B leads by 35 points at the same private memory as the 1B models (its weights stay a shared memory map). For
-bigger tiers, note that Qwen2.5-3B is under a research-only licence; Qwen3-4B/8B and Qwen2.5-7B are Apache-2.0.
-See [ADR-0005](docs/adr/0005-hybrid-language-understanding.md).
+Few-shot, Qwen2.5-1.5B led by 35 points. Fine-tuned, the 0.5B from the same family answers 97.4 % of the same 192
+questions on its own, up from 34.4 % (the later run includes the decline checks). Qwen2.5 is Apache-2.0, so the fine-tuned weights can be too. For bigger tiers, note that Qwen2.5-3B is under a
+research-only licence; Qwen3-4B/8B and Qwen2.5-7B are Apache-2.0. See
+[ADR-0005](docs/adr/0005-hybrid-language-understanding.md).
 
 ## Real data, not just simulation
 
@@ -127,13 +176,24 @@ python -m edgecar.prep.fetch all          # VED, Leaf DBC, BATON, TD2D tables, t
 python -m edgecar.prep.build              # store: real Leaf CAN, PHEV, ADAS over SOME/IP (+ the i3 if downloaded)
 edgecar ask "Why has my range dropped over the last two weeks?" --vehicle leaf-455
 edgecar brief                             # the case study's example questions, with route and latency
+pip install -e ".[voice]" && python -m edgecar.prep.fetch voice      # optional: on-device speech
+edgecar serve                             # the in-car app on http://127.0.0.1:8080
+```
+
+Fine-tune the command model (a CUDA GPU; separate venv with `pip install -e ".[train]"` and PyTorch for your CUDA):
+
+```bash
+python -m edgecar.train.data                                    # synthetic, overlap-checked training set
+python -m edgecar.train.finetune --base models/hf/Qwen2.5-0.5B-Instruct --out models/tuned/edgecar-0.5b
+python -m edgecar.train.export --merged models/tuned/edgecar-0.5b/merged --name edgecar-0.5b
+edgecar serve --model models/edgecar-0.5b-q4_k_m.gguf
 ```
 
 The TU Munich i3 data needs a free IEEE DataPort login ([DATASETS.md](docs/DATASETS.md)); without it the build skips
 the i3 and the overheat scenario. llama.cpp's `llama-server` goes in `tools/llama.cpp/` (or on `PATH`); without it,
 only the rules path answers.
 
-Reproduce: `pytest` (82 tests) · `python -m edgecar.bench.nlu_eval` · `bench.e2e` · `bench.coldstart` ·
+Reproduce: `pytest` (95 tests) · `python -m edgecar.bench.nlu_eval` · `bench.e2e` · `bench.coldstart` ·
 `bench.rootcause` · `bench.storage` · `bench.models`.
 
 ## Repository layout
@@ -146,13 +206,16 @@ src/edgecar/
   analytics/      trends, comparisons, anomalies, factor attribution, root-cause timelines
   diagnosis.py    fault-propagation map: event → subsystem, what can overheat which battery
   nlu/            decline checks, rules, grammar-constrained SLM (llama.cpp), shared pipeline
+  train/          fine-tuning: overlap-checked synthetic data, LoRA, export to GGUF
+  app/            the in-car app (edgecar serve): one page, evidence cards, push-to-talk
+  voice.py        on-device speech recognition and synthesis (sherpa-onnx)
   assistant.py    question → query → analytics → answer;  privacy.py: driver / service / fleet roles
   sim/            wire-traffic simulators on real trips: ADAS, fault scenarios with distractors
   prep/           dataset fetch (pinned) and the multi-protocol store build
   bench/          accuracy, latency, memory, cold start, root cause, storage, model comparison
-  cli.py          `edgecar ask` / `edgecar brief`
-eval/             question sets (dev, held-out, refusal) and every benchmark result
-docs/             ARCHITECTURE.md, ADRs, dataset registry
+  cli.py          `edgecar ask` / `edgecar brief` / `edgecar serve`
+eval/             question sets (dev, held-out, refusal), labelling guide, outside-set protocol, every result
+docs/             ARCHITECTURE.md, ADRs, dataset registry, screenshots
 .github/          the Arm64 edge benchmark
 ```
 
