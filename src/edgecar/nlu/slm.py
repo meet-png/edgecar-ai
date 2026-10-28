@@ -10,9 +10,11 @@ The prompt (instructions + few-shot chat turns) is identical for every request, 
 
 from __future__ import annotations
 
+import hashlib
 import json
 import subprocess
 import time
+import urllib.error
 import urllib.request
 from dataclasses import dataclass
 from pathlib import Path
@@ -157,6 +159,28 @@ class SlmParser:
         """Process the shared prompt prefix once so later requests reuse its KV cache."""
         return self.parse("how far did I drive")
 
+    def prefix_cache_name(self, model: Path) -> str:
+        """File name for the saved prefix KV cache; changes whenever the model or the prompt changes."""
+        prefix = self.prompt("")  # also fetches the chat template
+        digest = hashlib.sha256(f"{model.name}\n{prefix}".encode()).hexdigest()[:16]
+        return f"{model.stem}-{digest}.kv"
+
+    def ready(self, model: Path) -> str:
+        """Make the prompt prefix's KV cache ready: restore it from disk if it was saved before (fast ignition),
+        otherwise compute it once and save it. Returns "restored", "computed" or "computed (not saved)"."""
+        name = self.prefix_cache_name(model)
+        try:
+            self._post("/slots/0?action=restore", {"filename": name})
+            return "restored"
+        except (urllib.error.HTTPError, urllib.error.URLError):
+            pass  # no saved cache yet, or the server runs without --slot-save-path
+        self.warm_up()
+        try:
+            self._post("/slots/0?action=save", {"filename": name})
+            return "computed"
+        except (urllib.error.HTTPError, urllib.error.URLError):
+            return "computed (not saved)"
+
 
 # Server profiles. "edge" is the 2 GB target: no weight repacking (weights stay a read-only memory map the OS can
 # share and page, instead of a ~630 MB private copy), a context just large enough for the cached prompt, smaller
@@ -179,7 +203,11 @@ class SlmServer:
         threads: int = 2,
         ctx: int = 4096,
         extra_args: tuple[str, ...] = (),
+        cache_dir: Path | None = None,
     ) -> None:
+        if cache_dir is not None:  # where the prompt-prefix KV cache is saved and restored (see SlmParser.ready)
+            Path(cache_dir).mkdir(parents=True, exist_ok=True)
+            extra_args = (*extra_args, "--slot-save-path", str(cache_dir))
         self.args = [
             str(binary),
             "-m",
