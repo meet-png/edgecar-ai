@@ -278,7 +278,8 @@ function evidence(ans) {
 const TIME_LINE = /^\d{2}:\d{2}:\d{2} — |^…and \d+ more\.$/;
 
 function routeLabel(ans) {
-  const t = ans.route === "model" ? `${(ans.ms / 1000).toFixed(2)} s` : `${ans.ms < 10 ? ans.ms.toFixed(1) : Math.round(ans.ms)} ms`;
+  const ms = ans.ms;
+  const t = ms >= 1000 ? `${(ms / 1000).toFixed(2)} s` : ms < 1 ? "<1 ms" : ms < 10 ? `${ms.toFixed(1)} ms` : `${Math.round(ms)} ms`;
   return `${{ rules: "Rules", model: "Model", declined: "Declined" }[ans.route] || ans.route} · ${t}`;
 }
 
