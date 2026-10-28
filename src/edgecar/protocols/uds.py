@@ -1,8 +1,10 @@
 """UDS (ISO 14229-1) diagnostic trouble codes carried over ISO-TP (ISO 15765-2) on classic CAN.
 
-EdgeCar never *sends* diagnostic requests — the AI zone has no transmit path. The vehicle's diagnostic manager
-(central gateway) already polls ECUs with ``ReadDTCInformation`` (0x19 / reportDTCByStatusMask 0x02); EdgeCar
-listens to the responses and decodes them.
+EdgeCar never *sends* diagnostic requests — the AI zone has no transmit path. UDS is request/response, so somebody
+must ask: the vehicle's diagnostic manager (central gateway) already polls ECUs with ``ReadDTCInformation``
+(0x19 / reportDTCByStatusMask 0x02) after fault indications and on a schedule. EdgeCar receives a mirror of that
+bus traffic and decodes the request/response pairs passively. On a platform without such polling, the poll list
+belongs in the *gateway's* configuration (read services 0x19 and 0x22 only) — never in the AI zone.
 
 DTC format: 3 bytes = 2-byte SAE J2012 code + failure-type byte. The two high bits of the first byte select the
 system letter (P/C/B/U), the next two bits the first digit, then three hex digits.
@@ -32,9 +34,15 @@ STATUS_BITS = (
 
 # SAE J2012 definitions for the codes this system decodes into readable text.
 DTC_TEXT = {
-    "P0C73": "Motor electronics coolant pump 'A' control",
-    "P0A7E": "Hybrid/EV battery pack 'A' over temperature",
+    "P0534": "A/C refrigerant charge loss",
+    "P0562": "System voltage low",
+    "P0A7E": "Hybrid/EV battery pack over temperature",
+    "P0A7F": "Hybrid/EV battery pack deterioration",
     "P0A93": "Inverter 'A' cooling system performance",
+    "P0C32": "Hybrid/EV battery pack cooling system performance",
+    "P0C73": "Motor electronics coolant pump 'A' control performance",
+    "U0121": "Lost communication with anti-lock brake system (ABS) control module",
+    "U0155": "Lost communication with instrument panel cluster (IPC) control module",
 }
 
 _LETTERS = "PCBU"

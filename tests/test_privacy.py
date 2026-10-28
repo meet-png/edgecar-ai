@@ -39,7 +39,7 @@ def _timeline() -> Result:
         "list_events",
         "3 events yesterday at 13:25:33.",
         details=[
-            "13:11:00 — thermal_mgr: pump fault (QNX slog2)",
+            "13:11:00 — thermal_mgr: compressor locked out (QNX slog2)",
             "13:19:51 — Late takeover: responded after 2.00 s (SOME/IP 0x1A01 (ADAS))",
             "13:20:00 — Parked at 42.243933, -83.743826",
         ],

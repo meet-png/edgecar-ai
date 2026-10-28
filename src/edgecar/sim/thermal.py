@@ -1,31 +1,36 @@
-"""Fault scenario: coolant-pump failure + a degrading cell group → battery overheating warning.
+"""Fault scenario: loss of battery cooling + a degrading cell group → battery overheating warning.
 
 A scenario is a *derived trip*: a real trip's signals replayed on a new date with a failure applied on top. It is
 stored as its own trip with ``sim:scenario`` provenance and is excluded from energy statistics, so it never
 distorts the real data.
 
-Physics. After the pump fails, the hottest cell group heats by Joule losses on the trip's **real** current draw and
+The fault matches the vehicle. The BMW i3 cools its high-voltage battery **directly with refrigerant** from the A/C
+circuit (no liquid loop), so the failure that removes its active cooling is a refrigerant charge loss: the low-side
+pressure falls below the compressor's minimum, the electric compressor is locked out, and both cabin A/C and battery
+cooling stop. (A coolant-pump fault would not explain it — on the i3 the pump serves the drive electronics.)
+
+Physics. Once cooling is lost, the hottest cell group heats by Joule losses on the trip's **real** current draw and
 loses heat only passively::
 
     dT/dt = I² · R_fault / (m·c)  −  (T − T_base) / τ
 
-On the real trip alone the hottest sensor never exceeds 33 °C, and a pump failure with a healthy cell group
+On the real trip alone the hottest sensor never exceeds 33 °C, and losing cooling with a healthy cell group
 (R ≈ 0.02–0.04 Ω) would only reach 35–38 °C — not enough to warn. The scenario therefore models a cell group whose
 resistance has risen to 0.15 Ω (an ageing or internally damaged group, a known precursor of thermal events).
 
 The simulator emits only **wire traffic**, each item on the protocol that would carry it in a real vehicle:
 
 =====================  ==========================================================================================
-QNX ``slog2``          thermal manager logs the pump fault (and routine INFO lines the adapter filters out)
-UDS over ISO-TP        gateway polls ``ReadDTCInformation``; VCU reports P0C73, later P0C73 + P0A93 (multi-frame);
-                       BMS reports P0A7E
+QNX ``slog2``          thermal manager logs the compressor lock-out (and routine INFO lines the adapter filters out)
+UDS over ISO-TP        the gateway's own ``ReadDTCInformation`` polls, decoded passively: VCU reports P0534; BMS
+                       reports P0C32 (pending), later P0C32 + P0A7E (multi-frame)
 CAN FD 0x3A0           ``BMS_Status_FD.ThermalWarning`` rises to 1 (fast rise) and 3 (over-temperature)
 SOME/IP 0x2B01         thermal management announces a drive-power limit
 VHAL 0x21400101        vendor property: overheating warning shown on the cluster
 =====================  ==========================================================================================
 
-Diagnostic codes are SAE J2012: P0C73 (motor-electronics coolant pump "A" control), P0A93 (inverter "A" cooling
-system performance — the inverter shares the coolant loop), P0A7E (hybrid/EV battery pack "A" over temperature).
+Diagnostic codes are SAE J2012: P0534 (A/C refrigerant charge loss), P0C32 (hybrid/EV battery pack cooling system
+performance), P0A7E (hybrid/EV battery pack over temperature).
 """
 
 from __future__ import annotations
@@ -99,6 +104,8 @@ def battery_overheat(base: pd.DataFrame) -> ScenarioTraffic:
         temp[k] = temp[k - 1] + heat - (temp[k - 1] - t_base[k]) / PASSIVE_TAU_S
     f["batt_temp_max_c"] = temp
     f["batt_temp_c"] = base["batt_temp_c"].to_numpy() + 0.25 * (temp - t_base)  # one hot group lifts the average
+    if "hvac_ac_kw" in f:
+        f.loc[FAIL_AFTER_S:, "hvac_ac_kw"] = 0.0  # the compressor is locked out: no cabin A/C either
 
     rate = pd.Series(temp).diff(60).to_numpy()  # °C per minute
     idx = np.arange(len(f))
@@ -114,20 +121,19 @@ def battery_overheat(base: pd.DataFrame) -> ScenarioTraffic:
     t_fail, t_derate, t_warn = ts[FAIL_AFTER_S], ts[k_derate], ts[k_warn]
     tr = ScenarioTraffic(frames=f)
 
-    # QNX system log: routine pump telemetry every minute, then the fault and the BMS over-temperature report
+    # QNX system log: routine refrigerant-circuit telemetry every minute, then the lock-out and the BMS report
+    routine = "p_low=2.9 bar p_high=12.1 bar batt_valve=open"
     for k in range(0, FAIL_AFTER_S, 60):
-        tr.slog2_lines.append(
-            format_record(LogRecord(ts[k].to_pydatetime(), "thermal_mgr", 412, "pump_a", 5, "duty=58% flow=11.8 l/min"))
-        )
+        tr.slog2_lines.append(format_record(LogRecord(ts[k].to_pydatetime(), "thermal_mgr", 412, "refrig", 5, routine)))
     tr.slog2_lines += [
         format_record(
             LogRecord(
                 (t_fail + pd.Timedelta(milliseconds=412)).to_pydatetime(),
                 "thermal_mgr",
                 412,
-                "pump_a",
+                "refrig",
                 3,
-                "pwm_fb=0 duty=62% flow=0.0 l/min -> FAULT",
+                "p_low=0.9 bar < 1.5 bar min: compressor locked out, battery cooling unavailable -> FAULT",
             )
         ),
         format_record(
@@ -151,17 +157,19 @@ def battery_overheat(base: pd.DataFrame) -> ScenarioTraffic:
             )
         ),
     ]
-    # UDS: the gateway polls after each new fault indication
+    # UDS: the gateway polls after each new fault indication (EdgeCar only listens to these exchanges)
+    t_rise = ts[k_rise]
     tr.diag_frames += _uds_poll(
-        t_fail + pd.Timedelta(seconds=1), "VCU", [uds.DtcRecord("P0C73", 0x00, STATUS_CONFIRMED)]
+        t_fail + pd.Timedelta(seconds=1), "VCU", [uds.DtcRecord("P0534", 0x00, STATUS_CONFIRMED)]
+    )
+    tr.diag_frames += _uds_poll(t_rise + pd.Timedelta(seconds=1), "BMS", [uds.DtcRecord("P0C32", 0x00, STATUS_PENDING)])
+    tr.diag_frames += _uds_poll(
+        t_warn + pd.Timedelta(seconds=1), "VCU", [uds.DtcRecord("P0534", 0x00, STATUS_CONFIRMED)]
     )
     tr.diag_frames += _uds_poll(
-        t_warn + pd.Timedelta(seconds=1),
-        "VCU",
-        [uds.DtcRecord("P0C73", 0x00, STATUS_CONFIRMED), uds.DtcRecord("P0A93", 0x00, STATUS_PENDING)],
-    )
-    tr.diag_frames += _uds_poll(
-        t_warn + pd.Timedelta(seconds=1.2), "BMS", [uds.DtcRecord("P0A7E", 0x00, STATUS_CONFIRMED)]
+        t_warn + pd.Timedelta(seconds=1.2),
+        "BMS",
+        [uds.DtcRecord("P0C32", 0x00, STATUS_CONFIRMED), uds.DtcRecord("P0A7E", 0x00, STATUS_CONFIRMED)],
     )
     # SOME/IP: thermal management announces the power limit
     payload = someip.THERMAL_PAYLOAD.pack(POWER_LIMIT_KW, round(temp[k_derate] * 10), 1)
@@ -176,13 +184,13 @@ def battery_overheat(base: pd.DataFrame) -> ScenarioTraffic:
     tr.truth = sorted(
         [
             (t_fail, "QNX_THERMAL_MGR"),
-            (t_fail, "P0C73"),
-            (ts[k_rise], "BATT_TEMP_RISE_RATE"),
+            (t_fail, "P0534"),
+            (t_rise, "BATT_TEMP_RISE_RATE"),
+            (t_rise, "P0C32"),
             (t_derate, "BATT_POWER_DERATE"),
             (t_warn, "BATT_OVERTEMP_FLAG"),
             (t_warn, "QNX_BMS_THERMAL"),
             (t_warn, "BATT_OVERTEMP_WARNING"),
-            (t_warn, "P0A93"),
             (t_warn, "P0A7E"),
         ]
     )

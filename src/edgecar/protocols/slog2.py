@@ -2,7 +2,7 @@
 
 Line layout (one record per line)::
 
-    Jul 24 13:11:00.412  thermal_mgr.412  pump_a  3  pwm_fb=0 duty=62% flow=0.0 l/min -> FAULT
+    Jul 24 13:11:00.412  thermal_mgr.412  refrig  3  p_low=0.9 bar < 1.5 bar min: compressor locked out -> FAULT
 
 date/time, ``process.pid``, buffer name, slog2 severity (0 SHUTDOWN … 7 DEBUG2), message. ``slog2info`` prints no
 year, so the reader takes it from the log's context (here: the trip date).

@@ -60,7 +60,7 @@ def test_isotp_drops_a_message_with_a_missing_frame():
 
 def test_slog2_round_trip_and_rejects_garbage():
     rec = slog2.LogRecord(
-        datetime(2019, 7, 24, 13, 11, 0, 412000), "thermal_mgr", 412, "pump_a", 3, "flow=0.0 -> FAULT"
+        datetime(2019, 7, 24, 13, 11, 0, 412000), "thermal_mgr", 412, "refrig", 3, "p_low=0.9 bar -> FAULT"
     )
     assert slog2.parse_line(slog2.format_record(rec), 2019) == rec
     assert slog2.parse_line("not a log line", 2019) is None
@@ -173,7 +173,7 @@ def test_overheat_scenario_is_fully_recovered_from_the_wire(tmp_path):
         ]
     )
     assert set(events["code"]) == {code for _, code in sc.truth}
-    assert len(events) == len(sc.truth)  # nothing duplicated (P0C73 is reported twice on the wire, once as an event)
+    assert len(events) == len(sc.truth)  # nothing duplicated (P0534 and P0C32 are each reported twice on the wire)
 
 
 def test_out_of_range_values_saturate_instead_of_failing():
