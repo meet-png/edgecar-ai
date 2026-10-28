@@ -55,3 +55,12 @@ def test_model_commands_must_be_grounded_in_the_question():
         "why doesn't my battery last as long as it used to", {"intent": "explain_change", "metric": "range"}
     )
     assert guard.grounded("Which day was I driving the most?", {"intent": "extreme", "metric": "distance"})
+
+
+def test_multi_word_cues_match():
+    # regression: phrases such as "battery level" used to compile to a pattern with a literal backslash
+    assert guard.grounded("What's my battery level?", {"intent": "status"})
+    assert guard.grounded("Is the battery warm at the moment?", {"intent": "status"})
+    assert guard.not_recorded("How full is the washer fluid?") == "oil or fluid levels"
+    assert guard.not_recorded("Show me the dash cam clip") == "camera video"
+    assert guard.not_recorded("Who was driving on Tuesday?") == "who was driving"

@@ -23,7 +23,9 @@ def _stem(word: str) -> str:
 def _words(*stems: str) -> re.Pattern:
     """Any of the stems at the start of a word (``consum`` matches consumption, consuming, …)."""
     stems = tuple(_stem(s) for s in stems)
-    return re.compile(r"\b(?:" + "|".join(re.escape(s).replace(" ", r"\s+") for s in stems) + ")")
+    # escape word by word: re.escape also escapes spaces, so escaping the whole phrase and then swapping " " for
+    # \s+ would leave a literal backslash in every multi-word cue, which then never matches
+    return re.compile(r"\b(?:" + "|".join(r"\s+".join(map(re.escape, s.split())) for s in stems) + ")")
 
 
 def _norm(question: str) -> str:
