@@ -1,0 +1,76 @@
+name: ARM64 edge benchmark
+
+# Rebuilds the store from public data and measures the whole AI zone on an Arm64 runner, pinned to two cores and a
+# hard memory limit. Results are uploaded as the "arm-bench" artifact and shown on the run's summary page.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "eval/*.jsonl"
+      - "scripts/ci/**"
+      - ".github/workflows/arm-bench.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: arm-bench
+  cancel-in-progress: true
+
+jobs:
+  bench:
+    name: Arm64 · 2 cores · 1.75 GB
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install EdgeCar AI
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[prep,dev]"
+
+      - name: Unit tests
+        run: pytest -q
+
+      - name: llama.cpp b11577 (official ubuntu-arm64 build, SHA-256 checked)
+        run: |
+          curl -fsSL -o llama.tgz https://github.com/ggml-org/llama.cpp/releases/download/b11577/llama-b11577-bin-ubuntu-arm64.tar.gz
+          echo "ea19b3ea15d2ae46ea4066685f41a9aaa2446a80145f6f05650ecdfbf6c86345  llama.tgz" | sha256sum -c -
+          mkdir -p tools/llama.cpp && tar -xzf llama.tgz -C tools/llama.cpp --strip-components=1
+
+      - name: Cache datasets and model
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/raw/ved_archives
+            models
+          key: public-data-v1
+
+      - name: Fetch public datasets and the model (SHA-256 pinned)
+        run: |
+          sudo apt-get install -y -q p7zip-full > /dev/null
+          python -m edgecar.prep.fetch ved dbc baton model
+
+      - name: Build the store (VED Leafs as real Leaf CAN, PHEV, ADAS as SOME/IP)
+        run: python -m edgecar.prep.build
+
+      - name: Run the AI zone in a 2-core, 1.75 GB cgroup
+        run: bash scripts/ci/arm_bench.sh
+
+      - name: Summary
+        if: always()
+        run: python scripts/ci/summary.py eval/results/arm | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: arm-bench
+          path: eval/results/arm/

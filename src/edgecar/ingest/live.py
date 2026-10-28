@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import argparse
 import heapq
+import signal
 import statistics
 import tempfile
 import time
@@ -83,6 +84,14 @@ class LiveIngestor:
         self.can_batch, self.someip_batch = [], []
 
 
+_stopping = False
+
+
+def _stop(*_) -> None:
+    global _stopping
+    _stopping = True  # checked between messages, so a stop never interrupts a commit
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--vehicle", default="leaf-455", choices=["leaf-455", "leaf-010"])
@@ -90,7 +99,14 @@ def main() -> None:
     ap.add_argument("--dbc", type=Path, default=Path("data/raw/leaf_dbc"))
     ap.add_argument("--days", type=float, default=7.0, help="replay the last N days of the capture")
     ap.add_argument("--threads", type=int, default=2)
+    ap.add_argument(
+        "--pace",
+        type=float,
+        default=0.0,
+        help="replay at this multiple of real time while driving (parked time is skipped); 0 = as fast as possible",
+    )
     a = ap.parse_args()
+    signal.signal(signal.SIGTERM, _stop)  # a supervisor stops the replay; the summary is still printed
 
     can_log = a.wire / f"{a.vehicle}.can.log"
     last = max(f.ts for f in read_log(can_log))
@@ -101,27 +117,34 @@ def main() -> None:
         store.upsert_vehicle({**v.__dict__, "provenance": str(v.provenance)})
         ing = LiveIngestor(store, CanCodec(a.dbc), a.vehicle, str(v.provenance))
         messages, t0 = 0, time.perf_counter()
-        first_ts = None
+        anchor, prev = (0.0, 0.0), None  # (vehicle time, wall time) at the start of the current drive
         for ts, kind, msg in merged_stream(can_log, a.wire / f"{a.vehicle}.adas.pcap", start, last + 1):
-            first_ts = first_ts or ts
+            if _stopping:
+                break
+            if a.pace:
+                if prev is None or ts - prev > TRIP_GAP_S:  # parked: go straight to the next drive
+                    anchor = (ts, time.perf_counter())
+                elif (wait := anchor[1] + (ts - anchor[0]) / a.pace - time.perf_counter()) > 0:
+                    time.sleep(wait)
+                prev = ts
             ing.feed(ts, kind, msg)
             messages += 1
         ing.flush()
         wall = time.perf_counter() - t0
-        driven_s = store.sql("SELECT sum(duration_min) * 60 AS s FROM trips")["s"][0]
-        lat = ing.commit_latency_ms
+        driven_s = store.sql("SELECT sum(duration_min) * 60 AS s FROM trips")["s"][0] or 0.0
+        lat = ing.commit_latency_ms or [0.0]
         print(
-            f"replayed {a.days:g} days of {a.vehicle}: {messages:,} messages ({ing.rows:,} 1 Hz rows, "
+            f"replayed {driven_s / 3600:.1f} h of {a.vehicle} driving: {messages:,} messages ({ing.rows:,} 1 Hz rows, "
             f"{ing.events:,} ADAS events, {store.sql('SELECT count(*) AS n FROM trips')['n'][0]} trips) "
             f"in {wall:.1f} s on {a.threads} threads"
         )
         print(
-            f"throughput: {messages / wall:,.0f} messages/s · real-time factor ×{driven_s / wall:,.0f} "
+            f"throughput: {messages / wall:,.0f} messages/s · real-time factor ×{driven_s / wall:,.1f} "
             f"(driving time ingested per wall-clock second)"
         )
         print(
             f"commit latency per 1 s batch: p50 {statistics.median(lat):.1f} ms · "
-            f"p95 {statistics.quantiles(lat, n=20)[18]:.1f} ms · max {max(lat):.1f} ms"
+            f"p95 {statistics.quantiles(lat, n=20)[18] if len(lat) > 1 else lat[0]:.1f} ms · max {max(lat):.1f} ms"
         )
         ans = Assistant(store, a.vehicle).ask("How far did I drive today?")
         print(f"query while live → {ans.text}  [{ans.timings_ms['total']:.0f} ms]")
