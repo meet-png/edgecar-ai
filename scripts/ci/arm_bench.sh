@@ -25,5 +25,5 @@ sync && echo 3 | sudo tee /proc/sys/vm/drop_caches > /dev/null  # start cold: th
 sudo systemd-run --scope --quiet --unit="edgecar-ai-zone-$$" "${LIMITS[@]}" \
     --uid="$(id -u)" --gid="$(id -g)" \
     -- /usr/bin/env PATH="$PATH" HOME="$HOME" OUT="$OUT" LIMIT_MB="$LIMIT_MB" \
-    RUN_BRIEF="${RUN_BRIEF:-0}" RUN_REFUSAL="${RUN_REFUSAL:-0}" \
+    RUN_BRIEF="${RUN_BRIEF:-0}" RUN_REFUSAL="${RUN_REFUSAL:-0}" MODEL="${MODEL:-models/qwen2.5-1.5b-instruct-q4_k_m.gguf}" \
     taskset -c "$CPUS" bash scripts/ci/ai_zone.sh

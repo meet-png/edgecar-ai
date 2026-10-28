@@ -1,0 +1,1514 @@
+{
+  "mode": "slm",
+  "n": 122,
+  "accuracy": 0.9918032786885246,
+  "by_category": {
+    "ano": 1.0,
+    "bef": 1.0,
+    "brief": 1.0,
+    "cmp": 1.0,
+    "evt": 1.0,
+    "exp": 1.0,
+    "ext": 1.0,
+    "oos": 1.0,
+    "sts": 0.833,
+    "sum": 1.0,
+    "trd": 1.0
+  },
+  "paths": {
+    "fast": 3,
+    "slm": 119,
+    "none": 0
+  },
+  "rows": [
+    {
+      "id": "brief-1",
+      "q": "Why has my driving range reduced over the last two weeks?",
+      "gold": [
+        "explain_change metric=range window=last_14d"
+      ],
+      "pred": "explain_change metric=range window=last_14d",
+      "path": "slm",
+      "model_line": "why range",
+      "ok": true,
+      "ms": 425.6441998295486
+    },
+    {
+      "id": "brief-2",
+      "q": "When did fuel efficiency show the largest drop?",
+      "gold": [
+        "extreme metric=fuel_efficiency window=all dir=drop",
+        "extreme metric=fuel_consumption window=all dir=rise"
+      ],
+      "pred": "extreme metric=fuel_efficiency window=all dir=drop",
+      "path": "slm",
+      "model_line": "when fuel_efficiency drop",
+      "ok": true,
+      "ms": 436.1064999829978
+    },
+    {
+      "id": "brief-3",
+      "q": "Show all ADAS disengagement events from yesterday.",
+      "gold": [
+        "list_events window=yesterday event=adas_disengagement"
+      ],
+      "pred": "list_events window=yesterday event=adas_disengagement",
+      "path": "slm",
+      "model_line": "show adas_disengagement",
+      "ok": true,
+      "ms": 446.1164998356253
+    },
+    {
+      "id": "brief-4",
+      "q": "What happened before the battery overheating warning?",
+      "gold": [
+        "events_before window=all event=battery_overheat_warning"
+      ],
+      "pred": "events_before window=all event=battery_overheat_warning",
+      "path": "slm",
+      "model_line": "before battery_overheat_warning",
+      "ok": true,
+      "ms": 406.4209999050945
+    },
+    {
+      "id": "brief-5",
+      "q": "Compare energy consumption between city and highway driving.",
+      "gold": [
+        "compare metric=energy_consumption window=all by=road_type"
+      ],
+      "pred": "compare metric=energy_consumption window=all by=road_type",
+      "path": "slm",
+      "model_line": "compare energy_consumption road_type",
+      "ok": true,
+      "ms": 439.36660001054406
+    },
+    {
+      "id": "exp-1",
+      "q": "Why is my range lower than it was a couple of weeks ago?",
+      "gold": [
+        "explain_change metric=range window=last_14d"
+      ],
+      "pred": "explain_change metric=range window=last_14d",
+      "path": "slm",
+      "model_line": "why range",
+      "ok": true,
+      "ms": 399.37830017879605
+    },
+    {
+      "id": "exp-2",
+      "q": "What's making my range shrink this month?",
+      "gold": [
+        "explain_change metric=range window=this_month"
+      ],
+      "pred": "explain_change metric=range window=this_month",
+      "path": "slm",
+      "model_line": "why range",
+      "ok": true,
+      "ms": 282.019600039348
+    },
+    {
+      "id": "exp-3",
+      "q": "My estimated range dropped recently. Why?",
+      "gold": [
+        "explain_change metric=range window=last_14d"
+      ],
+      "pred": "explain_change metric=range window=last_14d",
+      "path": "slm",
+      "model_line": "why range",
+      "ok": true,
+      "ms": 287.3968000058085
+    },
+    {
+      "id": "exp-4",
+      "q": "Why am I using more energy per km lately?",
+      "gold": [
+        "explain_change metric=energy_consumption window=last_14d"
+      ],
+      "pred": "explain_change metric=energy_consumption window=last_14d",
+      "path": "slm",
+      "model_line": "why energy_consumption",
+      "ok": true,
+      "ms": 367.8940001409501
+    },
+    {
+      "id": "exp-5",
+      "q": "Explain the increase in my energy consumption over the past 3 weeks",
+      "gold": [
+        "explain_change metric=energy_consumption window=last_21d"
+      ],
+      "pred": "explain_change metric=energy_consumption window=last_21d",
+      "path": "slm",
+      "model_line": "why energy_consumption",
+      "ok": true,
+      "ms": 475.7687000092119
+    },
+    {
+      "id": "exp-6",
+      "q": "Why did my efficiency get worse last month?",
+      "gold": [
+        "explain_change metric=energy_efficiency window=last_month",
+        "explain_change metric=energy_consumption window=last_month"
+      ],
+      "pred": "explain_change metric=energy_efficiency window=last_month",
+      "path": "slm",
+      "model_line": "why energy_efficiency",
+      "ok": true,
+      "ms": 362.1564998757094
+    },
+    {
+      "id": "exp-7",
+      "q": "Why is the car less efficient this week?",
+      "gold": [
+        "explain_change metric=energy_efficiency window=this_week",
+        "explain_change metric=energy_consumption window=this_week"
+      ],
+      "pred": "explain_change metric=energy_efficiency window=this_week",
+      "path": "slm",
+      "model_line": "why energy_efficiency",
+      "ok": true,
+      "ms": 358.3347999956459
+    },
+    {
+      "id": "exp-8",
+      "q": "how come my range went down over the last 10 days",
+      "gold": [
+        "explain_change metric=range window=last_10d"
+      ],
+      "pred": "explain_change metric=range window=last_10d",
+      "path": "slm",
+      "model_line": "why range",
+      "ok": true,
+      "ms": 395.45840001665056
+    },
+    {
+      "id": "exp-9",
+      "q": "reason for the drop in range in the past fortnight?",
+      "gold": [
+        "explain_change metric=range window=last_14d"
+      ],
+      "pred": "explain_change metric=range window=last_14d",
+      "path": "slm",
+      "model_line": "why range",
+      "ok": true,
+      "ms": 400.6525001022965
+    },
+    {
+      "id": "exp-10",
+      "q": "What's causing the higher consumption over the last 30 days?",
+      "gold": [
+        "explain_change metric=energy_consumption window=last_30d"
+      ],
+      "pred": "explain_change metric=energy_consumption window=last_30d",
+      "path": "slm",
+      "model_line": "why energy_consumption",
+      "ok": true,
+      "ms": 488.9094999525696
+    },
+    {
+      "id": "exp-11",
+      "q": "why doesn't my battery last as long as it used to",
+      "gold": [
+        "explain_change metric=range window=last_14d"
+      ],
+      "pred": "explain_change metric=range window=last_14d",
+      "path": "slm",
+      "model_line": "why range",
+      "ok": true,
+      "ms": 410.44569993391633
+    },
+    {
+      "id": "exp-12",
+      "q": "Why did my fuel economy fall this month?",
+      "gold": [
+        "explain_change metric=fuel_efficiency window=this_month",
+        "explain_change metric=fuel_consumption window=this_month"
+      ],
+      "pred": "explain_change metric=fuel_efficiency window=this_month",
+      "path": "slm",
+      "model_line": "why fuel_efficiency",
+      "ok": true,
+      "ms": 365.23220012895763
+    },
+    {
+      "id": "exp-13",
+      "q": "range dropped from 160 to 150 km, explain",
+      "gold": [
+        "explain_change metric=range window=last_14d"
+      ],
+      "pred": "explain_change metric=range window=last_14d",
+      "path": "slm",
+      "model_line": "why range",
+      "ok": true,
+      "ms": 400.12259990908206
+    },
+    {
+      "id": "exp-14",
+      "q": "Why is my car consuming more power these days?",
+      "gold": [
+        "explain_change metric=energy_consumption window=last_14d"
+      ],
+      "pred": "explain_change metric=energy_consumption window=last_14d",
+      "path": "slm",
+      "model_line": "why energy_consumption",
+      "ok": true,
+      "ms": 368.16579988226295
+    },
+    {
+      "id": "ext-1",
+      "q": "Which day had the largest drop in energy efficiency?",
+      "gold": [
+        "extreme metric=energy_efficiency window=all dir=drop",
+        "extreme metric=energy_consumption window=all dir=rise"
+      ],
+      "pred": "extreme metric=energy_efficiency window=all dir=drop",
+      "path": "slm",
+      "model_line": "when energy_efficiency drop",
+      "ok": true,
+      "ms": 401.78840002045035
+    },
+    {
+      "id": "ext-2",
+      "q": "When was my energy consumption highest?",
+      "gold": [
+        "extreme metric=energy_consumption window=all dir=max"
+      ],
+      "pred": "extreme metric=energy_consumption window=all dir=max",
+      "path": "slm",
+      "model_line": "when energy_consumption max",
+      "ok": true,
+      "ms": 409.53930001705885
+    },
+    {
+      "id": "ext-3",
+      "q": "When did the battery temperature peak?",
+      "gold": [
+        "extreme metric=battery_temp window=all dir=max"
+      ],
+      "pred": "extreme metric=battery_temp window=all dir=max",
+      "path": "slm",
+      "model_line": "when battery_temp max",
+      "ok": true,
+      "ms": 357.33380005694926
+    },
+    {
+      "id": "ext-4",
+      "q": "What was the coldest day I drove?",
+      "gold": [
+        "extreme metric=ambient_temp window=all dir=min"
+      ],
+      "pred": "extreme metric=ambient_temp window=all dir=min",
+      "path": "slm",
+      "model_line": "when ambient_temp min",
+      "ok": true,
+      "ms": 359.77690014988184
+    },
+    {
+      "id": "ext-5",
+      "q": "On which day did my range drop the most?",
+      "gold": [
+        "extreme metric=range window=all dir=drop"
+      ],
+      "pred": "extreme metric=range window=all dir=drop",
+      "path": "slm",
+      "model_line": "when range drop",
+      "ok": true,
+      "ms": 325.29629999771714
+    },
+    {
+      "id": "ext-6",
+      "q": "When did my consumption spike the most this month?",
+      "gold": [
+        "extreme metric=energy_consumption window=this_month dir=rise"
+      ],
+      "pred": "extreme metric=energy_consumption window=this_month dir=rise",
+      "path": "slm",
+      "model_line": "when energy_consumption rise",
+      "ok": true,
+      "ms": 421.6007001232356
+    },
+    {
+      "id": "ext-7",
+      "q": "Which day did I drive the farthest?",
+      "gold": [
+        "extreme metric=distance window=all dir=max"
+      ],
+      "pred": "extreme metric=distance window=all dir=max",
+      "path": "slm",
+      "model_line": "when distance max",
+      "ok": true,
+      "ms": 328.44420010223985
+    },
+    {
+      "id": "ext-8",
+      "q": "When was my average speed the highest last month?",
+      "gold": [
+        "extreme metric=speed window=last_month dir=max"
+      ],
+      "pred": "extreme metric=speed window=last_month dir=max",
+      "path": "slm",
+      "model_line": "when speed max",
+      "ok": true,
+      "ms": 337.0234000030905
+    },
+    {
+      "id": "ext-9",
+      "q": "When was my fuel consumption at its peak?",
+      "gold": [
+        "extreme metric=fuel_consumption window=all dir=max"
+      ],
+      "pred": "extreme metric=fuel_consumption window=all dir=max",
+      "path": "slm",
+      "model_line": "when fuel_consumption max",
+      "ok": true,
+      "ms": 422.88820003159344
+    },
+    {
+      "id": "ext-10",
+      "q": "biggest efficiency drop in the last 2 months - when was it?",
+      "gold": [
+        "extreme metric=energy_efficiency window=last_60d dir=drop"
+      ],
+      "pred": "extreme metric=energy_efficiency window=last_60d dir=drop",
+      "path": "slm",
+      "model_line": "when energy_efficiency drop",
+      "ok": true,
+      "ms": 517.0537999365479
+    },
+    {
+      "id": "ext-11",
+      "q": "When did I use the most heating?",
+      "gold": [
+        "extreme metric=hvac_energy window=all dir=max"
+      ],
+      "pred": "extreme metric=hvac_energy window=all dir=max",
+      "path": "slm",
+      "model_line": "when hvac_energy max",
+      "ok": true,
+      "ms": 404.7018999699503
+    },
+    {
+      "id": "ext-12",
+      "q": "When was the battery level lowest this week?",
+      "gold": [
+        "extreme metric=soc window=this_week dir=min"
+      ],
+      "pred": "extreme metric=soc window=this_week dir=min",
+      "path": "slm",
+      "model_line": "when soc min",
+      "ok": true,
+      "ms": 323.3417000155896
+    },
+    {
+      "id": "ext-13",
+      "q": "What day had the most hard braking?",
+      "gold": [
+        "extreme metric=hard_brakes window=all dir=max"
+      ],
+      "pred": "extreme metric=hard_brakes window=all dir=max",
+      "path": "slm",
+      "model_line": "when hard_brakes max",
+      "ok": true,
+      "ms": 400.28639999218285
+    },
+    {
+      "id": "ext-14",
+      "q": "When did my mileage drop the most?",
+      "gold": [
+        "extreme metric=fuel_efficiency window=all dir=drop"
+      ],
+      "pred": "extreme metric=fuel_efficiency window=all dir=drop",
+      "path": "slm",
+      "model_line": "when fuel_efficiency drop",
+      "ok": true,
+      "ms": 404.7627002000809
+    },
+    {
+      "id": "ext-15",
+      "q": "which day saw the sharpest rise in energy use per km over the last 3 months",
+      "gold": [
+        "extreme metric=energy_consumption window=last_90d dir=rise"
+      ],
+      "pred": "extreme metric=energy_consumption window=last_90d dir=rise",
+      "path": "slm",
+      "model_line": "when energy_consumption rise",
+      "ok": true,
+      "ms": 531.9777000695467
+    },
+    {
+      "id": "cmp-1",
+      "q": "City vs highway efficiency?",
+      "gold": [
+        "compare metric=energy_efficiency window=all by=road_type"
+      ],
+      "pred": "compare metric=energy_efficiency window=all by=road_type",
+      "path": "slm",
+      "model_line": "compare energy_efficiency road_type",
+      "ok": true,
+      "ms": 440.3009000234306
+    },
+    {
+      "id": "cmp-2",
+      "q": "Do I use more energy on the highway or in town?",
+      "gold": [
+        "compare metric=energy_consumption window=all by=road_type"
+      ],
+      "pred": "compare metric=energy_consumption window=all by=road_type",
+      "path": "slm",
+      "model_line": "compare energy_consumption road_type",
+      "ok": true,
+      "ms": 578.7165998481214
+    },
+    {
+      "id": "cmp-3",
+      "q": "How does cold weather affect my consumption?",
+      "gold": [
+        "compare metric=energy_consumption window=all by=temperature"
+      ],
+      "pred": "compare metric=energy_consumption window=all by=temperature",
+      "path": "slm",
+      "model_line": "compare energy_consumption temperature",
+      "ok": true,
+      "ms": 404.78999982587993
+    },
+    {
+      "id": "cmp-4",
+      "q": "Compare my efficiency in winter and summer",
+      "gold": [
+        "compare metric=energy_efficiency window=all by=temperature"
+      ],
+      "pred": "compare metric=energy_efficiency window=all by=temperature",
+      "path": "slm",
+      "model_line": "compare energy_efficiency temperature",
+      "ok": true,
+      "ms": 401.6580998431891
+    },
+    {
+      "id": "cmp-5",
+      "q": "Is my energy use this week higher than last week?",
+      "gold": [
+        "compare metric=energy_consumption window=this_week by=previous_period"
+      ],
+      "pred": "compare metric=energy_consumption window=this_week by=previous_period",
+      "path": "slm",
+      "model_line": "compare energy_consumption previous_period",
+      "ok": true,
+      "ms": 441.13380019553006
+    },
+    {
+      "id": "cmp-6",
+      "q": "Compare this month's consumption with last month",
+      "gold": [
+        "compare metric=energy_consumption window=this_month by=previous_period"
+      ],
+      "pred": "compare metric=energy_consumption window=this_month by=previous_period",
+      "path": "slm",
+      "model_line": "compare energy_consumption previous_period",
+      "ok": true,
+      "ms": 441.4260999765247
+    },
+    {
+      "id": "cmp-7",
+      "q": "How much worse is my efficiency when it's freezing?",
+      "gold": [
+        "compare metric=energy_efficiency window=all by=temperature",
+        "compare metric=energy_consumption window=all by=temperature"
+      ],
+      "pred": "compare metric=energy_efficiency window=all by=temperature",
+      "path": "slm",
+      "model_line": "compare energy_efficiency temperature",
+      "ok": true,
+      "ms": 403.2380999997258
+    },
+    {
+      "id": "cmp-8",
+      "q": "fuel consumption highway versus city",
+      "gold": [
+        "compare metric=fuel_consumption window=all by=road_type"
+      ],
+      "pred": "compare metric=fuel_consumption window=all by=road_type",
+      "path": "slm",
+      "model_line": "compare fuel_consumption road_type",
+      "ok": true,
+      "ms": 436.06900004670024
+    },
+    {
+      "id": "cmp-9",
+      "q": "Does highway driving cost me more fuel than city driving?",
+      "gold": [
+        "compare metric=fuel_consumption window=all by=road_type"
+      ],
+      "pred": "compare metric=fuel_consumption window=all by=road_type",
+      "path": "slm",
+      "model_line": "compare fuel_consumption road_type",
+      "ok": true,
+      "ms": 441.67539989575744
+    },
+    {
+      "id": "cmp-10",
+      "q": "urban or motorway: which is more efficient for my car",
+      "gold": [
+        "compare metric=energy_efficiency window=all by=road_type"
+      ],
+      "pred": "compare metric=energy_efficiency window=all by=road_type",
+      "path": "slm",
+      "model_line": "compare energy_efficiency road_type",
+      "ok": true,
+      "ms": 551.4116999693215
+    },
+    {
+      "id": "cmp-11",
+      "q": "Compare consumption on freezing days vs warm days over the last 3 months",
+      "gold": [
+        "compare metric=energy_consumption window=last_90d by=temperature"
+      ],
+      "pred": "compare metric=energy_consumption window=last_90d by=temperature",
+      "path": "slm",
+      "model_line": "compare energy_consumption temperature",
+      "ok": true,
+      "ms": 516.8063999153674
+    },
+    {
+      "id": "cmp-12",
+      "q": "how does temperature change my efficiency",
+      "gold": [
+        "compare metric=energy_efficiency window=all by=temperature"
+      ],
+      "pred": "compare metric=energy_efficiency window=all by=temperature",
+      "path": "slm",
+      "model_line": "compare energy_efficiency temperature",
+      "ok": true,
+      "ms": 399.0182999987155
+    },
+    {
+      "id": "cmp-13",
+      "q": "Am I driving more efficiently than in the previous two weeks?",
+      "gold": [
+        "compare metric=energy_efficiency window=last_14d by=previous_period"
+      ],
+      "pred": "compare metric=energy_efficiency window=last_14d by=previous_period",
+      "path": "slm",
+      "model_line": "compare energy_efficiency previous_period",
+      "ok": true,
+      "ms": 549.4735001120716
+    },
+    {
+      "id": "cmp-14",
+      "q": "Compare city and highway consumption this month",
+      "gold": [
+        "compare metric=energy_consumption window=this_month by=road_type"
+      ],
+      "pred": "compare metric=energy_consumption window=this_month by=road_type",
+      "path": "slm",
+      "model_line": "compare energy_consumption road_type",
+      "ok": true,
+      "ms": 442.2013000585139
+    },
+    {
+      "id": "evt-1",
+      "q": "List ADAS disengagements this week",
+      "gold": [
+        "list_events window=this_week event=adas_disengagement"
+      ],
+      "pred": "list_events window=this_week event=adas_disengagement",
+      "path": "slm",
+      "model_line": "show adas_disengagement",
+      "ok": true,
+      "ms": 441.7805999983102
+    },
+    {
+      "id": "evt-2",
+      "q": "Were there any takeover requests today?",
+      "gold": [
+        "list_events window=today event=adas_takeover_request"
+      ],
+      "pred": "list_events window=today event=adas_takeover_request",
+      "path": "slm",
+      "model_line": "show adas_takeover_request",
+      "ok": true,
+      "ms": 470.8904998842627
+    },
+    {
+      "id": "evt-3",
+      "q": "Show me the fault codes from last month",
+      "gold": [
+        "list_events window=last_month event=dtc"
+      ],
+      "pred": "list_events window=last_month event=dtc",
+      "path": "slm",
+      "model_line": "show dtc",
+      "ok": true,
+      "ms": 394.33389995247126
+    },
+    {
+      "id": "evt-4",
+      "q": "Any DTCs in the past 7 days?",
+      "gold": [
+        "list_events window=last_7d event=dtc"
+      ],
+      "pred": "list_events window=last_7d event=dtc",
+      "path": "slm",
+      "model_line": "show dtc",
+      "ok": true,
+      "ms": 352.90580010041595
+    },
+    {
+      "id": "evt-5",
+      "q": "Show my charging sessions this week",
+      "gold": [
+        "list_events window=this_week event=charging"
+      ],
+      "pred": "list_events window=this_week event=charging",
+      "path": "slm",
+      "model_line": "show charging",
+      "ok": true,
+      "ms": 298.3001000247896
+    },
+    {
+      "id": "evt-6",
+      "q": "How many hard braking events did I have yesterday?",
+      "gold": [
+        "list_events window=yesterday event=hard_brake",
+        "summary metric=hard_brakes window=yesterday"
+      ],
+      "pred": "list_events window=yesterday event=hard_brake",
+      "path": "slm",
+      "model_line": "show hard_brake",
+      "ok": true,
+      "ms": 367.33049992471933
+    },
+    {
+      "id": "evt-7",
+      "q": "List all battery overheating warnings ever",
+      "gold": [
+        "list_events window=all event=battery_overheat_warning"
+      ],
+      "pred": "list_events window=all event=battery_overheat_warning",
+      "path": "slm",
+      "model_line": "show battery_overheat_warning",
+      "ok": true,
+      "ms": 407.16609987430274
+    },
+    {
+      "id": "evt-8",
+      "q": "Did lane keeping switch off at any point today?",
+      "gold": [
+        "list_events window=today event=adas_disengagement"
+      ],
+      "pred": "list_events window=today event=adas_disengagement",
+      "path": "slm",
+      "model_line": "show adas_disengagement",
+      "ok": true,
+      "ms": 450.7672998588532
+    },
+    {
+      "id": "evt-9",
+      "q": "Show ADAS events from last week",
+      "gold": [
+        "list_events window=last_week event=adas_any"
+      ],
+      "pred": "list_events window=last_week event=adas_any",
+      "path": "slm",
+      "model_line": "show adas_any",
+      "ok": true,
+      "ms": 364.62779995054007
+    },
+    {
+      "id": "evt-10",
+      "q": "Any thermal warnings this month?",
+      "gold": [
+        "list_events window=this_month event=thermal_any"
+      ],
+      "pred": "list_events window=this_month event=thermal_any",
+      "path": "slm",
+      "model_line": "show thermal_any",
+      "ok": true,
+      "ms": 324.34580009430647
+    },
+    {
+      "id": "evt-11",
+      "q": "Show the system log events from yesterday",
+      "gold": [
+        "list_events window=yesterday event=system"
+      ],
+      "pred": "list_events window=yesterday event=system",
+      "path": "slm",
+      "model_line": "show system",
+      "ok": true,
+      "ms": 302.11029993370175
+    },
+    {
+      "id": "evt-12",
+      "q": "list every time adaptive cruise disengaged in the last 3 days",
+      "gold": [
+        "list_events window=last_3d event=adas_disengagement"
+      ],
+      "pred": "list_events window=last_3d event=adas_disengagement",
+      "path": "slm",
+      "model_line": "show adas_disengagement",
+      "ok": true,
+      "ms": 562.3842000495642
+    },
+    {
+      "id": "evt-13",
+      "q": "Show me everything that was logged today",
+      "gold": [
+        "list_events window=today event=any"
+      ],
+      "pred": "list_events window=today event=any",
+      "path": "slm",
+      "model_line": "show any",
+      "ok": true,
+      "ms": 289.4822000525892
+    },
+    {
+      "id": "evt-14",
+      "q": "What diagnostic trouble codes were logged this week?",
+      "gold": [
+        "list_events window=this_week event=dtc"
+      ],
+      "pred": "list_events window=this_week event=dtc",
+      "path": "slm",
+      "model_line": "show dtc",
+      "ok": true,
+      "ms": 338.03909993730485
+    },
+    {
+      "id": "evt-15",
+      "q": "Show takeover requests from the past month",
+      "gold": [
+        "list_events window=last_30d event=adas_takeover_request"
+      ],
+      "pred": "list_events window=last_30d event=adas_takeover_request",
+      "path": "slm",
+      "model_line": "show adas_takeover_request",
+      "ok": true,
+      "ms": 446.0873999632895
+    },
+    {
+      "id": "evt-16",
+      "q": "Did the car log any error codes yesterday?",
+      "gold": [
+        "list_events window=yesterday event=dtc"
+      ],
+      "pred": "list_events window=yesterday event=dtc",
+      "path": "slm",
+      "model_line": "show dtc",
+      "ok": true,
+      "ms": 339.73359991796315
+    },
+    {
+      "id": "evt-17",
+      "q": "when did I plug in to charge this month",
+      "gold": [
+        "list_events window=this_month event=charging"
+      ],
+      "pred": "list_events window=this_month event=charging",
+      "path": "slm",
+      "model_line": "show charging",
+      "ok": true,
+      "ms": 308.27019992284477
+    },
+    {
+      "id": "evt-18",
+      "q": "were there any harsh braking moments in the last 2 weeks",
+      "gold": [
+        "list_events window=last_14d event=hard_brake"
+      ],
+      "pred": "list_events window=last_14d event=hard_brake",
+      "path": "slm",
+      "model_line": "show hard_brake",
+      "ok": true,
+      "ms": 506.3903001137078
+    },
+    {
+      "id": "bef-1",
+      "q": "What led up to the overheating alert?",
+      "gold": [
+        "events_before window=all event=battery_overheat_warning"
+      ],
+      "pred": "events_before window=all event=battery_overheat_warning",
+      "path": "slm",
+      "model_line": "before battery_overheat_warning",
+      "ok": true,
+      "ms": 443.272199947387
+    },
+    {
+      "id": "bef-2",
+      "q": "Show me the 5 minutes before the battery overheat warning",
+      "gold": [
+        "events_before window=all event=battery_overheat_warning lookback=5m"
+      ],
+      "pred": "events_before window=all event=battery_overheat_warning lookback=5m",
+      "path": "slm",
+      "model_line": "before battery_overheat_warning",
+      "ok": true,
+      "ms": 517.5924999639392
+    },
+    {
+      "id": "bef-3",
+      "q": "What happened right before the last ADAS disengagement?",
+      "gold": [
+        "events_before window=all event=adas_disengagement"
+      ],
+      "pred": "events_before window=all event=adas_disengagement",
+      "path": "slm",
+      "model_line": "before adas_disengagement",
+      "ok": true,
+      "ms": 565.7803998328745
+    },
+    {
+      "id": "bef-4",
+      "q": "What preceded the takeover request?",
+      "gold": [
+        "events_before window=all event=adas_takeover_request"
+      ],
+      "pred": "events_before window=all event=adas_takeover_request",
+      "path": "slm",
+      "model_line": "before adas_takeover_request",
+      "ok": true,
+      "ms": 449.9131999909878
+    },
+    {
+      "id": "bef-5",
+      "q": "What was going on before the fault code appeared?",
+      "gold": [
+        "events_before window=all event=dtc"
+      ],
+      "pred": "events_before window=all event=dtc",
+      "path": "slm",
+      "model_line": "before dtc",
+      "ok": true,
+      "ms": 332.54539989866316
+    },
+    {
+      "id": "bef-6",
+      "q": "Events leading up to the last hard brake",
+      "gold": [
+        "events_before window=all event=hard_brake"
+      ],
+      "pred": "events_before window=all event=hard_brake",
+      "path": "slm",
+      "model_line": "before hard_brake",
+      "ok": true,
+      "ms": 363.5903999675065
+    },
+    {
+      "id": "bef-7",
+      "q": "What happened in the 20 minutes prior to the thermal warning?",
+      "gold": [
+        "events_before window=all event=thermal_any lookback=20m",
+        "events_before window=all event=battery_overheat_warning lookback=20m"
+      ],
+      "pred": "events_before window=all event=thermal_any lookback=20m",
+      "path": "slm",
+      "model_line": "before thermal_any",
+      "ok": true,
+      "ms": 460.981999989599
+    },
+    {
+      "id": "bef-8",
+      "q": "What triggered the battery overheating warning?",
+      "gold": [
+        "events_before window=all event=battery_overheat_warning"
+      ],
+      "pred": "events_before window=all event=battery_overheat_warning",
+      "path": "slm",
+      "model_line": "before battery_overheat_warning",
+      "ok": true,
+      "ms": 422.0894000027329
+    },
+    {
+      "id": "bef-9",
+      "q": "timeline before the battery overheat",
+      "gold": [
+        "events_before window=all event=battery_overheat_warning"
+      ],
+      "pred": "events_before window=all event=battery_overheat_warning",
+      "path": "slm",
+      "model_line": "before battery_overheat_warning",
+      "ok": true,
+      "ms": 401.0447000619024
+    },
+    {
+      "id": "bef-10",
+      "q": "what sequence of events came before the over-temperature fault",
+      "gold": [
+        "events_before window=all event=battery_overheat_warning",
+        "events_before window=all event=dtc"
+      ],
+      "pred": "events_before window=all event=battery_overheat_warning",
+      "path": "slm",
+      "model_line": "before battery_overheat_warning",
+      "ok": true,
+      "ms": 419.3165998440236
+    },
+    {
+      "id": "ano-1",
+      "q": "Is anything unusual with my car this month?",
+      "gold": [
+        "anomalies window=this_month"
+      ],
+      "pred": "anomalies window=this_month",
+      "path": "slm",
+      "model_line": "unusual",
+      "ok": true,
+      "ms": 286.80970007553697
+    },
+    {
+      "id": "ano-2",
+      "q": "Any anomalies in the last two weeks?",
+      "gold": [
+        "anomalies window=last_14d"
+      ],
+      "pred": "anomalies window=last_14d",
+      "path": "slm",
+      "model_line": "unusual",
+      "ok": true,
+      "ms": 284.78850005194545
+    },
+    {
+      "id": "ano-3",
+      "q": "Did the car behave abnormally last week?",
+      "gold": [
+        "anomalies window=last_week"
+      ],
+      "pred": "anomalies window=last_week",
+      "path": "slm",
+      "model_line": "unusual",
+      "ok": true,
+      "ms": 291.54139989987016
+    },
+    {
+      "id": "ano-4",
+      "q": "Is something wrong with my car?",
+      "gold": [
+        "anomalies window=last_30d"
+      ],
+      "pred": "anomalies window=last_30d",
+      "path": "slm",
+      "model_line": "unusual",
+      "ok": true,
+      "ms": 296.4524000417441
+    },
+    {
+      "id": "ano-5",
+      "q": "Find outlier trips from the past month",
+      "gold": [
+        "anomalies window=last_30d"
+      ],
+      "pred": "anomalies window=last_30d",
+      "path": "slm",
+      "model_line": "unusual",
+      "ok": true,
+      "ms": 281.8903001025319
+    },
+    {
+      "id": "ano-6",
+      "q": "Has anything strange happened in the last 10 days?",
+      "gold": [
+        "anomalies window=last_10d"
+      ],
+      "pred": "anomalies window=last_10d",
+      "path": "slm",
+      "model_line": "unusual",
+      "ok": true,
+      "ms": 408.1701999530196
+    },
+    {
+      "id": "ano-7",
+      "q": "Check for problems this week",
+      "gold": [
+        "anomalies window=this_week"
+      ],
+      "pred": "anomalies window=this_week",
+      "path": "slm",
+      "model_line": "unusual",
+      "ok": true,
+      "ms": 293.5077000875026
+    },
+    {
+      "id": "ano-8",
+      "q": "Any unusual energy use yesterday?",
+      "gold": [
+        "anomalies window=yesterday"
+      ],
+      "pred": "anomalies window=yesterday",
+      "path": "slm",
+      "model_line": "unusual",
+      "ok": true,
+      "ms": 284.90820014849305
+    },
+    {
+      "id": "trd-1",
+      "q": "How has my energy consumption changed over the past 2 months?",
+      "gold": [
+        "trend metric=energy_consumption window=last_60d"
+      ],
+      "pred": "trend metric=energy_consumption window=last_60d",
+      "path": "slm",
+      "model_line": "trend energy_consumption",
+      "ok": true,
+      "ms": 530.5135000962764
+    },
+    {
+      "id": "trd-2",
+      "q": "Show the battery temperature trend this month",
+      "gold": [
+        "trend metric=battery_temp window=this_month"
+      ],
+      "pred": "trend metric=battery_temp window=this_month",
+      "path": "slm",
+      "model_line": "trend battery_temp",
+      "ok": true,
+      "ms": 361.84919998049736
+    },
+    {
+      "id": "trd-3",
+      "q": "Plot my range over the last 30 days",
+      "gold": [
+        "trend metric=range window=last_30d"
+      ],
+      "pred": "trend metric=range window=last_30d",
+      "path": "slm",
+      "model_line": "trend range",
+      "ok": true,
+      "ms": 325.40139998309314
+    },
+    {
+      "id": "trd-4",
+      "q": "How has my efficiency evolved over the past year?",
+      "gold": [
+        "trend metric=energy_efficiency window=last_365d",
+        "trend metric=energy_efficiency window=all"
+      ],
+      "pred": "trend metric=energy_efficiency window=last_365d",
+      "path": "slm",
+      "model_line": "trend energy_efficiency",
+      "ok": true,
+      "ms": 414.4148000050336
+    },
+    {
+      "id": "trd-5",
+      "q": "Graph outside temperature for the last 3 weeks",
+      "gold": [
+        "trend metric=ambient_temp window=last_21d"
+      ],
+      "pred": "trend metric=ambient_temp window=last_21d",
+      "path": "slm",
+      "model_line": "trend ambient_temp",
+      "ok": true,
+      "ms": 376.88990007154644
+    },
+    {
+      "id": "trd-6",
+      "q": "How has my average speed changed this month?",
+      "gold": [
+        "trend metric=speed window=this_month"
+      ],
+      "pred": "trend metric=speed window=this_month",
+      "path": "slm",
+      "model_line": "trend speed",
+      "ok": true,
+      "ms": 330.4230000358075
+    },
+    {
+      "id": "trd-7",
+      "q": "trend of heating energy over the past month",
+      "gold": [
+        "trend metric=hvac_energy window=last_30d"
+      ],
+      "pred": "trend metric=hvac_energy window=last_30d",
+      "path": "slm",
+      "model_line": "trend hvac_energy",
+      "ok": true,
+      "ms": 422.3458000924438
+    },
+    {
+      "id": "trd-8",
+      "q": "Show my battery level over the last week",
+      "gold": [
+        "trend metric=soc window=last_7d"
+      ],
+      "pred": "trend metric=soc window=last_7d",
+      "path": "slm",
+      "model_line": "trend soc",
+      "ok": true,
+      "ms": 328.5158001817763
+    },
+    {
+      "id": "trd-9",
+      "q": "How did my fuel consumption change during the last 2 months?",
+      "gold": [
+        "trend metric=fuel_consumption window=last_60d"
+      ],
+      "pred": "trend metric=fuel_consumption window=last_60d",
+      "path": "slm",
+      "model_line": "trend fuel_consumption",
+      "ok": true,
+      "ms": 523.3437998685986
+    },
+    {
+      "id": "trd-10",
+      "q": "chart distance driven per day this month",
+      "gold": [
+        "trend metric=distance window=this_month"
+      ],
+      "pred": "trend metric=distance window=this_month",
+      "path": "slm",
+      "model_line": "trend distance",
+      "ok": true,
+      "ms": 331.0485000256449
+    },
+    {
+      "id": "trd-11",
+      "q": "Is my consumption getting better or worse over the last 6 weeks?",
+      "gold": [
+        "trend metric=energy_consumption window=last_42d"
+      ],
+      "pred": "trend metric=energy_consumption window=last_42d",
+      "path": "slm",
+      "model_line": "trend energy_consumption",
+      "ok": true,
+      "ms": 541.0188001114875
+    },
+    {
+      "id": "trd-12",
+      "q": "regen energy trend over the last 14 days",
+      "gold": [
+        "trend metric=regen_energy window=last_14d"
+      ],
+      "pred": "trend metric=regen_energy window=last_14d",
+      "path": "slm",
+      "model_line": "trend regen_energy",
+      "ok": true,
+      "ms": 422.76420001871884
+    },
+    {
+      "id": "sum-1",
+      "q": "How far did I drive last week?",
+      "gold": [
+        "summary metric=distance window=last_week"
+      ],
+      "pred": "summary metric=distance window=last_week",
+      "path": "slm",
+      "model_line": "total distance",
+      "ok": true,
+      "ms": 285.6813999824226
+    },
+    {
+      "id": "sum-2",
+      "q": "What was my average energy consumption this month?",
+      "gold": [
+        "summary metric=energy_consumption window=this_month"
+      ],
+      "pred": "summary metric=energy_consumption window=this_month",
+      "path": "slm",
+      "model_line": "total energy_consumption",
+      "ok": true,
+      "ms": 373.0952001642436
+    },
+    {
+      "id": "sum-3",
+      "q": "How much energy did I use yesterday?",
+      "gold": [
+        "summary metric=energy_used window=yesterday"
+      ],
+      "pred": "summary metric=energy_used window=yesterday",
+      "path": "slm",
+      "model_line": "total energy_used",
+      "ok": true,
+      "ms": 321.466299938038
+    },
+    {
+      "id": "sum-4",
+      "q": "What's my average speed over the last 7 days?",
+      "gold": [
+        "summary metric=speed window=last_7d"
+      ],
+      "pred": "summary metric=speed window=last_7d",
+      "path": "slm",
+      "model_line": "total speed",
+      "ok": true,
+      "ms": 399.2512000259012
+    },
+    {
+      "id": "sum-5",
+      "q": "How many trips did I take this week?",
+      "gold": [
+        "summary metric=trip_count window=this_week"
+      ],
+      "pred": "summary metric=trip_count window=this_week",
+      "path": "slm",
+      "model_line": "total trip_count",
+      "ok": true,
+      "ms": 333.91840010881424
+    },
+    {
+      "id": "sum-6",
+      "q": "Total distance in the past month?",
+      "gold": [
+        "summary metric=distance window=last_30d"
+      ],
+      "pred": "summary metric=distance window=last_30d",
+      "path": "slm",
+      "model_line": "total distance",
+      "ok": true,
+      "ms": 298.05250000208616
+    },
+    {
+      "id": "sum-7",
+      "q": "How much energy did regenerative braking recover last week?",
+      "gold": [
+        "summary metric=regen_energy window=last_week"
+      ],
+      "pred": "summary metric=regen_energy window=last_week",
+      "path": "slm",
+      "model_line": "total regen_energy",
+      "ok": true,
+      "ms": 366.8419001623988
+    },
+    {
+      "id": "sum-8",
+      "q": "What was my fuel consumption over the last 30 days?",
+      "gold": [
+        "summary metric=fuel_consumption window=last_30d"
+      ],
+      "pred": "summary metric=fuel_consumption window=last_30d",
+      "path": "slm",
+      "model_line": "total fuel_consumption",
+      "ok": true,
+      "ms": 484.0241000056267
+    },
+    {
+      "id": "sum-9",
+      "q": "How much did the heater use this week?",
+      "gold": [
+        "summary metric=hvac_energy window=this_week"
+      ],
+      "pred": "summary metric=hvac_energy window=this_week",
+      "path": "slm",
+      "model_line": "total hvac_energy",
+      "ok": true,
+      "ms": 368.2615999132395
+    },
+    {
+      "id": "sum-10",
+      "q": "What was the average outside temperature on my drives this month?",
+      "gold": [
+        "summary metric=ambient_temp window=this_month"
+      ],
+      "pred": "summary metric=ambient_temp window=this_month",
+      "path": "slm",
+      "model_line": "total ambient_temp",
+      "ok": true,
+      "ms": 440.21990010514855
+    },
+    {
+      "id": "sum-11",
+      "q": "How hot did the battery get yesterday?",
+      "gold": [
+        "summary metric=battery_temp window=yesterday"
+      ],
+      "pred": "summary metric=battery_temp window=yesterday",
+      "path": "slm",
+      "model_line": "total battery_temp",
+      "ok": true,
+      "ms": 338.9043998904526
+    },
+    {
+      "id": "sum-12",
+      "q": "How many hard brakes this month?",
+      "gold": [
+        "summary metric=hard_brakes window=this_month",
+        "list_events window=this_month event=hard_brake"
+      ],
+      "pred": "summary metric=hard_brakes window=this_month",
+      "path": "slm",
+      "model_line": "total hard_brakes",
+      "ok": true,
+      "ms": 362.4743998516351
+    },
+    {
+      "id": "sum-13",
+      "q": "What was my efficiency last week?",
+      "gold": [
+        "summary metric=energy_efficiency window=last_week"
+      ],
+      "pred": "summary metric=energy_efficiency window=last_week",
+      "path": "slm",
+      "model_line": "total energy_efficiency",
+      "ok": true,
+      "ms": 386.7613000329584
+    },
+    {
+      "id": "sum-14",
+      "q": "km driven today",
+      "gold": [
+        "summary metric=distance window=today"
+      ],
+      "pred": "summary metric=distance window=today",
+      "path": "slm",
+      "model_line": "total distance",
+      "ok": true,
+      "ms": 276.49879991076887
+    },
+    {
+      "id": "sum-15",
+      "q": "What range have I been getting over the last 7 days?",
+      "gold": [
+        "summary metric=range window=last_7d"
+      ],
+      "pred": "summary metric=range window=last_7d",
+      "path": "slm",
+      "model_line": "total range",
+      "ok": true,
+      "ms": 401.1083000805229
+    },
+    {
+      "id": "sts-1",
+      "q": "What's my battery level?",
+      "gold": [
+        "status"
+      ],
+      "pred": "status",
+      "path": "slm",
+      "model_line": "now",
+      "ok": true,
+      "ms": 244.8615999892354
+    },
+    {
+      "id": "sts-2",
+      "q": "How much range do I have right now?",
+      "gold": [
+        "status"
+      ],
+      "pred": "status",
+      "path": "slm",
+      "model_line": "now",
+      "ok": true,
+      "ms": 251.37259997427464
+    },
+    {
+      "id": "sts-3",
+      "q": "What is the current state of charge?",
+      "gold": [
+        "status"
+      ],
+      "pred": "status",
+      "path": "slm",
+      "model_line": "now",
+      "ok": true,
+      "ms": 243.4839999768883
+    },
+    {
+      "id": "sts-4",
+      "q": "Battery status please",
+      "gold": [
+        "status"
+      ],
+      "pred": "status",
+      "path": "slm",
+      "model_line": "now",
+      "ok": true,
+      "ms": 237.83710016869009
+    },
+    {
+      "id": "sts-5",
+      "q": "Is the battery warm at the moment?",
+      "gold": [
+        "status"
+      ],
+      "pred": "unsupported",
+      "path": "slm",
+      "model_line": "unsupported",
+      "ok": false,
+      "ms": 247.39220016635954
+    },
+    {
+      "id": "sts-6",
+      "q": "How's the car doing right now?",
+      "gold": [
+        "status"
+      ],
+      "pred": "status",
+      "path": "slm",
+      "model_line": "now",
+      "ok": true,
+      "ms": 249.33680007234216
+    },
+    {
+      "id": "oos-1",
+      "q": "Play some music",
+      "gold": [
+        "unsupported"
+      ],
+      "pred": "unsupported",
+      "path": "fast",
+      "model_line": null,
+      "ok": true,
+      "ms": 0.017700018361210823
+    },
+    {
+      "id": "oos-2",
+      "q": "What's the weather forecast for tomorrow?",
+      "gold": [
+        "unsupported"
+      ],
+      "pred": "unsupported",
+      "path": "slm",
+      "model_line": "unsupported",
+      "ok": true,
+      "ms": 245.00279990024865
+    },
+    {
+      "id": "oos-3",
+      "q": "Book a service appointment for next Monday",
+      "gold": [
+        "unsupported"
+      ],
+      "pred": "unsupported",
+      "path": "fast",
+      "model_line": null,
+      "ok": true,
+      "ms": 0.008800067007541656
+    },
+    {
+      "id": "oos-4",
+      "q": "Tell me a joke",
+      "gold": [
+        "unsupported"
+      ],
+      "pred": "unsupported",
+      "path": "slm",
+      "model_line": "unsupported",
+      "ok": true,
+      "ms": 240.15269987285137
+    },
+    {
+      "id": "oos-5",
+      "q": "Navigate to the nearest airport",
+      "gold": [
+        "unsupported"
+      ],
+      "pred": "unsupported",
+      "path": "fast",
+      "model_line": null,
+      "ok": true,
+      "ms": 0.00800006091594696
+    }
+  ],
+  "fast_accuracy": 1.0,
+  "fast_ms": {
+    "p50": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "slm_accuracy": 0.9915966386554622,
+  "slm_ms": {
+    "p50": 399.0,
+    "p95": 541.0,
+    "max": 578.7
+  },
+  "model": "edgecar-1.5b-q4_k_m.gguf",
+  "threads": 2
+}

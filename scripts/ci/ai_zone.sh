@@ -3,7 +3,7 @@
 set -euo pipefail
 CG="/sys/fs/cgroup$(cut -d: -f3 /proc/self/cgroup)"
 SERVER=tools/llama.cpp/llama-server
-MODEL=models/qwen2.5-1.5b-instruct-q4_k_m.gguf
+MODEL="${MODEL:-models/qwen2.5-1.5b-instruct-q4_k_m.gguf}"  # override to benchmark another model
 export LD_LIBRARY_PATH="$PWD/tools/llama.cpp${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}"
 echo "cgroup $CG · memory.max $(cat "$CG/memory.max") · cpus $(cat "$CG/cpuset.cpus.effective" 2> /dev/null || nproc)"
 

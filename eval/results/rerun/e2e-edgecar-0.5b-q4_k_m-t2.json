@@ -1,0 +1,1211 @@
+{
+  "machine": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel (10 cores)",
+  "threads": 2,
+  "profile": "edge",
+  "model": "edgecar-0.5b-q4_k_m.gguf",
+  "model_file_mb": 398,
+  "boot_s": 1.0,
+  "warmup_prompt_tokens": 36,
+  "questions": 192,
+  "peak_rss_mb": {
+    "llama_server": 499,
+    "assistant": 118,
+    "total": 617
+  },
+  "llama_server_private_mb": 162,
+  "latency_ms_fast": {
+    "n": 146,
+    "p50": 4.4,
+    "p95": 12.2,
+    "max": 15.0
+  },
+  "latency_ms_slm": {
+    "n": 38,
+    "p50": 204.7,
+    "p95": 294.6,
+    "max": 305.1
+  },
+  "latency_ms_unsupported": {
+    "n": 4,
+    "p50": 110.2,
+    "p95": 125.9,
+    "max": 119.4
+  },
+  "latency_ms_refused": {
+    "n": 3,
+    "p50": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "latency_ms_unavailable": {
+    "n": 1,
+    "p50": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "latency_ms_all": {
+    "p50": 5.8,
+    "p95": 252.8,
+    "max": 305.1,
+    "under_2s_pct": 100.0
+  },
+  "engine_ms": {
+    "p50": 4.2,
+    "p95": 12.0,
+    "max": 14.1
+  },
+  "rows": [
+    {
+      "q": "Why has my driving range reduced over the last two weeks?",
+      "path": "fast",
+      "total_ms": 10.422399966046214,
+      "engine_ms": 9.047900093719363
+    },
+    {
+      "q": "When did fuel efficiency show the largest drop?",
+      "path": "fast",
+      "total_ms": 15.022699953988194,
+      "engine_ms": 14.105699956417084
+    },
+    {
+      "q": "Show all ADAS disengagement events from yesterday.",
+      "path": "fast",
+      "total_ms": 7.922400021925569,
+      "engine_ms": 6.130299996584654
+    },
+    {
+      "q": "What happened before the battery overheating warning?",
+      "path": "fast",
+      "total_ms": 1.1959997937083244,
+      "engine_ms": 0.9820000268518925
+    },
+    {
+      "q": "Compare energy consumption between city and highway driving.",
+      "path": "fast",
+      "total_ms": 8.83050006814301,
+      "engine_ms": 8.530300110578537
+    },
+    {
+      "q": "Why is my range lower than it was a couple of weeks ago?",
+      "path": "fast",
+      "total_ms": 8.4349000826478,
+      "engine_ms": 8.26869998127222
+    },
+    {
+      "q": "What's making my range shrink this month?",
+      "path": "slm",
+      "total_ms": 156.47020004689693,
+      "engine_ms": 12.077299878001213
+    },
+    {
+      "q": "My estimated range dropped recently. Why?",
+      "path": "fast",
+      "total_ms": 7.666799938306212,
+      "engine_ms": 7.502299966290593
+    },
+    {
+      "q": "Why am I using more energy per km lately?",
+      "path": "slm",
+      "total_ms": 230.15049984678626,
+      "engine_ms": 8.505699923262
+    },
+    {
+      "q": "Explain the increase in my energy consumption over the past 3 weeks",
+      "path": "fast",
+      "total_ms": 7.834600051864982,
+      "engine_ms": 7.638600189238787
+    },
+    {
+      "q": "Why did my efficiency get worse last month?",
+      "path": "fast",
+      "total_ms": 8.102100109681487,
+      "engine_ms": 7.92550016194582
+    },
+    {
+      "q": "Why is the car less efficient this week?",
+      "path": "fast",
+      "total_ms": 8.047600043937564,
+      "engine_ms": 7.875399896875024
+    },
+    {
+      "q": "how come my range went down over the last 10 days",
+      "path": "fast",
+      "total_ms": 8.27490002848208,
+      "engine_ms": 8.11139983125031
+    },
+    {
+      "q": "reason for the drop in range in the past fortnight?",
+      "path": "fast",
+      "total_ms": 8.369100047275424,
+      "engine_ms": 8.19920003414154
+    },
+    {
+      "q": "What's causing the higher consumption over the last 30 days?",
+      "path": "fast",
+      "total_ms": 8.536699926480651,
+      "engine_ms": 8.340300060808659
+    },
+    {
+      "q": "why doesn't my battery last as long as it used to",
+      "path": "slm",
+      "total_ms": 189.37649996951222,
+      "engine_ms": 8.611799916252494
+    },
+    {
+      "q": "Why did my fuel economy fall this month?",
+      "path": "fast",
+      "total_ms": 11.788200121372938,
+      "engine_ms": 11.656700167804956
+    },
+    {
+      "q": "range dropped from 160 to 150 km, explain",
+      "path": "fast",
+      "total_ms": 7.958800066262484,
+      "engine_ms": 7.792799966409802
+    },
+    {
+      "q": "Why is my car consuming more power these days?",
+      "path": "fast",
+      "total_ms": 7.5628000777214766,
+      "engine_ms": 7.388400146737695
+    },
+    {
+      "q": "Which day had the largest drop in energy efficiency?",
+      "path": "fast",
+      "total_ms": 12.35489989630878,
+      "engine_ms": 12.187999906018376
+    },
+    {
+      "q": "When was my energy consumption highest?",
+      "path": "fast",
+      "total_ms": 3.056199988350272,
+      "engine_ms": 2.747899852693081
+    },
+    {
+      "q": "When did the battery temperature peak?",
+      "path": "fast",
+      "total_ms": 5.582799902185798,
+      "engine_ms": 5.407599965110421
+    },
+    {
+      "q": "What was the coldest day I drove?",
+      "path": "slm",
+      "total_ms": 203.23139987885952,
+      "engine_ms": 5.101399961858988
+    },
+    {
+      "q": "On which day did my range drop the most?",
+      "path": "fast",
+      "total_ms": 13.884600019082427,
+      "engine_ms": 13.722800184041262
+    },
+    {
+      "q": "When did my consumption spike the most this month?",
+      "path": "fast",
+      "total_ms": 2.7532000094652176,
+      "engine_ms": 2.5514999870210886
+    },
+    {
+      "q": "Which day did I drive the farthest?",
+      "path": "slm",
+      "total_ms": 176.24369985423982,
+      "engine_ms": 3.0487999320030212
+    },
+    {
+      "q": "When was my average speed the highest last month?",
+      "path": "fast",
+      "total_ms": 3.1466002110391855,
+      "engine_ms": 2.782499883323908
+    },
+    {
+      "q": "When was my fuel consumption at its peak?",
+      "path": "fast",
+      "total_ms": 2.937000012025237,
+      "engine_ms": 2.807500073686242
+    },
+    {
+      "q": "biggest efficiency drop in the last 2 months - when was it?",
+      "path": "fast",
+      "total_ms": 12.733599869534373,
+      "engine_ms": 12.569100130349398
+    },
+    {
+      "q": "When did I use the most heating?",
+      "path": "slm",
+      "total_ms": 243.63389983773232,
+      "engine_ms": 3.131499979645014
+    },
+    {
+      "q": "When was the battery level lowest this week?",
+      "path": "fast",
+      "total_ms": 2.629899885505438,
+      "engine_ms": 2.2960000205785036
+    },
+    {
+      "q": "What day had the most hard braking?",
+      "path": "slm",
+      "total_ms": 229.31859991513193,
+      "engine_ms": 3.0728999990969896
+    },
+    {
+      "q": "When did my mileage drop the most?",
+      "path": "fast",
+      "total_ms": 13.088500127196312,
+      "engine_ms": 12.9466000944376
+    },
+    {
+      "q": "which day saw the sharpest rise in energy use per km over the last 3 months",
+      "path": "fast",
+      "total_ms": 13.760600006207824,
+      "engine_ms": 13.540599960833788
+    },
+    {
+      "q": "City vs highway efficiency?",
+      "path": "fast",
+      "total_ms": 8.277500048279762,
+      "engine_ms": 8.123500039801002
+    },
+    {
+      "q": "Do I use more energy on the highway or in town?",
+      "path": "slm",
+      "total_ms": 305.0689999945462,
+      "engine_ms": 8.582399925217032
+    },
+    {
+      "q": "How does cold weather affect my consumption?",
+      "path": "slm",
+      "total_ms": 228.75960008241236,
+      "engine_ms": 3.831899957731366
+    },
+    {
+      "q": "Compare my efficiency in winter and summer",
+      "path": "fast",
+      "total_ms": 3.4483999479562044,
+      "engine_ms": 3.171500051394105
+    },
+    {
+      "q": "Is my energy use this week higher than last week?",
+      "path": "slm",
+      "total_ms": 293.9538999926299,
+      "engine_ms": 2.486600074917078
+    },
+    {
+      "q": "Compare this month's consumption with last month",
+      "path": "fast",
+      "total_ms": 2.3611998185515404,
+      "engine_ms": 2.0675999112427235
+    },
+    {
+      "q": "How much worse is my efficiency when it's freezing?",
+      "path": "fast",
+      "total_ms": 3.6317999474704266,
+      "engine_ms": 3.4065002109855413
+    },
+    {
+      "q": "fuel consumption highway versus city",
+      "path": "fast",
+      "total_ms": 8.427799912169576,
+      "engine_ms": 8.284199982881546
+    },
+    {
+      "q": "Does highway driving cost me more fuel than city driving?",
+      "path": "slm",
+      "total_ms": 282.30209997855127,
+      "engine_ms": 8.567800046876073
+    },
+    {
+      "q": "urban or motorway: which is more efficient for my car",
+      "path": "fast",
+      "total_ms": 7.79619999229908,
+      "engine_ms": 7.606400176882744
+    },
+    {
+      "q": "Compare consumption on freezing days vs warm days over the last 3 months",
+      "path": "fast",
+      "total_ms": 2.9492999892681837,
+      "engine_ms": 2.7432998176664114
+    },
+    {
+      "q": "how does temperature change my efficiency",
+      "path": "slm",
+      "total_ms": 228.50330010987818,
+      "engine_ms": 3.2862001098692417
+    },
+    {
+      "q": "Am I driving more efficiently than in the previous two weeks?",
+      "path": "slm",
+      "total_ms": 278.27410004101694,
+      "engine_ms": 2.725800033658743
+    },
+    {
+      "q": "Compare city and highway consumption this month",
+      "path": "fast",
+      "total_ms": 3.8614999502897263,
+      "engine_ms": 3.6746999248862267
+    },
+    {
+      "q": "List ADAS disengagements this week",
+      "path": "fast",
+      "total_ms": 2.491899998858571,
+      "engine_ms": 2.0910000894218683
+    },
+    {
+      "q": "Were there any takeover requests today?",
+      "path": "fast",
+      "total_ms": 2.056000055745244,
+      "engine_ms": 1.8825000151991844
+    },
+    {
+      "q": "Show me the fault codes from last month",
+      "path": "fast",
+      "total_ms": 5.5738999508321285,
+      "engine_ms": 5.377100082114339
+    },
+    {
+      "q": "Any DTCs in the past 7 days?",
+      "path": "fast",
+      "total_ms": 5.754300160333514,
+      "engine_ms": 5.574599839746952
+    },
+    {
+      "q": "Show my charging sessions this week",
+      "path": "fast",
+      "total_ms": 2.264099894091487,
+      "engine_ms": 2.049400005489588
+    },
+    {
+      "q": "How many hard braking events did I have yesterday?",
+      "path": "fast",
+      "total_ms": 4.989299923181534,
+      "engine_ms": 4.802099894732237
+    },
+    {
+      "q": "List all battery overheating warnings ever",
+      "path": "fast",
+      "total_ms": 6.128400098532438,
+      "engine_ms": 6.005899980664253
+    },
+    {
+      "q": "Did lane keeping switch off at any point today?",
+      "path": "fast",
+      "total_ms": 2.0343000069260597,
+      "engine_ms": 1.8140999600291252
+    },
+    {
+      "q": "Show ADAS events from last week",
+      "path": "fast",
+      "total_ms": 2.32190010137856,
+      "engine_ms": 2.1112998947501183
+    },
+    {
+      "q": "Any thermal warnings this month?",
+      "path": "fast",
+      "total_ms": 5.157100036740303,
+      "engine_ms": 4.955400014296174
+    },
+    {
+      "q": "Show the system log events from yesterday",
+      "path": "fast",
+      "total_ms": 4.144599894061685,
+      "engine_ms": 3.911500098183751
+    },
+    {
+      "q": "list every time adaptive cruise disengaged in the last 3 days",
+      "path": "fast",
+      "total_ms": 2.09650001488626,
+      "engine_ms": 1.8811998888850212
+    },
+    {
+      "q": "Show me everything that was logged today",
+      "path": "slm",
+      "total_ms": 160.50180001184344,
+      "engine_ms": 2.539900131523609
+    },
+    {
+      "q": "What diagnostic trouble codes were logged this week?",
+      "path": "fast",
+      "total_ms": 5.402500042691827,
+      "engine_ms": 5.16940001398325
+    },
+    {
+      "q": "Show takeover requests from the past month",
+      "path": "fast",
+      "total_ms": 2.1452000364661217,
+      "engine_ms": 1.9531999714672565
+    },
+    {
+      "q": "Did the car log any error codes yesterday?",
+      "path": "fast",
+      "total_ms": 4.113000119104981,
+      "engine_ms": 3.9059000555425882
+    },
+    {
+      "q": "when did I plug in to charge this month",
+      "path": "slm",
+      "total_ms": 155.39940004236996,
+      "engine_ms": 2.6750999968498945
+    },
+    {
+      "q": "were there any harsh braking moments in the last 2 weeks",
+      "path": "fast",
+      "total_ms": 2.2279999684542418,
+      "engine_ms": 2.0119999535381794
+    },
+    {
+      "q": "What led up to the overheating alert?",
+      "path": "fast",
+      "total_ms": 1.1526001617312431,
+      "engine_ms": 0.9691999293863773
+    },
+    {
+      "q": "Show me the 5 minutes before the battery overheat warning",
+      "path": "fast",
+      "total_ms": 1.0605999268591404,
+      "engine_ms": 0.9206000249832869
+    },
+    {
+      "q": "What happened right before the last ADAS disengagement?",
+      "path": "fast",
+      "total_ms": 11.406299890950322,
+      "engine_ms": 11.210599914193153
+    },
+    {
+      "q": "What preceded the takeover request?",
+      "path": "fast",
+      "total_ms": 5.876400042325258,
+      "engine_ms": 5.687400000169873
+    },
+    {
+      "q": "What was going on before the fault code appeared?",
+      "path": "fast",
+      "total_ms": 1.1084000580012798,
+      "engine_ms": 0.8852998726069927
+    },
+    {
+      "q": "Events leading up to the last hard brake",
+      "path": "fast",
+      "total_ms": 7.074099965393543,
+      "engine_ms": 6.90590008161962
+    },
+    {
+      "q": "What happened in the 20 minutes prior to the thermal warning?",
+      "path": "fast",
+      "total_ms": 1.1689001694321632,
+      "engine_ms": 0.9011998772621155
+    },
+    {
+      "q": "What triggered the battery overheating warning?",
+      "path": "fast",
+      "total_ms": 1.3254000805318356,
+      "engine_ms": 1.2128001544624567
+    },
+    {
+      "q": "timeline before the battery overheat",
+      "path": "fast",
+      "total_ms": 0.9693000465631485,
+      "engine_ms": 0.8666999638080597
+    },
+    {
+      "q": "what sequence of events came before the over-temperature fault",
+      "path": "fast",
+      "total_ms": 1.0679999832063913,
+      "engine_ms": 0.8654999546706676
+    },
+    {
+      "q": "Is anything unusual with my car this month?",
+      "path": "fast",
+      "total_ms": 7.843300001695752,
+      "engine_ms": 7.618000032380223
+    },
+    {
+      "q": "Any anomalies in the last two weeks?",
+      "path": "fast",
+      "total_ms": 7.738099899142981,
+      "engine_ms": 7.520399987697601
+    },
+    {
+      "q": "Did the car behave abnormally last week?",
+      "path": "slm",
+      "total_ms": 180.3790999110788,
+      "engine_ms": 9.000799851492047
+    },
+    {
+      "q": "Is something wrong with my car?",
+      "path": "fast",
+      "total_ms": 8.333400124683976,
+      "engine_ms": 8.090100018307567
+    },
+    {
+      "q": "Find outlier trips from the past month",
+      "path": "fast",
+      "total_ms": 8.229900151491165,
+      "engine_ms": 7.995800115168095
+    },
+    {
+      "q": "Has anything strange happened in the last 10 days?",
+      "path": "fast",
+      "total_ms": 7.517399964854121,
+      "engine_ms": 7.265200139954686
+    },
+    {
+      "q": "Check for problems this week",
+      "path": "slm",
+      "total_ms": 136.3631000276655,
+      "engine_ms": 9.302299935370684
+    },
+    {
+      "q": "Any unusual energy use yesterday?",
+      "path": "fast",
+      "total_ms": 7.630199892446399,
+      "engine_ms": 7.4674999341368675
+    },
+    {
+      "q": "How has my energy consumption changed over the past 2 months?",
+      "path": "fast",
+      "total_ms": 3.640499897301197,
+      "engine_ms": 3.4543999936431646
+    },
+    {
+      "q": "Show the battery temperature trend this month",
+      "path": "fast",
+      "total_ms": 2.5331000797450542,
+      "engine_ms": 2.356200013309717
+    },
+    {
+      "q": "Plot my range over the last 30 days",
+      "path": "fast",
+      "total_ms": 3.1782002188265324,
+      "engine_ms": 3.0428001191467047
+    },
+    {
+      "q": "How has my efficiency evolved over the past year?",
+      "path": "fast",
+      "total_ms": 3.5474998876452446,
+      "engine_ms": 3.3925999887287617
+    },
+    {
+      "q": "Graph outside temperature for the last 3 weeks",
+      "path": "fast",
+      "total_ms": 3.4167999401688576,
+      "engine_ms": 3.1873001717031
+    },
+    {
+      "q": "How has my average speed changed this month?",
+      "path": "fast",
+      "total_ms": 3.5266000777482986,
+      "engine_ms": 3.2244999893009663
+    },
+    {
+      "q": "trend of heating energy over the past month",
+      "path": "fast",
+      "total_ms": 3.3124000765383244,
+      "engine_ms": 3.108399920165539
+    },
+    {
+      "q": "Show my battery level over the last week",
+      "path": "slm",
+      "total_ms": 189.82030008919537,
+      "engine_ms": 3.7239999510347843
+    },
+    {
+      "q": "How did my fuel consumption change during the last 2 months?",
+      "path": "fast",
+      "total_ms": 3.5335998982191086,
+      "engine_ms": 3.3702999353408813
+    },
+    {
+      "q": "chart distance driven per day this month",
+      "path": "fast",
+      "total_ms": 2.6729998644441366,
+      "engine_ms": 2.433300018310547
+    },
+    {
+      "q": "Is my consumption getting better or worse over the last 6 weeks?",
+      "path": "slm",
+      "total_ms": 288.2914000656456,
+      "engine_ms": 4.19429992325604
+    },
+    {
+      "q": "regen energy trend over the last 14 days",
+      "path": "fast",
+      "total_ms": 2.9953999910503626,
+      "engine_ms": 2.7943002060055733
+    },
+    {
+      "q": "How far did I drive last week?",
+      "path": "fast",
+      "total_ms": 4.4392000418156385,
+      "engine_ms": 4.210100043565035
+    },
+    {
+      "q": "What was my average energy consumption this month?",
+      "path": "fast",
+      "total_ms": 4.551799967885017,
+      "engine_ms": 4.379599820822477
+    },
+    {
+      "q": "How much energy did I use yesterday?",
+      "path": "fast",
+      "total_ms": 3.588699968531728,
+      "engine_ms": 3.3882998395711184
+    },
+    {
+      "q": "What's my average speed over the last 7 days?",
+      "path": "fast",
+      "total_ms": 4.988400032743812,
+      "engine_ms": 4.7553000040352345
+    },
+    {
+      "q": "How many trips did I take this week?",
+      "path": "fast",
+      "total_ms": 4.510300001129508,
+      "engine_ms": 4.321299958974123
+    },
+    {
+      "q": "Total distance in the past month?",
+      "path": "fast",
+      "total_ms": 4.279900109395385,
+      "engine_ms": 4.072400042787194
+    },
+    {
+      "q": "How much energy did regenerative braking recover last week?",
+      "path": "fast",
+      "total_ms": 4.119399935007095,
+      "engine_ms": 3.907499834895134
+    },
+    {
+      "q": "What was my fuel consumption over the last 30 days?",
+      "path": "fast",
+      "total_ms": 4.483500029891729,
+      "engine_ms": 4.3467998038977385
+    },
+    {
+      "q": "How much did the heater use this week?",
+      "path": "fast",
+      "total_ms": 4.1680000722408295,
+      "engine_ms": 3.9929000195115805
+    },
+    {
+      "q": "What was the average outside temperature on my drives this month?",
+      "path": "fast",
+      "total_ms": 4.322399850934744,
+      "engine_ms": 4.056199919432402
+    },
+    {
+      "q": "How hot did the battery get yesterday?",
+      "path": "fast",
+      "total_ms": 3.8949998561292887,
+      "engine_ms": 3.6853000055998564
+    },
+    {
+      "q": "How many hard brakes this month?",
+      "path": "fast",
+      "total_ms": 1.954499864950776,
+      "engine_ms": 1.7977000679820776
+    },
+    {
+      "q": "What was my efficiency last week?",
+      "path": "fast",
+      "total_ms": 4.284099908545613,
+      "engine_ms": 4.145100014284253
+    },
+    {
+      "q": "km driven today",
+      "path": "slm",
+      "total_ms": 134.27760009653866,
+      "engine_ms": 5.919500021263957
+    },
+    {
+      "q": "What range have I been getting over the last 7 days?",
+      "path": "slm",
+      "total_ms": 177.91990004479885,
+      "engine_ms": 5.074900109320879
+    },
+    {
+      "q": "What's my battery level?",
+      "path": "fast",
+      "total_ms": 7.15159997344017,
+      "engine_ms": 6.9281000178307295
+    },
+    {
+      "q": "How much range do I have right now?",
+      "path": "fast",
+      "total_ms": 6.21100002899766,
+      "engine_ms": 6.063899956643581
+    },
+    {
+      "q": "What is the current state of charge?",
+      "path": "fast",
+      "total_ms": 6.133300019428134,
+      "engine_ms": 5.91449998319149
+    },
+    {
+      "q": "Battery status please",
+      "path": "slm",
+      "total_ms": 99.98119994997978,
+      "engine_ms": 7.270500063896179
+    },
+    {
+      "q": "Is the battery warm at the moment?",
+      "path": "fast",
+      "total_ms": 6.735699949786067,
+      "engine_ms": 6.5413000993430614
+    },
+    {
+      "q": "How's the car doing right now?",
+      "path": "fast",
+      "total_ms": 6.2015000730752945,
+      "engine_ms": 5.963200004771352
+    },
+    {
+      "q": "Play some music",
+      "path": "unavailable",
+      "total_ms": 0.016700010746717453,
+      "engine_ms": 0.0
+    },
+    {
+      "q": "What's the weather forecast for tomorrow?",
+      "path": "unsupported",
+      "total_ms": 119.39530004747212,
+      "engine_ms": 0.0
+    },
+    {
+      "q": "Book a service appointment for next Monday",
+      "path": "refused",
+      "total_ms": 0.0100000761449337,
+      "engine_ms": 0.0
+    },
+    {
+      "q": "Tell me a joke",
+      "path": "unsupported",
+      "total_ms": 99.38240004703403,
+      "engine_ms": 0.0
+    },
+    {
+      "q": "Navigate to the nearest airport",
+      "path": "refused",
+      "total_ms": 0.007899943739175797,
+      "engine_ms": 0.0
+    },
+    {
+      "q": "My range has gotten worse since the start of the month - what's behind it?",
+      "path": "slm",
+      "total_ms": 205.7281001470983,
+      "engine_ms": 7.7661999966949224
+    },
+    {
+      "q": "Why is my kWh per 100 km so high over the past 10 days?",
+      "path": "fast",
+      "total_ms": 7.261899998411536,
+      "engine_ms": 7.063800003379583
+    },
+    {
+      "q": "what caused the efficiency loss last week",
+      "path": "fast",
+      "total_ms": 7.05379992723465,
+      "engine_ms": 6.8783999886363745
+    },
+    {
+      "q": "explain why the estimated range is down compared to a few weeks ago",
+      "path": "fast",
+      "total_ms": 6.6939000971615314,
+      "engine_ms": 6.512099876999855
+    },
+    {
+      "q": "why has energy consumption gone up this week",
+      "path": "fast",
+      "total_ms": 7.11470004171133,
+      "engine_ms": 6.936900084838271
+    },
+    {
+      "q": "Service engineer here: why did this vehicle's consumption increase over the last 3 weeks?",
+      "path": "fast",
+      "total_ms": 6.974100135266781,
+      "engine_ms": 6.764399819076061
+    },
+    {
+      "q": "y is my range dropping lately",
+      "path": "slm",
+      "total_ms": 166.57910007052124,
+      "engine_ms": 4.344500135630369
+    },
+    {
+      "q": "What's the reason my efficiency went down this month?",
+      "path": "fast",
+      "total_ms": 10.158099932596087,
+      "engine_ms": 9.977699955925345
+    },
+    {
+      "q": "On what day was consumption the highest in the last 2 months?",
+      "path": "fast",
+      "total_ms": 2.8701000846922398,
+      "engine_ms": 2.67399987205863
+    },
+    {
+      "q": "When did my efficiency hit its lowest point?",
+      "path": "fast",
+      "total_ms": 2.723099896684289,
+      "engine_ms": 2.5577000342309475
+    },
+    {
+      "q": "which day was the battery the hottest this month",
+      "path": "slm",
+      "total_ms": 203.7547999061644,
+      "engine_ms": 3.1613998580724
+    },
+    {
+      "q": "When did range take the biggest hit?",
+      "path": "slm",
+      "total_ms": 197.0106998924166,
+      "engine_ms": 12.602800037711859
+    },
+    {
+      "q": "What was my longest driving day last month?",
+      "path": "slm",
+      "total_ms": 243.76740003935993,
+      "engine_ms": 2.9841000214219093
+    },
+    {
+      "q": "When was the biggest jump in fuel consumption?",
+      "path": "fast",
+      "total_ms": 12.842399999499321,
+      "engine_ms": 12.67970004118979
+    },
+    {
+      "q": "Which day had the warmest weather on my trips?",
+      "path": "slm",
+      "total_ms": 214.49089981615543,
+      "engine_ms": 5.1424999255687
+    },
+    {
+      "q": "When did my energy efficiency decline the most over the past 6 weeks?",
+      "path": "fast",
+      "total_ms": 11.60990004427731,
+      "engine_ms": 11.325400089845061
+    },
+    {
+      "q": "Is highway driving more efficient than city driving for me?",
+      "path": "slm",
+      "total_ms": 294.0071001648903,
+      "engine_ms": 8.34010005928576
+    },
+    {
+      "q": "Show me consumption in the city compared with the highway",
+      "path": "fast",
+      "total_ms": 9.07350005581975,
+      "engine_ms": 8.83920001797378
+    },
+    {
+      "q": "How much more energy do I use in winter than in summer?",
+      "path": "fast",
+      "total_ms": 3.214400028809905,
+      "engine_ms": 2.9104999266564846
+    },
+    {
+      "q": "compare fuel economy on cold and warm days",
+      "path": "fast",
+      "total_ms": 2.786400029435754,
+      "engine_ms": 2.6498001534491777
+    },
+    {
+      "q": "Is this month's efficiency better than last month's?",
+      "path": "slm",
+      "total_ms": 262.4556999653578,
+      "engine_ms": 2.4904999881982803
+    },
+    {
+      "q": "fleet manager: compare city vs motorway energy use over the past 30 days",
+      "path": "fast",
+      "total_ms": 5.034899804741144,
+      "engine_ms": 4.810799844563007
+    },
+    {
+      "q": "What difference does the outside temperature make to my consumption?",
+      "path": "slm",
+      "total_ms": 238.73040010221303,
+      "engine_ms": 3.656500019133091
+    },
+    {
+      "q": "Am I using less fuel this week compared to the previous week?",
+      "path": "fast",
+      "total_ms": 2.3134001530706882,
+      "engine_ms": 1.9470001570880413
+    },
+    {
+      "q": "Display the ADAS disengagements from today",
+      "path": "fast",
+      "total_ms": 2.075500087812543,
+      "engine_ms": 1.8853000365197659
+    },
+    {
+      "q": "Were there any trouble codes yesterday?",
+      "path": "fast",
+      "total_ms": 3.9534999523311853,
+      "engine_ms": 3.663599956780672
+    },
+    {
+      "q": "List the times the car requested a takeover this week",
+      "path": "slm",
+      "total_ms": 265.5205999035388,
+      "engine_ms": 2.2361997980624437
+    },
+    {
+      "q": "show me every charge from the last 2 weeks",
+      "path": "slm",
+      "total_ms": 154.0335000026971,
+      "engine_ms": 2.365600084885955
+    },
+    {
+      "q": "Did adaptive cruise cut out at any time yesterday?",
+      "path": "fast",
+      "total_ms": 5.289500113576651,
+      "engine_ms": 5.050100153312087
+    },
+    {
+      "q": "Give me all the DTCs from the past month",
+      "path": "fast",
+      "total_ms": 4.9397998955100775,
+      "engine_ms": 4.724999889731407
+    },
+    {
+      "q": "any overheating warnings in the last 10 days?",
+      "path": "fast",
+      "total_ms": 4.963699961081147,
+      "engine_ms": 4.786900011822581
+    },
+    {
+      "q": "what ADAS events happened this week",
+      "path": "fast",
+      "total_ms": 2.3264000192284584,
+      "engine_ms": 2.0961000118404627
+    },
+    {
+      "q": "Show me the hard braking events from last week",
+      "path": "fast",
+      "total_ms": 1.7870001029223204,
+      "engine_ms": 1.5978000592440367
+    },
+    {
+      "q": "Were there any battery temperature alerts this month?",
+      "path": "fast",
+      "total_ms": 5.483800079673529,
+      "engine_ms": 5.30409999191761
+    },
+    {
+      "q": "list system errors from today",
+      "path": "slm",
+      "total_ms": 161.425800062716,
+      "engine_ms": 5.4477001540362835
+    },
+    {
+      "q": "show lane keeping disengagements over the past 5 days",
+      "path": "fast",
+      "total_ms": 2.1271000150591135,
+      "engine_ms": 1.9060999620705843
+    },
+    {
+      "q": "What happened just before the overheat warning came on?",
+      "path": "fast",
+      "total_ms": 1.0918001644313335,
+      "engine_ms": 0.8914000354707241
+    },
+    {
+      "q": "Show the 15 minutes leading up to the battery overheating alert",
+      "path": "fast",
+      "total_ms": 0.996599905192852,
+      "engine_ms": 0.8426997810602188
+    },
+    {
+      "q": "what was happening before adaptive cruise disengaged",
+      "path": "fast",
+      "total_ms": 9.638099931180477,
+      "engine_ms": 9.450000012293458
+    },
+    {
+      "q": "What led to the takeover request?",
+      "path": "fast",
+      "total_ms": 5.687800003215671,
+      "engine_ms": 5.516399862244725
+    },
+    {
+      "q": "Which events preceded the DTC?",
+      "path": "fast",
+      "total_ms": 1.057199900969863,
+      "engine_ms": 0.8747000247240067
+    },
+    {
+      "q": "Reconstruct the sequence before the battery overheat warning",
+      "path": "fast",
+      "total_ms": 0.9869998320937157,
+      "engine_ms": 0.8587997872382402
+    },
+    {
+      "q": "what happened 30 minutes before the thermal alert",
+      "path": "fast",
+      "total_ms": 1.0764000471681356,
+      "engine_ms": 0.826000003144145
+    },
+    {
+      "q": "Has the car been behaving oddly this week?",
+      "path": "slm",
+      "total_ms": 162.66730008646846,
+      "engine_ms": 8.538800058886409
+    },
+    {
+      "q": "Spot any abnormal trips in the last 2 months",
+      "path": "fast",
+      "total_ms": 9.424400050193071,
+      "engine_ms": 9.164900053292513
+    },
+    {
+      "q": "Anything I should be worried about?",
+      "path": "slm",
+      "total_ms": 147.16649986803532,
+      "engine_ms": 8.656800026074052
+    },
+    {
+      "q": "Were there any anomalies yesterday?",
+      "path": "fast",
+      "total_ms": 7.030099863186479,
+      "engine_ms": 6.79180002771318
+    },
+    {
+      "q": "Is there any unusual battery behaviour this month?",
+      "path": "fast",
+      "total_ms": 7.43180001154542,
+      "engine_ms": 7.166799856349826
+    },
+    {
+      "q": "How has my range changed over the past 6 weeks?",
+      "path": "fast",
+      "total_ms": 3.5533998161554337,
+      "engine_ms": 3.393499879166484
+    },
+    {
+      "q": "Plot battery temperature over the last 10 days",
+      "path": "fast",
+      "total_ms": 2.657499862834811,
+      "engine_ms": 2.475599991157651
+    },
+    {
+      "q": "Show me how my efficiency has developed this month",
+      "path": "slm",
+      "total_ms": 247.6025999058038,
+      "engine_ms": 3.5701999440789223
+    },
+    {
+      "q": "graph my fuel consumption for the last 3 months",
+      "path": "fast",
+      "total_ms": 3.507999936118722,
+      "engine_ms": 3.355200169607997
+    },
+    {
+      "q": "Is my energy consumption trending up over the past 2 weeks?",
+      "path": "slm",
+      "total_ms": 272.2926998976618,
+      "engine_ms": 4.130299901589751
+    },
+    {
+      "q": "chart the outside temperature this month",
+      "path": "fast",
+      "total_ms": 2.9974000062793493,
+      "engine_ms": 2.7483999729156494
+    },
+    {
+      "q": "Trend of my daily distance over the last 30 days",
+      "path": "fast",
+      "total_ms": 3.002299927175045,
+      "engine_ms": 2.7489999774843454
+    },
+    {
+      "q": "How many kilometres did I drive this week?",
+      "path": "fast",
+      "total_ms": 4.280199995264411,
+      "engine_ms": 4.04500006698072
+    },
+    {
+      "q": "What was my average consumption yesterday?",
+      "path": "fast",
+      "total_ms": 3.5931000020354986,
+      "engine_ms": 3.432400058954954
+    },
+    {
+      "q": "How much energy went into heating last week?",
+      "path": "fast",
+      "total_ms": 4.0657001081854105,
+      "engine_ms": 3.8388001266866922
+    },
+    {
+      "q": "total kWh used over the last 14 days",
+      "path": "fast",
+      "total_ms": 3.8933001924306154,
+      "engine_ms": 3.6977999843657017
+    },
+    {
+      "q": "How many trips did I make yesterday?",
+      "path": "fast",
+      "total_ms": 3.0755000188946724,
+      "engine_ms": 2.8874999843537807
+    },
+    {
+      "q": "What's my average efficiency this month?",
+      "path": "fast",
+      "total_ms": 4.709600005298853,
+      "engine_ms": 4.56200004555285
+    },
+    {
+      "q": "How fast did I drive on average last week?",
+      "path": "fast",
+      "total_ms": 4.980500089004636,
+      "engine_ms": 4.758600145578384
+    },
+    {
+      "q": "How much regen energy did I get back today?",
+      "path": "fast",
+      "total_ms": 4.0114999283105135,
+      "engine_ms": 3.8282000459730625
+    },
+    {
+      "q": "What was my fuel economy over the past month?",
+      "path": "fast",
+      "total_ms": 4.080999875441194,
+      "engine_ms": 3.9596999995410442
+    },
+    {
+      "q": "How much battery is left?",
+      "path": "fast",
+      "total_ms": 6.9391001015901566,
+      "engine_ms": 6.738800089806318
+    },
+    {
+      "q": "what's my range at the moment",
+      "path": "fast",
+      "total_ms": 6.606600014492869,
+      "engine_ms": 6.451199995353818
+    },
+    {
+      "q": "Give me the current battery status",
+      "path": "fast",
+      "total_ms": 6.126800086349249,
+      "engine_ms": 5.906400037929416
+    },
+    {
+      "q": "Find me a coffee shop nearby",
+      "path": "unsupported",
+      "total_ms": 110.70120008662343,
+      "engine_ms": 0.0
+    },
+    {
+      "q": "Send a message to John saying I'm late",
+      "path": "refused",
+      "total_ms": 0.009799841791391373,
+      "engine_ms": 0.0
+    },
+    {
+      "q": "Who won the football match yesterday?",
+      "path": "unsupported",
+      "total_ms": 109.7478000447154,
+      "engine_ms": 0.0
+    }
+  ]
+}

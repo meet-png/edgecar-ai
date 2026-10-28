@@ -3,6 +3,7 @@ data/raw/
 data/processed/
 data/interim/
 data/cache/
+data/train/
 data/*.csv
 data/*.duckdb
 data/*.duckdb.wal
@@ -10,12 +11,17 @@ data/*.duckdb.wal
 # Model weights and third-party binaries (fetched, not committed)
 models/*.gguf
 models/*.bin
+models/*.json
+models/hf/
+models/tuned/
+models/voice/
 tools/
 
 # Python
 __pycache__/
 *.py[cod]
 .venv/
+.venv-train/
 venv/
 *.egg-info/
 .pytest_cache/
