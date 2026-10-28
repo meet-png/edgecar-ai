@@ -18,7 +18,7 @@ import pandas as pd
 
 from edgecar import diagnosis
 from edgecar.analytics.metrics import BEV_EQUIVALENT, METRICS, MetricSpec, fmt
-from edgecar.query import Query
+from edgecar.query import Query, TimeWindow
 from edgecar.store import Store
 from edgecar.store.db import CITY_MAX_KMH, HIGHWAY_MIN_KMH
 
@@ -362,12 +362,17 @@ class Engine:
         metric, spec = self._spec(q.metric)
         by = q.compare_by or "road_type"
         if by == "previous_period":
+            if q.window.kind == "all":  # "than before" with no period named: the last 30 days against the 30 before
+                q = q.model_copy(update={"window": TimeWindow(kind="last_days", days=30)})
             s, e = self._window(q)
             now_v, prev_v = self._value(metric, s, e), self._value(metric, s - (e - s), s)
             ch = _pct(now_v, prev_v) if now_v is not None and prev_v is not None else None
             headline = (
                 f"Your {spec.label} was {fmt(now_v, spec)} {q.window.phrase()}, compared with "
                 f"{fmt(prev_v, spec)} in the period before" + (f" ({ch:+.0f}%)." if ch is not None else ".")
+                if prev_v is not None
+                else f"Your {spec.label} was {fmt(now_v, spec)} {q.window.phrase()}; there is no data from the "
+                "period before to compare with."
             )
             return Result(
                 "compare",

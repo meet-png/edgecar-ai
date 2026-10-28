@@ -48,6 +48,17 @@ def test_compare_by_temperature(store):
     assert seg["10–20 °C"] == pytest.approx(14.0, rel=1e-3)
 
 
+def test_compare_with_before(store):
+    q = Query(intent="compare", metric="energy_consumption", compare_by="previous_period")
+    r = engine(store).run(q.model_copy(update={"window": TimeWindow(kind="last_days", days=14)}))
+    assert r.facts["current"] == pytest.approx(20.0, rel=1e-3)
+    assert r.facts["previous"] == pytest.approx(14.0, rel=1e-3)
+    # "than before" with no period named: the last 30 days against the 30 before, never all-time against nothing
+    r = engine(store).run(q.model_copy(update={"window": TimeWindow(kind="all")}))
+    assert r.window[1] - r.window[0] == pd.Timedelta(days=30)
+    assert "n/a" not in r.headline and "no data from the period before" in r.headline
+
+
 def test_fuel_question_on_bev_is_answered_in_energy_terms(store):
     r = engine(store).run(Query(intent="summary", metric="fuel_efficiency", window=TimeWindow(kind="all")))
     assert r.facts["metric"] == "energy_efficiency"
