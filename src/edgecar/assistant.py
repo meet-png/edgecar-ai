@@ -19,7 +19,7 @@ from edgecar.store import Store
 class Answer:
     question: str
     text: str
-    path: str  # "fast" | "slm" | "unsupported" (model declined) | "unparsed"
+    path: str  # "fast" | "slm" | declined: "refused" | "unavailable" | "unsupported" | "unparsed"
     command: str | None = None
     query: Query | None = None
     result: Result | None = None
@@ -31,6 +31,14 @@ class Answer:
 UNPARSED_REPLY = (
     "I can only answer questions about this vehicle's recorded data — range, energy or fuel use, battery temperature, "
     "charging, ADAS events or fault codes. For example: “Why has my range dropped over the last two weeks?”"
+)
+REFUSED_REPLY = (
+    "I can't control the car or change its settings: I only read its recorded data and have no way to send commands "
+    "to the vehicle. I can tell you what happened — for example, which fault codes are stored."
+)
+UNAVAILABLE_REPLY = (
+    "This car's data doesn't include {what}, so I can't answer that. I can help with range, energy or fuel use, "
+    "battery temperature, charging, ADAS events and fault codes."
 )
 
 
@@ -53,8 +61,14 @@ class Assistant:
         timings = dict(u.timings_ms)
         if u.query is None:
             timings["total"] = (time.perf_counter() - t0) * 1000
+            reply = {"refused": REFUSED_REPLY, "unavailable": UNAVAILABLE_REPLY.format(what=u.note)}
             return Answer(
-                question, UNPARSED_REPLY, u.path, timings_ms=timings, slm_tokens=u.tokens, model_line=u.model_line
+                question,
+                reply.get(u.path, UNPARSED_REPLY),
+                u.path,
+                timings_ms=timings,
+                slm_tokens=u.tokens,
+                model_line=u.model_line,
             )
         t1 = time.perf_counter()
         result = redact(self.engine.run(u.query), self.role)

@@ -9,7 +9,7 @@ import re
 import time
 from dataclasses import dataclass, field
 
-from edgecar.nlu import command, fastpath
+from edgecar.nlu import command, fastpath, guard
 from edgecar.nlu.slm import SlmParser
 from edgecar.query import Query
 
@@ -19,10 +19,13 @@ _LOOKBACK = re.compile(r"\b(\d{1,3})\s*(?:min|mins|minute|minutes)\b")
 @dataclass
 class Understanding:
     query: Query | None
-    path: str  # "fast" | "slm" | "unsupported" | "unparsed"
+    # "fast" | "slm" | declined: "refused" (asked to act) · "unavailable" (not in the vehicle data) ·
+    # "unsupported" (the model declined, or its command was not grounded in the question) · "unparsed"
+    path: str
     model_line: str | None = None
     timings_ms: dict[str, float] = field(default_factory=dict)
     tokens: dict[str, int] = field(default_factory=dict)
+    note: str | None = None  # what is not recorded, for "unavailable"
 
 
 def complete(fields: dict, question: str) -> Query:
@@ -37,6 +40,12 @@ def complete(fields: dict, question: str) -> Query:
 
 def understand(question: str, slm: SlmParser | None, *, use_fast: bool = True) -> Understanding:
     t0 = time.perf_counter()
+    if guard.action_request(question):
+        return Understanding(None, "refused", timings_ms={"fastpath": (time.perf_counter() - t0) * 1000})
+    if (missing := guard.not_recorded(question)) is not None:
+        return Understanding(
+            None, "unavailable", timings_ms={"fastpath": (time.perf_counter() - t0) * 1000}, note=missing
+        )
     fast = fastpath.parse(question) if use_fast else fastpath.FastResult(None, 0.0, "disabled")
     timings = {"fastpath": (time.perf_counter() - t0) * 1000}
     if fast.query is not None:
@@ -53,6 +62,6 @@ def understand(question: str, slm: SlmParser | None, *, use_fast: bool = True) -
         fields = command.parse_model(out.line)
     except ValueError:
         return Understanding(None, "unparsed", out.line, timings, tokens)
-    if fields is None:
+    if fields is None or not guard.grounded(question, fields):
         return Understanding(None, "unsupported", out.line, timings, tokens)
     return Understanding(complete(fields, question), "slm", out.line, timings, tokens)

@@ -42,7 +42,10 @@ def run(questions: list[dict], mode: str, slm: SlmParser | None) -> dict:
         u = understand(item["q"], slm if mode != "fast" else None, use_fast=mode != "slm")
         ms = (time.perf_counter() - t0) * 1000
         golds = [command.render(command.parse(g)) for g in item["gold"]]
-        path = {"fast": "fast", "slm": "slm", "unsupported": "slm"}.get(u.path, "none")
+        # declined by deterministic checks counts as the rules path; declined by or after the model as the model path
+        path = {"fast": "fast", "refused": "fast", "unavailable": "fast", "slm": "slm", "unsupported": "slm"}.get(
+            u.path, "none"
+        )
         pred = normalise(command.render(u.query), golds[0])
         rows.append(
             {

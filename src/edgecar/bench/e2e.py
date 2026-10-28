@@ -85,7 +85,7 @@ def main() -> None:
         },
         "llama_server_private_mb": round(server_private / 1e6) if server_private else None,
     }
-    for path in ("fast", "slm", "unsupported"):
+    for path in ("fast", "slm", "unsupported", "refused", "unavailable"):
         ms = [r["total_ms"] for r in rows if r["path"] == path]
         if ms:
             report[f"latency_ms_{path}"] = {
