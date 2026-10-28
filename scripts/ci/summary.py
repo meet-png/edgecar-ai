@@ -22,6 +22,7 @@ def load(name: str):
 cpu_txt = (d / "cpu.txt").read_text() if (d / "cpu.txt").exists() else ""
 cpu = re.search(r"Model name:\s*(.+)", cpu_txt)
 e2e, cold, held, cg = load("e2e.json"), load("coldstart.json"), load("heldout.json"), load("cgroup.json")
+refusal, brief = load("refusal.json"), load("brief.json")
 live = (d / "live.txt").read_text() if (d / "live.txt").exists() else ""
 commit = re.search(r"p50 ([\d.]+) ms · p95 ([\d.]+) ms", live)
 
@@ -37,6 +38,8 @@ summary = {
     "memory_limit_mb": cg.get("memory_max_mb"),
     "memory_peak_mb": cg.get("memory_peak_mb"),
     "sampled_peak_mb": cg.get("sampled_peak_mb"),
+    "system_mem_total_mb": cg.get("system_mem_total_mb"),
+    "system_used_peak_mb": cg.get("system_used_peak_mb"),
     "oom_kills": cg.get("memory_events", {}).get("oom_kill"),
     "limit_hits": cg.get("memory_events", {}).get("max"),
     "questions": e2e.get("questions"),
@@ -49,6 +52,8 @@ summary = {
     "model_next_boot_s": cold.get("model_next_boot", {}).get("ready_s"),
     "live_commit_ms": {"p50": float(commit.group(1)), "p95": float(commit.group(2))} if commit else None,
     "llama_bench_2_threads": bench,
+    "refusal_declined": f"{round(refusal['accuracy'] * refusal['n'])}/{refusal['n']}" if refusal else None,
+    "brief": [{k: r[k] for k in ("vehicle", "question", "route", "ms")} for r in brief] if brief else None,
 }
 (d / "summary.json").write_text(json.dumps(summary, indent=2))
 
@@ -63,6 +68,10 @@ rows = [
     ("Memory limit (whole AI zone, no swap)", f"{summary['memory_limit_mb']} MB"),
     ("Peak memory: kernel high-water mark", f"{summary['memory_peak_mb']} MB"),
     ("Peak memory: anonymous / page cache (sampled)", json.dumps(summary["sampled_peak_mb"])),
+    (
+        "Whole machine incl. OS: peak used / total",
+        f"{summary['system_used_peak_mb']} MB / {summary['system_mem_total_mb']} MB",
+    ),
     ("OOM kills · times the limit was hit", f"{summary['oom_kills']} · {summary['limit_hits']}"),
     ("Rules path (deterministic)", lat("fast")),
     ("Model path (Qwen2.5-1.5B, grammar-constrained)", lat("slm")),

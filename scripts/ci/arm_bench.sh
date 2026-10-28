@@ -17,9 +17,13 @@ for repack in 0 1; do
         > "$OUT/llama-bench-repack$repack.json" || echo "llama-bench (repack $repack) failed"
 done
 
+# LIMIT_MB=0: no artificial limit — on a real 2 GiB machine the hardware is the limit, operating system included
+LIMITS=(-p AllowedCPUs="$CPUS")
+if [ "$LIMIT_MB" != "0" ]; then LIMITS+=(-p MemoryMax="${LIMIT_MB}M" -p MemorySwapMax=0); fi
+
 sync && echo 3 | sudo tee /proc/sys/vm/drop_caches > /dev/null  # start cold: the model and the store come from disk
-sudo systemd-run --scope --quiet --unit="edgecar-ai-zone-$$" \
-    -p MemoryMax="${LIMIT_MB}M" -p MemorySwapMax=0 -p AllowedCPUs="$CPUS" \
+sudo systemd-run --scope --quiet --unit="edgecar-ai-zone-$$" "${LIMITS[@]}" \
     --uid="$(id -u)" --gid="$(id -g)" \
     -- /usr/bin/env PATH="$PATH" HOME="$HOME" OUT="$OUT" LIMIT_MB="$LIMIT_MB" \
+    RUN_BRIEF="${RUN_BRIEF:-0}" RUN_REFUSAL="${RUN_REFUSAL:-0}" \
     taskset -c "$CPUS" bash scripts/ci/ai_zone.sh

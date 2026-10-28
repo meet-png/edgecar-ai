@@ -20,6 +20,14 @@ python -m edgecar.bench.e2e --server "$SERVER" --model "$MODEL" --threads 2 --ou
 python -m edgecar.bench.nlu_eval --questions eval/test.jsonl --mode hybrid --server "$SERVER" --model "$MODEL" \
     --threads 2 --out "$OUT/heldout.json"
 
+if [ "${RUN_REFUSAL:-0}" = "1" ]; then
+    python -m edgecar.bench.nlu_eval --questions eval/refusal_test.jsonl --mode hybrid --server "$SERVER" \
+        --model "$MODEL" --threads 2 --out "$OUT/refusal.json"
+fi
+if [ "${RUN_BRIEF:-0}" = "1" ]; then  # the case study's questions on every demo car (needs the TU Munich i3 data)
+    edgecar brief --server "$SERVER" --model "$MODEL" --threads 2 --out "$OUT/brief.json"
+fi
+
 kill -TERM "$LIVE" && wait "$LIVE" || true
 kill -TERM "$SAMPLER" && wait "$SAMPLER" || true
 cat "$OUT/live.txt"
