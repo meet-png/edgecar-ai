@@ -127,12 +127,13 @@ def t(text, **opts):
 
 def load(results: Path) -> dict:
     j = lambda name: json.loads((results / name).read_text(encoding="utf-8"))  # noqa: E731
-    arm, held = j("arm/summary.json"), j("test-hybrid-qwen2.5-1.5b-instruct-q4_k_m.json")
+    # latency and memory from the real 2 GiB ARM machine (AWS t4g.small, Graviton2), the brief's questions too
+    edge, held = j("graviton/summary.json"), j("test-hybrid-qwen2.5-1.5b-instruct-q4_k_m.json")
     rc, store = j("rootcause.json")["summary"], j("storage.json")
     refusal, refusal_before = j("refusal-test-hybrid.json"), j("refusal-test-baseline-no-guard.json")
-    brief = {r["question"]: r for r in j("brief.json")}
+    brief = {r["question"]: r for r in j("graviton/brief.json")}
     return {
-        "arm": arm,
+        "edge": edge,
         "heldout": held["accuracy"],
         "rc": rc,
         "store_mb": store["whole_year_all_tiers_mb"],
@@ -260,7 +261,7 @@ def title_slide(s1) -> None:
 
 
 def content_slide(s, n: dict, qr_png: bytes) -> None:
-    arm, rc, b = n["arm"], n["rc"], n["brief"]
+    edge, rc, b = n["edge"], n["rc"], n["brief"]
     for shp in list(s.shapes):  # keep the logos and the title placeholder; drop the empty body placeholder
         if shp.is_placeholder and shp.placeholder_format.idx != 0:
             shp._element.getparent().remove(shp._element)
@@ -281,8 +282,7 @@ def content_slide(s, n: dict, qr_png: bytes) -> None:
         r.font.color.rgb = RGBColor.from_string(color)
         CONTRAST.append((text, color, WHITE))
 
-    slm, fast = arm["latency_ms"]["slm"], arm["latency_ms"]["fast"]
-    gb = lambda mb: f"{mb / 1024:.2f} GB"  # noqa: E731
+    slm, fast = edge["latency_ms"]["slm"], edge["latency_ms"]["fast"]
 
     # ---- left: where it runs and how data and questions flow -------------------------------------------------------
     box(
@@ -423,7 +423,7 @@ def content_slide(s, n: dict, qr_png: bytes) -> None:
         h,
         [
             [t(f"Rules · {fast['n'] / 192:.0%} of questions", size=11, bold=True, color=WHITE)],
-            [t(f"deterministic · p50 {fast['p50']:.0f} ms on ARM", size=10, color=WHITE)],
+            [t(f"deterministic · p50 {fast['p50']:.0f} ms on Graviton2", size=10, color=WHITE)],
         ],
         fill=BLUE,
     )
@@ -495,11 +495,10 @@ def content_slide(s, n: dict, qr_png: bytes) -> None:
     tiles = [
         (
             f"{slm['p95'] / 1000:.2f} s",
-            f"model-path p95, 2\u00a0ARM\u00a0cores · "
-            f"{arm['latency_ms']['all']['under_2s_pct']:.0f}% of answers <\u00a02\u00a0s",
+            f"model-path p95 on 2 Graviton2 cores · {edge['latency_ms']['all']['under_2s_pct']:.0f}% of answers < 2 s",
         ),
-        (gb(arm["memory_peak_mb"]), f"whole AI zone peak, hard limit {gb(arm['memory_limit_mb'])}"),
-        (f"{n['heldout']:.1%}", f"question → query, 70 held-out ({arm['heldout_accuracy']:.1%}\u00a0on\u00a0ARM)"),
+        ("2 GB", f"AWS t4g.small, OS included — no swap, {edge['oom_kills']} OOM"),
+        (f"{n['heldout']:.1%}", f"question → query, 70 held-out ({edge['heldout_accuracy']:.1%} on ARM)"),
         (
             rc["root_cause_correct"],
             f"root causes found in random fault tests (old rule {rc['earliest_fault_rule_correct'].split('/')[0]})",
@@ -561,7 +560,11 @@ def content_slide(s, n: dict, qr_png: bytes) -> None:
     table.horz_banding = False
     for i, width in enumerate((2.55, 0.95, rw - 2.55 - 0.95)):
         table.columns[i].width = Inches(width)
-    head = ["The brief's five questions · a paraphrase · a request", "Route · x86", "Answer — computed, not generated"]
+    head = [
+        "The brief's five questions · a paraphrase · a request",
+        "Route · Graviton2",
+        "Answer — computed, not generated",
+    ]
     for r_i, row in enumerate([head, *rows]):
         table.rows[r_i].height = Inches(0.27 if r_i == 0 else 0.38)
         for c_i, value in enumerate(row):

@@ -106,8 +106,8 @@ question → decline checks → rules (76 %) ───────────�
 | | Typical "LLM over the data" | EdgeCar AI |
 |---|---|---|
 | Who writes the numbers | The model reads rows and writes figures — they can be invented | The model writes a read-only query; code computes every figure |
-| Memory | Several GB (large model + long context) | 1.54 GB peak for the whole AI zone, measured |
-| Latency | Seconds per answer | Rules p50 6 ms; model path p95 1.35 s on 2 Arm cores |
+| Memory | Several GB (large model + long context) | Runs on a 2 GB AWS Graviton2 machine, OS included — measured |
+| Latency | Seconds per answer | Rules p50 10 ms; model path p95 1.89 s on 2 Graviton2 cores |
 | Can a prompt make the car act? | Depends on tool access | No: the output grammar contains only read-only commands, and there is no transmit path |
 
 ## 5. Root cause
@@ -137,25 +137,26 @@ wire.
 
 ## 7. Edge performance (measured)
 
-Arm Neoverse-N2 (GitHub's Arm64 runner, `.github/workflows/arm-bench.yml`), pinned to **2 cores**, the whole AI zone —
-live CAN/SOME/IP ingestion at real-time pace, DuckDB, the assistant and llama-server — in **one cgroup with a hard
-1.75 GB limit and no swap** (256 MB of a 2 GB budget left for the guest OS):
+Two Arm measurements, both with the whole AI zone — live CAN/SOME/IP ingestion at real-time pace, DuckDB, the
+assistant and llama-server — on **2 cores**, the page cache dropped first (memory in binary units: 1 GB = 1,024 MiB):
 
-| | Result (memory in binary units: 1 GB = 1,024 MiB) |
-|---|---|
-| Rules path (146 of 192 questions) | p50 5.7 ms · p95 16 ms |
-| Model path (34 questions) | p50 0.92 s · p95 1.35 s · max 1.35 s |
-| All 192 questions under 2 s | 100 % |
-| Peak memory, whole AI zone | 1.54 GB = 1,577 MiB (330 MiB anonymous; the rest is the memory-mapped model, which the kernel can page) · 0 OOM |
-| Ignition → first answer | 0.65 s (rules) · model ready in 0.8 s with the saved prompt cache, 57 s without |
-| Held-out accuracy on Arm | 94.3 % (one borderline answer flips between CPU architectures; 95.7 % on x86) |
+| | **AWS t4g.small** — 2 Graviton2 cores (Neoverse-N1, Cortex-A76 generation), 2 GiB in total, OS included, no swap | GitHub Arm64 runner — Neoverse-N2 pinned to 2 cores, AI zone in a 1.75 GB cgroup, every push |
+|---|---|---|
+| Rules path (146 of 192 questions) | p50 10 ms · p95 24 ms | p50 5.7 ms · p95 16 ms |
+| Model path (34 questions) | p50 1.46 s · p95 1.89 s · max 1.90 s | p50 0.92 s · p95 1.35 s · max 1.35 s |
+| All 192 questions under 2 s | 100 % | 100 % |
+| Memory | whole machine incl. OS: peak 670 MiB in use of 1,835 MiB; the AI zone 1,520 MiB of which 1,230 MiB is the memory-mapped model as page cache · 0 OOM | AI zone peak 1,577 MiB of the 1,792 MiB limit (330 MiB anonymous) · 0 OOM |
+| Ignition → first answer | 1.07 s (rules) · model ready 1.53 s with the saved prompt cache, 81 s without | 0.65 s · 0.77 s, 57 s without |
+| Held-out accuracy · refusal set | 94.3 % · 40/40 | 94.3 % |
+| Raw model throughput, 2 threads (llama-bench) | prompt 17.7 tok/s (30 with repacking) · generation 10.9 tok/s | prompt 34 tok/s (55–61) · generation 15 tok/s |
 
-**Slower cores.** The model path is bound by prompt processing (~34 tokens/s on two N2 cores without weight
-repacking). A Cortex-A76 (Raspberry Pi 5) is roughly half as fast per core and lacks the i8mm instructions, so the long
-tail would likely take 2–3 s or more there (an estimate, not a measurement).
-The levers, in order: weight repacking (1.6× faster prompt processing measured, +~0.6 GB), Qwen2.5-0.5B on the
-smallest tier (81.4 % hybrid accuracy), an NPU, or a LoRA-tuned smaller model. The common questions are unaffected:
-they never touch the model.
+Results: [eval/results/graviton](../eval/results/graviton/RUN.md) and [eval/results/arm](../eval/results/arm/RUN.md).
+One held-out answer flips between CPU architectures (94.3 % on Arm, 95.7 % on x86).
+
+**Headroom on the slowest tier.** On Graviton2 the long tail peaks at 1.90 s — inside the 2 s budget, but close. Prompt
+processing is the bottleneck; the levers, in order: weight repacking (1.7× faster prompt processing measured on N1,
+at ~0.6 GB more private memory), Qwen2.5-0.5B on the smallest tier (81.4 % hybrid accuracy), an NPU, or a LoRA-tuned
+smaller model. The common questions are unaffected: they never touch the model.
 
 ## 8. Security and privacy
 
@@ -180,7 +181,7 @@ prompt are vehicle-agnostic; the evaluation sets are re-run per vehicle; the res
 
 | Tier | Example hardware | Model | Status |
 |---|---|---|---|
-| Entry | 2 Arm cores, 2 GB (Graviton t4g.small, Pi 5 pinned to 2 cores) | Qwen2.5-1.5B Q4_K_M, CPU | Measured on Neoverse-N2 (section 7) |
+| Entry | 2 Arm cores, 2 GB (AWS t4g.small, Pi 5 pinned to 2 cores) | Qwen2.5-1.5B Q4_K_M, CPU | **Measured** on t4g.small (Graviton2) and Neoverse-N2 (section 7) |
 | Entry + NPU | Raspberry Pi 5 + AI HAT+ 2 (Hailo-10H, 8 GB on the HAT; Qwen2.5-1.5B-Instruct is in its model list) | Same model on the NPU — frees the host's RAM; independent tests found the Pi's CPU as fast for most LLMs, and the runtime must accept the output grammar (or the command is validated and retried) | Design |
 | Vehicle HPC | Automotive SoC with an NPU, several GB for the AI zone | 3–8B for multi-step questions: Qwen3-4B/8B or Qwen2.5-7B (Apache-2.0). Not Qwen2.5-3B: its licence is research-only | Design |
 

@@ -82,6 +82,9 @@ GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky h
 `pip install --default-timeout=120`. Windows `tar` (bsdtar 3.8) extracts `.7z`. Run analysis scripts with
 `python -P` (not `-I`: `-I` hides user site-packages where pandas deps live). ARM measurements run in CI on GitHub's
 free Arm64 runner (public repo): `gh workflow run arm-bench.yml`, results via `gh run download <id> -n arm-bench`.
+AWS: Meet's account (free plan, $100 credits, region ap-southeast-2). AWS CLI v2.39 installed (winget); credentials
+come from `aws login` (browser sign-in, temporary credentials, no access keys). Graviton runs use a throwaway
+t4g.small + key pair + IP-restricted security group, all deleted afterwards (`scripts/graviton/run.sh`).
 
 ## 8. Open items / blockers
 
@@ -95,8 +98,8 @@ free Arm64 runner (public repo): `gh workflow run arm-bench.yml`, results via `g
 
 1. Fresh evaluation sets written by people outside the project (paraphrases, refusals, ambiguous follow-ups).
    Known false refusal to include: "Has the battery been running hotter lately?" is declined (model + grounding).
-2. Measure on a Cortex-A76-class core (Pi 5 / Graviton2): estimate is 2–3 s+ for the model path; levers: weight
-   repacking (1.6× prompt speed measured, +~0.6 GB), Qwen2.5-0.5B for the entry tier, LoRA fine-tuning.
+2. Headroom on the slowest tier: Graviton2 model-path max is 1.90 s (budget 2 s). Levers: weight repacking (1.7×
+   prompt speed measured on N1, +~0.6 GB), Qwen2.5-0.5B for the entry tier, LoRA fine-tuning, an NPU.
 3. IVI-style UI with push-to-talk (on-device ASR), evidence cards; service-engineer timeline + export.
 4. DuckDB FTS over log text; camera perception metadata (object lists, visibility flags) + clip references.
 5. Weighted fault-propagation links (FMEA likelihoods); more fault families (charging, ADAS sensor degradation).
@@ -119,7 +122,13 @@ edgecar brief                                                     # the five bri
 
 ## Verified results (for the slide)
 
-**ARM** (Neoverse-N2, 2 cores, whole AI zone in a 1,792 MB cgroup, live ingestion running; CI run 40682528585,
+**AWS t4g.small** (2 Graviton2 cores = Neoverse-N1, 2 GiB total incl. OS, no swap, stock Ubuntu; files in
+`eval/results/graviton/`): 100 % of 192 < 2 s; rules p50 10 ms / p95 24 ms; model p50 1.46 s / p95 1.89 s / max
+1.90 s; brief questions 11–34 ms; whole machine peak 670 MiB in use of 1,835 MiB, 0 OOM (AI zone 1,520 MiB incl.
+1,230 MiB model page cache); ignition: rules 1.07 s, model 1.53 s restored vs 81.4 s; held-out 94.3 %, refusals 40/40;
+llama-bench pp 17.7 tok/s (30 repacked), tg 10.9. **The slide uses these numbers.**
+
+**ARM CI** (Neoverse-N2, 2 cores, whole AI zone in a 1,792 MB cgroup, live ingestion running; CI run 40682528585,
 files in `eval/results/arm/`): rules p50 5.7 ms / p95 16 ms; model p50 0.92 s / p95 1.35 s / max 1.35 s; 100 % of
 192 < 2 s; peak 1,577 MiB = 1.54 GB (anon 330 MiB) · 0 OOM; cold start: rules 0.65 s, model ready 0.77 s restored vs 56.7 s
 computed; held-out 94.3 %; live commit p50 40 ms; llama-bench 2 threads: pp 34 tok/s (repack 55–61), tg 15 (18).
@@ -154,7 +163,7 @@ plus slide-design notes. What was done:
 
 | # | Issue | Status |
 |---|---|---|
-| 1 | x86 numbers under "Measured, not claimed" | ✅ ARM64 in CI: 2 cores, 1.75 GB cgroup, rules vs model path, cold start |
+| 1 | x86 numbers under "Measured, not claimed" | ✅ **AWS t4g.small (Graviton2, 2 GiB incl. OS)** + Arm64 CI on every push: rules vs model path, cold start |
 | 2 | Range breakdown doesn't add up (−7 −5 ≠ −10) | ✅ engine reports the offsetting +2 km; answer and slide add up |
 | 3 | P0C73 can't explain an i3 battery overheat | ✅ fault chain P0534 → P0C32 → P0A7E (refrigerant-cooled pack) |
 | 4 | "Listen-only" vs UDS | ✅ passive decoding of the gateway's polls; gateway-side read-only poll list otherwise |
@@ -176,6 +185,16 @@ plus slide-design notes. What was done:
 ---
 
 ## Session log
+
+### 2026-10-28 — Session 3b: AWS Graviton2 (the reviewer's t4g.small)
+- Meet created an AWS account (free plan). AWS CLI installed; `aws login` (browser, temporary credentials).
+- First t4g.small: the llama.cpp arm64 build needs `libgomp1` (absent on the EC2 Ubuntu image) → benchmark died;
+  the 3-hour self-terminate safety net shut the idle instance down. Fixed `run.sh`, relaunched.
+- Second run (13 min): 100 % < 2 s, model-path p95 1.89 s / max 1.90 s, rules 10 ms, whole machine 670 MiB in use
+  incl. OS, 0 OOM, held-out 94.3 %, refusals 40/40, brief questions 11–34 ms. My earlier projection for A76-class
+  cores (2–3 s+) was too pessimistic; docs now carry the measurement.
+- Slide v6 switched to the Graviton numbers (1.89 s, 2 GB incl. OS, Graviton2 route times). Instance, volume, key
+  pair and security group deleted; nothing left in the account.
 
 ### 2026-10-28 — Session 3: acting on an external review of the R1 slide
 - Verified the review's claims before acting: P0C73 = motor-electronics coolant pump (inverter loop); the i3's pack is

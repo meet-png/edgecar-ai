@@ -24,7 +24,7 @@ only receives mirrored bus traffic and returns text. Built for the Tata Elxsi TE
 |---|---|---|
 | Who writes the numbers | The model reads rows and writes figures — they can be invented | A small model writes a 2–6-token, read-only command under a grammar; code computes every figure |
 | Common questions | Every question pays for the model | Deterministic rules answer 76 % of questions in milliseconds |
-| Memory | Several GB | 1.54 GB peak for the whole AI zone, measured on ARM |
+| Memory | Several GB | Runs on a 2 GB AWS Graviton2 machine, OS included (670 MiB in use at peak + the model in page cache) |
 | A prompt asking the car to act | Depends on tool access | Impossible: the grammar has no write commands and the zone has no transmit path |
 
 ```mermaid
@@ -47,17 +47,24 @@ Where it sits in a vehicle (hypervisor partitions, freedom from interference, ca
 
 ## Measured, not claimed
 
-**On ARM.** Arm Neoverse-N2, pinned to **2 cores**; the whole AI zone — live CAN/SOME/IP ingestion at real-time pace,
-DuckDB, the assistant and llama-server — in **one cgroup with a hard 1.75 GB limit and no swap**, on GitHub's free Arm64
-runner. Every push re-runs it ([workflow](.github/workflows/arm-bench.yml), results in [eval/results/arm](eval/results/arm)).
+**On a real 2 GB ARM machine.** AWS EC2 **t4g.small**: 2 Graviton2 cores (Arm Neoverse-N1, the Cortex-A76
+generation), **2 GiB of RAM in total, operating system included, no swap**, stock Ubuntu 24.04. The whole AI zone —
+live CAN/SOME/IP ingestion at real-time pace, DuckDB, the assistant and llama-server — ran on it
+([results and setup](eval/results/graviton/RUN.md), [`scripts/graviton/run.sh`](scripts/graviton/run.sh)).
 
 | | Result |
 |---|---|
-| Rules path (146 of 192 questions) | p50 **5.7 ms** · p95 16 ms |
-| Model path (34 questions) | p50 **0.92 s** · p95 1.35 s · max 1.35 s |
 | Questions answered in under 2 s | **100 %** of 192 |
-| Peak memory, whole AI zone | **1.54 GB** of 1.75 GB (0.32 GB anonymous; the rest is the memory-mapped model) · 0 OOM |
-| Ignition → first answer | 0.65 s (rules) · model ready in **0.8 s** from the saved prompt cache (57 s to compute it) |
+| Rules path (146 of 192 questions) | p50 **10 ms** · p95 24 ms |
+| Model path (34 questions) | p50 **1.46 s** · p95 1.89 s · max 1.90 s |
+| The case study's five example questions | 11–34 ms each, rules path ([brief.json](eval/results/graviton/brief.json)) |
+| Memory, whole machine incl. OS | peak **670 MiB** in use of 1,835 MiB; the model's 1.2 GB stays resident as page cache · 0 OOM |
+| Ignition → first answer | 1.1 s (rules) · model ready in **1.5 s** from the saved prompt cache (81 s to compute it) |
+| Held-out accuracy · refusal set | 94.3 % · 40/40 |
+
+**On every push.** GitHub's free Arm64 runner (Neoverse-N2, faster cores) pinned to 2 cores, the whole AI zone in
+one cgroup with a hard 1.75 GB limit ([workflow](.github/workflows/arm-bench.yml), [results](eval/results/arm)): rules
+p50 5.7 ms, model path p95 1.35 s, 100 % under 2 s, peak 1.54 GB (0.32 GB anonymous), model ready in 0.8 s.
 
 **Understanding** (rules + model, x86 laptop limited to 2 threads unless noted):
 
@@ -65,7 +72,7 @@ runner. Every push re-runs it ([workflow](.github/workflows/arm-bench.yml), resu
 |---|---|
 | Question → query accuracy, held-out set (70 questions never used to tune rules or prompt) | **95.7 %** (94.3 % on ARM: one borderline answer flips between CPU architectures) |
 | Control, injection, out-of-scope and missing-data requests declined (40, frozen set) | **40/40** — 29/40 before the decline checks, which were written after seeing those failures |
-| The case study's five example questions | 5/5, rules path, 5–16 ms ([eval/results/brief.json](eval/results/brief.json)) |
+| The case study's five example questions | 5/5 on the rules path ([x86](eval/results/brief.json), [Graviton2](eval/results/graviton/brief.json)) |
 
 The question sets were written by the author with an AI pair-programmer; the held-out set was written after the
 rules were frozen and never used to tune them. Its first run with the decline checks scored 92.9 %: it exposed two
@@ -80,7 +87,7 @@ checks. A fresh set from people outside the project is the next step.
 | Events recovered from wire traffic (QNX, UDS, CAN FD, SOME/IP, VHAL) across those scenarios | 2,409/2,409 |
 | One real car-year (52 weeks, 297 trips) on disk, all tiers | **5.5 MB**; 2.2 MB under the retention policy |
 | Any typical question over that whole year | 3.5–22 ms median |
-| Live ingestion: one second of bus traffic queryable in | p50 14 ms (x86) · 40 ms on ARM while the model is busy |
+| Live ingestion: one second of bus traffic queryable in | p50 14 ms (x86) · 77 ms on Graviton2 while the model is busy |
 
 ### Why Qwen2.5-1.5B
 
