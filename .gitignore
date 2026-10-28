@@ -2,6 +2,7 @@
 data/raw/
 data/processed/
 data/interim/
+data/cache/
 data/*.csv
 data/*.duckdb
 data/*.duckdb.wal
