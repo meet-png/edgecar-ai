@@ -8,17 +8,17 @@ done, what was decided and why, and what is next. Newest session at the top of t
 ## 1. Project in one paragraph
 
 EdgeCar AI is an offline, on-device assistant for software-defined vehicles. It ingests vehicle data
-(CAN/CAN-FD, SOME/IP, Android VHAL, QNX logs, ADAS events, diagnostics), keeps weeks of searchable
+(CAN/CAN-FD, SOME/IP, Android VHAL, QNX logs, ADAS events, diagnostics), keeps a year of searchable
 history on the vehicle, and answers natural-language questions ("Why has my range dropped over the last two
-weeks?") in under 2 s on ~2 GB RAM / 2 ARM cores. A small language model translates the question into a
-structured query; a deterministic analytics engine computes every number; the model only phrases the answer.
+weeks?") in under 2 s on ~2 GB RAM / 2 ARM cores. Deterministic rules answer the common questions; a small
+language model turns the rest into a read-only typed query; a deterministic analytics engine computes every number.
 
 Built for **Tata Elxsi TELIPORT Season 4 — Case Study 5** ("Natural Language Vehicle Information using
-On-Device SLM/LLM"), and maintained as a portfolio project.
+On-Device SLM/LLM"), and maintained as a portfolio project. Public: https://github.com/meet-png/edgecar-ai
 
 ## 2. Deadlines
 
-Team **"sidemen"** (registered, confirmed): Meet Kabra + Aditya Mishra, JECRC University. Meet builds solo.
+Team **"Sidemen"** (registered, confirmed): Meet Kabra + Aditya Mishra, JECRC University. Meet builds solo.
 The registration page shows the ongoing round deadline as **31 Oct 2026** — treat that as the hard deadline.
 
 | Round | What | Window |
@@ -41,31 +41,31 @@ Judged on: architecture completeness, AI capability (NL understanding + accuracy
 protocols), search & analytics (events, trends, anomalies, causes), edge performance (memory, latency,
 scalability), privacy & security, innovation & practicality.
 
-## 4. Key decisions (details in `docs/adr/`)
+## 4. Key decisions (details in `docs/adr/`; deployment in `docs/ARCHITECTURE.md`)
 
 | # | Decision | Why |
 |---|---|---|
-| ADR-0001 | SLM is a **semantic parser**, not an oracle. NL → typed query (grammar-constrained JSON) → deterministic analytics → SLM phrases the facts. Fast-path intent cache bypasses the SLM for common questions. | 2 s budget on 2 ARM cores allows only ~20–40 generated tokens; SLMs hallucinate numbers. |
-| ADR-0002 | **Real data first.** Replay real vehicle datasets as genuine protocol traffic; simulate only what has no public real source, with injected ground-truth scenarios. | Accuracy can be *measured* against known truth. |
-| ADR-0003 | **One embedded DuckDB file**, tiers: 1 Hz `frames` → `frames_1min` roll-ups → `trips` + `events` (lifetime). Memory/threads capped. | Window aggregations dominate; columnar + pre-computed trips = 2–13 ms queries. |
-| ADR-0004 | **Simulation sits on top of real trips, never alters them.** ADAS from real speed profiles + TD2D takeover stats; fault scenarios as labelled derived trips; seeded; `sim:*` provenance. | Ground truth for events without contaminating real energy/thermal data. |
-| ADR-0005 | **Hybrid NLU:** rules fast path → Qwen2.5-1.5B writes only a 2–6-token verb-aligned command (`why range`, `show dtc`) under a per-verb GBNF grammar → windows/minutes extracted by code. `edge` llama-server profile (`--no-repack`, ctx 2048). | JSON output: 48 % (1.5B). Verb format + deterministic slots: 82 % model-only, **95.7 % hybrid on held-out**; RSS 1.28 GB. |
+| ADR-0001 | SLM is a **semantic parser**, not an oracle: NL → typed read-only query → deterministic analytics. | SLMs invent numbers; 2 s on 2 ARM cores allows only a few generated tokens. |
+| ADR-0002 | **Real data first.** Replay real datasets as protocol traffic; simulate only what has no public source, with ground truth. | Accuracy can be *measured*. |
+| ADR-0003 | **One embedded DuckDB file**: 1 Hz `frames` → `frames_1min` → `trips` + `events`. | Window aggregations dominate; one car-year = 5.5 MB, queries 3–22 ms. |
+| ADR-0004 | **Simulation on top of real trips, never altering them.** Fault must fit the vehicle (i3: refrigerant-cooled → P0534 → P0C32 → P0A7E). | Ground truth without contaminating real data. |
+| ADR-0005 | **Hybrid NLU:** rules → Qwen2.5-1.5B writes a 2–6-token verb command under a GBNF grammar → windows by code; `edge` llama-server profile. | 95.7 % held-out (x86), 94.3 % on ARM; best of 6 models. |
+| ADR-0006 | **Every source through its wire protocol**; read-only by construction; UDS decoded passively from the gateway's own polls. | Data integration is real, not CSV rows. |
+| ADR-0007 | **Root cause = fault-propagation map + causal order**, measured on 200 random scenarios with decoys. | 197/200 vs 34/200 for "earliest fault". |
+| ADR-0008 | **Decline instead of guessing**: action guard, not-recorded catalogue, grounding check. | Refusal 29/40 → 40/40 with no loss in accuracy. |
 
-## 5. Datasets (full registry in `docs/DATASETS.md`)
+## 5. Datasets (full registry in `docs/DATASETS.md`; `python -m edgecar.prep.fetch all`)
 
 | Dataset | Real? | Status | Used for |
 |---|---|---|---|
-| VED (Ann Arbor, 383 vehicles, Nov 2017–Nov 2018) | Real | ✅ downloaded + extracted (54 weekly CSVs, 3.2 GB) | EV range/energy over a full year (Leaf **VehId 455**: 293 trips/191 days; VehId 10: 201 trips), PHEV fuel (VehId 457/550/569 have Fuel Rate), city vs highway |
-| TUM BMW i3 (72 trips, Jun 2019–Feb 2020, 10 Hz) | Real | ✅ downloaded (70 trip CSVs: 32 summer "A", 38 winter "B") | Battery temperature, heating power, summer-vs-winter range drop |
-| Nissan Leaf DBC (dalathegreat) | Real | ✅ downloaded (GPL-3.0 → fetched, never committed) | Encoding replayed signals as real CAN frames |
-| ADAS-TO longitudinal (HF, MIT) | Real | ⏳ access requested (manual approval) — not needed | ADAS takeovers |
-| BATON benchmark tables (GitHub LFS, CC BY-NC 4.0) | Real | ✅ 565 drives, 3,593 handovers (public GitHub LFS, no login) | ADAS episode/re-engagement timing |
-| TD2D (Zenodo, CC BY 4.0, CARLA L2 takeovers) | Simulated (CARLA) | ✅ 500 takeover files fetched via HTTP range requests (not the 16.7 GB zip) | Takeover reaction time (median 948 ms) + outcome (36 % fail) for ADAS sim |
-| NHTSA SGO Level-2 ADAS incident CSV | Real | ✅ downloaded (2,574 incidents) | ADAS incident priors / wording |
-| CA DMV disengagement reports | Real | ❌ L3+ only; pages 404 | — |
-| OpenLKA (Dropbox) | Real | ❌ Dropbox links return error page | — |
-| ADAS-TO full / BATON full | Real | ❌ manual gate + 40 GB+ | — |
-| DTC / SOME/IP / VHAL / QNX logs | — | No open real time-series exists → simulate to spec | — |
+| VED (Ann Arbor, Nov 2017–Nov 2018) | Real | ✅ fetched by script (2 × 7z from GitHub) | Leaf 455 / 010 year-long EV energy + range; PHEV 457 fuel |
+| TUM BMW i3 (70 trip CSVs) | Real | ✅ manual (IEEE login) | Battery temperature, heating, summer vs winter; base of fault scenarios |
+| Nissan Leaf DBC (dalathegreat, GPL) | Real | ✅ fetched, SHA-pinned | Real CAN encoding |
+| BATON benchmark tables (GitHub LFS, CC BY-NC) | Real | ✅ fetched, SHA-pinned | ADAS episode / re-engagement timing |
+| TD2D (Zenodo, CC BY 4.0, CARLA) | Simulated | ✅ 500-row table ships in `sim/calibration/` | Takeover reaction time + outcome |
+| NHTSA SGO L2 incidents | Real | ✅ | ADAS incident priors / wording |
+| ADAS-TO, OpenLKA, CA DMV | — | ❌ gated / dead / L3+ only | — |
+| DTC / SOME/IP / VHAL / QNX logs | — | Simulated to spec on real trips | — |
 
 ## 6. Prior art that shaped the design
 
@@ -73,117 +73,134 @@ scalability), privacy & security, innovation & practicality.
   pruned Phi-3 to 1.8B, < 2 GB RAM, ~11 tok/s on a 7-core ARM head unit, 0.86–0.88 function-calling accuracy
   after fine-tuning — validates "small model + structured output" and points to LoRA as the next step.
 - Arm, *Building an on-device multimodal assistant for automobiles*: pre-computing the system-prompt KV cache
-  gave a ~2× end-to-end speed-up — adopted via llama-server prompt caching.
+  gave a ~2× end-to-end speed-up — adopted via llama-server prompt caching, and now saved to disk for ignition.
 
 ## 7. Environment
 
 Windows 11, PowerShell + Git Bash. Python 3.11.9, Node 24, git, gh (logged in as `meet-png`, commits use the
 GitHub no-reply email). **No Docker, no WSL, no uv.** PyPI downloads are flaky here — use
 `pip install --default-timeout=120`. Windows `tar` (bsdtar 3.8) extracts `.7z`. Run analysis scripts with
-`python -P` (not `-I`: `-I` hides user site-packages where pandas deps live).
+`python -P` (not `-I`: `-I` hides user site-packages where pandas deps live). ARM measurements run in CI on GitHub's
+free Arm64 runner (public repo): `gh workflow run arm-bench.yml`, results via `gh run download <id> -n arm-bench`.
 
 ## 8. Open items / blockers
 
-- [x] ADAS-TO_longitudinal access requested (PENDING, manual). BATON-Sample **ACCEPTED** (2026-10-27).
-- [ ] Meet: save a Hugging Face **read** token to `C:\Users\ACER\.cache\huggingface\token` (never paste tokens in
-      chat) so scripts can fetch BATON-Sample CSVs only (the full sample is 92.8 GB, mostly video).
-- [x] Team details received (names + university only go on the slide; never store phone numbers).
-- [ ] Optional (R2): install WSL2 + Docker Desktop for the 2 GB / 2-CPU container benchmark.
-- [x] llama.cpp **b11577** approved by Meet and installed in `tools/llama.cpp/` (SHA-256 verified against the
-      GitHub release digest). Models in `models/` (SHA-256 verified against Hugging Face).
+- [x] Repo public (2026-10-28), topics set. Old history still contains removed competitor notes and a 6 MB VED extract
+      — rewrite only if Meet asks (force-push).
+- [ ] Meet: review `build/EdgeCar_TELIPORT_R1.pptx` (+ PDF) and upload on the portal **before 31 Oct**.
+- [ ] Optional: a 2-minute demo recording (screen capture of `edgecar brief`) linked from the README.
+- [ ] Teammate/outsiders: write a fresh paraphrase + refusal question set (the current sets are author-written).
 
-## 9. Next steps
+## 9. Next steps (R2, if shortlisted: 14 Nov → 13 Dec)
 
-1. ~~Wire ADAS sim + battery-overheat scenario~~ ✅ done (2026-10-27). BATON event tables fetched from the
-   **public GitHub repo's Git LFS** (no HF token needed). All 5 brief questions now answer from data.
-2. ~~Protocols~~ ✅ done (2026-10-27, ADR-0006): CAN (Leaf DBC), CAN FD (reference DBC), Android VHAL (AOSP IDs
-   verified), SOME/IP (pcap), UDS over ISO-TP, QNX slog2. Simulators emit wire traffic only; adapters create events.
-3. ✅ Encryption at rest (DuckDB AES-256-GCM, 0.44 vs 0.40 ms/query) + role privacy (driver/service/fleet).
-   ✅ Live ingestion (`python -m edgecar.ingest.live`): 7 days of Leaf traffic replayed message by message;
-   each 1 s batch queryable in p50 14 ms / p95 16 ms; 67× real time on 2 threads; CAN decode 268 k frames/s,
-   filter of unused IDs 16.7 M frames/s (a busy bus is ~2 k frames/s).
-   ✅ Model comparison (2026-10-28, `bench.models`): Qwen2.5-1.5B wins — 85.4 % model-only vs ≤ 50.5 % for
-   Qwen2.5-0.5B, Qwen3-0.6B, Llama-3.2-1B, Gemma-3-1B, SmolLM2-1.7B; hybrid held-out 95.7 %. Prompts now use each
-   model's own chat template (llama-server `/apply-template`). Table in README + ADR-0005.
-   ✅ Final e2e (2026-10-28): p50 6.1 ms · p95 549 ms · max 684 ms · 100 % < 2 s; RSS 1.28 GB. Redaction used
-   deepcopy (doubled analytics time) → shallow copy; analytics+redact p50 4.3 ms. 61 tests passing.
-3b. API + car-style dashboard (R2 unless time allows; slide can use an answer card).
-4. **R1 slide**: `python scripts/make_r1_slide.py --template "<Downloads>/Teliport S4_Submission Template.pptx"`
-   → `build/EdgeCar_TELIPORT_R1.pptx` (git-ignored; organiser's branding). v2 rendered and reviewed
-   2026-10-27: 3 columns (architecture · measured tiles · real answers) + footer. Numbers are read from
-   `eval/results/e2e-qwen1.5b-edge-t2.json` and `test-hybrid-qwen2.5-1.5b-instruct-q4_k_m.json` —
-   re-run both after the model comparison so they reflect the `/apply-template` prompt path.
-4. R1 slide in the official template (due 31 Oct); make repo public at submission.
-5. R2: LoRA fine-tune (maybe lets 0.5B replace 1.5B), ARM measurement (Graviton/QEMU), new held-out test v2,
-   BATON real ADAS data, Docker 2 GB container.
+1. Fresh evaluation sets written by people outside the project (paraphrases, refusals, ambiguous follow-ups).
+2. Measure on a Cortex-A76-class core (Pi 5 / Graviton2): estimate is 2–3 s+ for the model path; levers: weight
+   repacking (1.6× prompt speed measured, +~0.6 GB), Qwen2.5-0.5B for the entry tier, LoRA fine-tuning.
+3. IVI-style UI with push-to-talk (on-device ASR), evidence cards; service-engineer timeline + export.
+4. DuckDB FTS over log text; camera perception metadata (object lists, visibility flags) + clip references.
+5. Weighted fault-propagation links (FMEA likelihoods); more fault families (charging, ADAS sensor degradation).
+6. 10-slide R2 deck; demo video.
 
 ## How to reproduce the numbers
 
 ```bash
-python -m edgecar.prep.build                       # data/edgecar.duckdb from data/raw/*
-python -m pytest -q                                # 32 tests (engine ground-truth recovery, NLU)
+python -m edgecar.prep.fetch all                    # public datasets + model, SHA-256 pinned (TUM i3: manual)
+python -m edgecar.prep.build                        # data/edgecar.duckdb
+python -m pytest -q                                 # 82 tests
 python -m edgecar.bench.nlu_eval --questions eval/test.jsonl --mode hybrid \
-       --model models/qwen2.5-1.5b-instruct-q4_k_m.gguf      # held-out accuracy
-python -m edgecar.bench.e2e --threads 2 --profile edge     # latency + memory, all 192 questions
+       --model models/qwen2.5-1.5b-instruct-q4_k_m.gguf          # held-out accuracy (also refusal_test.jsonl)
+python -m edgecar.bench.e2e --threads 2                           # latency + memory, all 192 questions
+python -m edgecar.bench.coldstart --threads 2                     # ignition: rules / model, prefix computed vs restored
+python -m edgecar.bench.rootcause --seed 1000 --n 200             # root cause on random fault scenarios
+python -m edgecar.bench.storage                                   # tier sizes, retention, query latency over a year
+edgecar brief                                                     # the five brief questions, route + latency
 ```
 
-## Verified results so far (for the slide)
+## Verified results (for the slide)
 
-- Leaf (VED 455), last 14 days to 4 Nov 2018: range 161 → 151 km (−6 %); consumption 13.2 → 14.1 kWh/100 km;
-  top factors: colder air/battery/tyres (+0.6 kWh/100 km ≈ 7 km) and heating (+0.4 ≈ 5 km); 6.9 °C vs 10.8 °C.
-- Leaf worst efficiency day: Sun 7 Jan 2018, −14.2 °C, 2.77 vs typical 5.93 km/kWh (−53 %); heating
-  16.9 vs 9.6 kWh/100 km.
-- Leaf, all year: below 0 °C 21.2 kWh/100 km vs 10–20 °C 11.6 (+83 %); city 16.4 vs highway 15.3 kWh/100 km.
-- i3: highway 17.7 vs city 9.2 kWh/100 km; below 0 °C 19.7 vs 10–20 °C 10.1 kWh/100 km.
-- Store: 4 vehicles, 540 k frames, 814 trips, 1,176 detected events → 36 MB; build 20 s; queries 2–13 ms.
-- **NLU held-out (70 q, never tuned on): 95.7 % hybrid** (fast path 73 % coverage @ 98.0 %; SLM 89.5 % on the
-  rest). Dev set 93.4 %. Rules only 75.7 %; with Qwen2.5-0.5B 80.0 %.
-- **End-to-end, 192 questions, 2 threads, edge profile:** p50 6.5 ms, p95 573 ms, max 702 ms, 100 % < 2 s;
-  peak RSS 1.28 GB (llama-server 1,157 MB / 227 MB private + assistant 120 MB). Boot 12 s (prompt warm-up).
-- Machine: Intel Raptor Lake laptop (10 cores) limited to 2 threads — **not ARM yet**.
-- Engine unit test recovers injected factors exactly (heating +4.0, cold +2.0 kWh/100 km).
-- **Real CAN:** both Leafs reach the store as decoded Leaf CAN frames (860 k frames for Leaf 455, 9.8 s);
-  round trip within ½ LSB; VED data calibrates the DBC's uncertain heater scaling (250 W/bit, not 300).
-- **ADAS:** 6,037 simulated events timed from BATON's 3,593 real handovers (engaged 44 % vs 55 % real).
-- **Overheat answer (i3, Wed 24 Jul 2019):** "Likely root cause: coolant pump A PWM feedback lost at 13:11:00,
-  14.5 min before, confirmed by DTC P0C73" → rise-rate warning (CAN) → > 40 °C (BMS) → power derate (SOME/IP) →
-  driver warning 13:25:33 (VHAL); battery 32 → 55 °C at up to 3.7 °C/min.
-- Physics finding: a pump failure alone would only reach 35–38 °C on that trip → scenario adds a degraded cell
-  group (0.15 Ω) — documented in ADR-0004.
+**ARM** (Neoverse-N2, 2 cores, whole AI zone in a 1,792 MB cgroup, live ingestion running; CI run 40682528585,
+files in `eval/results/arm/`): rules p50 5.7 ms / p95 16 ms; model p50 0.92 s / p95 1.35 s / max 1.35 s; 100 % of
+192 < 2 s; peak 1,577 MB (anon 330 MB) · 0 OOM; cold start: rules 0.65 s, model ready 0.77 s restored vs 56.7 s
+computed; held-out 94.3 %; live commit p50 40 ms; llama-bench 2 threads: pp 34 tok/s (repack 55–61), tg 15 (18).
+
+**Accuracy:** held-out 95.7 % (x86; 92.9 % on the first run with the decline checks, see ADR-0008); dev 93.4 %;
+refusal test 40/40 (baseline 29/40); refusal dev 19/20.
+
+**Root cause:** 197/200 random scenarios (earliest-fault rule 34/200, map only 161/200); events recovered 2,409/2,409.
+
+**Brief questions** (`eval/results/brief.json`, x86 2 threads): all five on the rules path, 5–16 ms.
+- Range (Leaf 455, last 14 days to 4 Nov 2018): **161 → 151 km**; consumption 13.3 → 14.1 kWh/100 km; colder air,
+  battery and tyres ≈ −7 km; cabin heating ≈ −5 km; other factors offset ≈ +2 km (less stop-and-go; driving style).
+  The answer now adds up (the slide used to show −7 and −5 only).
+- Worst efficiency day (Leaf 455): Sun 7 Jan 2018, −14.2 °C, 2.77 vs typical 5.93 km/kWh (−53 %).
+- ADAS disengagements yesterday (PHEV 457): 7 events.
+- Overheat (i3, Wed 24 Jul 2019): root cause **P0534 A/C refrigerant charge loss**, first logged by QNX slog2 at
+  13:11:00, 14.5 min before the warning → P0C32 (BMS) → power derate (SOME/IP) → warning 13:25:33 (VHAL); 32 → 55 °C.
+- City vs highway (i3): 9.2 vs 17.7 kWh/100 km.
+
+**Storage:** one real car-year (Leaf 455, 52 weeks, 297 trips, 48 h of driving) = 5.5 MB (1 Hz 3.9, 1-min 0.8,
+trips+events 0.8); 2.2 MB under the retention policy; questions over the year 3.5–22 ms.
+
+**Six-model comparison** (x86, before the decline checks): Qwen2.5-1.5B 85.4 % model-only / 95.7 % hybrid; next best
+SmolLM2-1.7B 50.5 % / Gemma-3-1B 85.7 % hybrid. Licences: Qwen2.5-1.5B Apache-2.0; Qwen2.5-3B research-only.
+
+---
+
+## R1 external review (2026-10-28) — checklist
+
+An independent reviewer (another model, judging as a panel would) scored the R1 slide ~44/70 and listed 16 issues
+plus slide-design notes. What was done:
+
+| # | Issue | Status |
+|---|---|---|
+| 1 | x86 numbers under "Measured, not claimed" | ✅ ARM64 in CI: 2 cores, 1.75 GB cgroup, rules vs model path, cold start |
+| 2 | Range breakdown doesn't add up (−7 −5 ≠ −10) | ✅ engine reports the offsetting +2 km; answer and slide add up |
+| 3 | P0C73 can't explain an i3 battery overheat | ✅ fault chain P0534 → P0C32 → P0A7E (refrigerant-cooled pack) |
+| 4 | "Listen-only" vs UDS | ✅ passive decoding of the gateway's polls; gateway-side read-only poll list otherwise |
+| 5 | Root cause on one self-injected scenario | ✅ 200 random scenarios with distractors + decoys: 197/200 |
+| 6 | Query accuracy ≠ answer accuracy; refusals; who wrote the questions | ✅ refusal set 40/40 (29/40 before); authorship disclosed. Answer-level eval vs independent ground truth: R2 |
+| 7 | RAM figure leaves out OS, ingest, DB | ✅ whole AI zone 1.58 GB in a 1.75 GB cgroup, 256 MB left for the OS |
+| 8 | Hardware, OS, hypervisor, FFI | ✅ docs/ARCHITECTURE.md §1, slide |
+| 9 | Simulation missing from the architecture | ✅ replay & fault-injection block feeding the same interfaces |
+| 10 | Camera feeds | ✅ design: perception metadata + clip references, no raw video (ARCHITECTURE §2) |
+| 11 | Retention period | ✅ measured tiers, retention policy, power-loss test, erasure |
+| 12 | Time sync, internal links, search, no vector DB | ✅ ARCHITECTURE §2–3 |
+| 13 | User interaction design | ✅ driver / service / fleet / validation surfaces (ARCHITECTURE §6, slide) |
+| 14 | Validation teams, production rollout | ✅ ARCHITECTURE §6, §9 |
+| 15 | Security specifics | ✅ HSM/TEE key, secure boot, signed OTA incl. model, read-only by construction, DPDP/GDPR erasure |
+| 16 | Model comparison + scaling tiers + licences | ✅ README table with licences/sizes; tiers in ARCHITECTURE §10 |
+| — | Slide design (text size, hierarchy, contrast, fonts, links, QR, title) | ✅ redesigned (see session log) |
+| — | Demo video + QR | ⏳ optional — needs a screen recording |
 
 ---
 
 ## Session log
 
+### 2026-10-28 — Session 3: acting on an external review of the R1 slide
+- Verified the review's claims before acting: P0C73 = motor-electronics coolant pump (inverter loop); the i3's pack is
+  cooled directly by refrigerant; P0C32 = battery pack cooling system performance; P0534 = A/C refrigerant charge loss;
+  GitHub Arm64 runners are free for public repos (Cobalt 100 = Neoverse-N2); AI HAT+ 2 lists Qwen2.5-1.5B; Qwen2.5-3B
+  is research-licensed.
+- Fixed: range answer adds up (offsetting factors reported); overheat fault chain; **a real data bug** found while
+  testing the brief questions on every car — two TUM recordings include a charging session, giving −17.42 km/kWh;
+  standstill negative power is now charging, excluded from driving energy and reported as a charging event.
+- Cross-platform bug: TD2D glob order differs by OS → packaged, sorted TD2D table.
+- Built: `prep.fetch` (pinned, TD2D via HTTP range with 429 back-off), build without the gated i3 data, prompt-prefix
+  KV save/restore (ignition 57 s → 0.8 s on ARM), `bench.coldstart`, Arm64 CI workflow (cgroup, page cache dropped,
+  live ingestion at real-time pace), decline checks (`nlu/guard.py`), random fault scenarios + `bench.rootcause`,
+  fault-propagation map (`diagnosis.py`), `bench.storage`, `Store.wipe`, crash test, the `edgecar` CLI (pyproject
+  declared it but `cli.py` was missing), ARCHITECTURE.md, ADR-0007/0008.
+- Honest notes kept in the docs: refusal checks designed after seeing baseline failures; held-out set exposed two
+  vocabulary gaps (92.9 % → 95.7 % after generic fixes); ARM held-out 94.3 % (one answer flips between CPUs).
+
 ### 2026-10-28 — Session 2: closing gaps before the slide
-- Gap audit against the brief (protocols, live streaming, privacy, model rationale) → all closed except ARM
-  hardware measurement and a UI (R2).
-- Protocols on the wire (ADR-0006): CAN FD reference DBC, Android VHAL (AOSP IDs verified), SOME/IP pcap,
-  UDS over ISO-TP, QNX slog2. Simulators emit traffic only; adapters create events. Overheat scenario: 9/9.
-- Data quality: TUM overlapping trips A24/A31 excluded; plausibility ranges (i3 heater 39.9 kW, throttle > 100 %).
-- Encoder bugs caught by tests: 2-bit enum value 3 (OverTemp) read as "not available"; crash on out-of-range
-  values → reserved invalid value only for ≥ 4-bit non-enum fields; saturation.
-- Encryption at rest (DuckDB AES-256-GCM) + driver/service/fleet privacy roles; live ingestion (14 ms per 1 s batch).
-- Six-model comparison → Qwen2.5-1.5B confirmed. Final benchmarks re-run. R1 slide v2 generated and reviewed.
+- Gap audit against the brief → all closed except ARM hardware and a UI.
+- Protocols on the wire (ADR-0006); data quality (TUM overlaps, plausibility ranges); encoder bugs caught by tests.
+- Encryption at rest + privacy roles; live ingestion; six-model comparison; R1 slide v2; repo made public.
 
 ### 2026-10-27 — Session 1: brief, research, data acquisition
-- Read the case-study PDF and the R1 submission template; confirmed R1 = one content slide due 1 Nov.
-- Researched prior art: Mercedes-Benz in-vehicle SLM paper (arXiv 2501.02342: pruned
-  Phi-3 1.8B, <2 GB RAM, ~11 tok/s on 7-core ARM head unit), Arm on-device assistant blog (system-prompt KV
-  cache precompute ≈ 2× latency win), Pi 5 llama.cpp numbers (0.5B ≈ 17–20 tok/s, 1.5B ≈ 10–15 tok/s).
-- Downloaded + profiled VED, TUM BMW i3, Leaf DBCs. Found ADAS-TO/BATON gated, OpenLKA Dropbox dead.
-- Created repo skeleton, this log, dataset registry, first two ADRs. Pushed to private GitHub repo.
-- Fetched TD2D takeover files (500) via exact HTTP range requests; NHTSA SGO ADAS CSV.
-- Built: canonical schema, fleet, VED/TUM converters (1 Hz resample, despike), DuckDB store with trips/roll-ups,
-  real-signal event detectors (charging, hard braking, battery temperature), typed `Query`, analytics engine
-  (summary/trend/extreme/compare/explain_change/list_events/events_before/anomalies/status), ADAS simulator.
-- Data-quality fixes found by testing: TUM A10 max-battery-temp spike (60.9 °C) removed by despike;
-  sparse windows fall back to "last 8 trips vs 8 before"; PHEV fuel answers now report electric-only share.
-- Gotchas: pip to files.pythonhosted.org stalls (IPv6) but completes; Windows console needs
-  `PYTHONIOENCODING=utf-8`; pandas NaN must be converted to SQL NULL on insert.
-- NLU: fast path + llama-server SLM parser; eval harness (dev 122 q, held-out 70 q) and e2e benchmark.
-  Findings: Qwen2.5-0.5B few-shot too weak (24–33 %); JSON-ish output invites surface copying and arithmetic
-  errors → verb-aligned 2–6-token output + code-extracted windows. llama.cpp weight repacking costs ~630 MB
-  private RAM → `--no-repack` edge profile (accuracy unchanged, +~30 % latency).
-- Held-out failure modes (do NOT fix against test.jsonl; write test v2 first): "since the start of the month"
-  window, "biggest hit" → max not drop, bare "fuel" on the fast path.
+- Read the brief and template; researched prior art; downloaded and profiled VED, TUM, Leaf DBCs, BATON, TD2D, NHTSA.
+- Built the schema, converters, DuckDB store, detectors, typed query, analytics engine, ADAS simulator, NLU (rules +
+  llama-server SLM), eval harness (dev 122, held-out 70) and the e2e benchmark.
+- Findings: Qwen2.5-0.5B few-shot too weak; JSON output invites copying/arithmetic errors → verb format + code
+  windows; weight repacking costs ~630 MB private RAM → `--no-repack` edge profile.

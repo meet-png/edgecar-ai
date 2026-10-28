@@ -21,11 +21,13 @@ any of that: the ingestion layer must decode real encodings, and its behaviour m
    | CAN FD | EdgeCar reference DBC (64-byte frames; BMW's DBC is proprietary), candump `##` lines | i3 battery, thermal-warning level, powertrain |
    | Android VHAL | `VehiclePropValue` records with AOSP property IDs, units and enums (verified against AOSP source) | i3 speed (m/s), outside temperature; cluster warning (vendor property) |
    | SOME/IP | 16-byte AUTOSAR header, notifications, Wireshark-readable pcap | ADAS state changes; thermal-management power limit |
-   | UDS over ISO-TP | `ReadDTCInformation` 0x19/0x02 responses, SAE J2012 DTC encoding, single/multi-frame ISO-TP | P0C73, P0A93, P0A7E |
+   | UDS over ISO-TP | `ReadDTCInformation` 0x19/0x02 responses, SAE J2012 DTC encoding, single/multi-frame ISO-TP | P0534, P0C32, P0A7E, P0A7F (+ distractors U0155, U0121, P0562, P0C73) |
    | QNX slog2 | `slog2info` text records with slog2 severity levels | thermal manager and BMS logs |
 
-3. **Read-only by construction.** CAN interfaces are opened listen-only; UDS responses are decoded from the vehicle
-   diagnostic manager's own polling — EdgeCar never transmits a request; SOME/IP and VHAL are subscribe-only.
+3. **Read-only by construction.** CAN interfaces are opened listen-only; SOME/IP and VHAL are subscribe-only. UDS is
+   request/response, so somebody must ask: EdgeCar decodes the request/response pairs of the gateway's own
+   `ReadDTCInformation` polls, passively. A platform without such polling gets a read-only poll list (0x19, 0x22) in
+   the *gateway's* configuration; the AI zone never transmits.
 4. **Defensive decoding.** Every canonical signal has a physical plausibility range; out-of-range samples are dropped
    at ingestion. Encoders reserve the all-ones raw value for "not available" (except enumerations and fields under
    4 bits, where every value is meaningful) and saturate out-of-range readings at the field limits.

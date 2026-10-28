@@ -1,8 +1,9 @@
 # Dataset registry
 
 EdgeCar AI uses **real vehicle data wherever an open source exists**, and simulates only the channels for which
-no public real-world time series exists. Every dataset below is *fetched* by the user or by a script — none is
-redistributed in this repository (several licences forbid it or are unstated).
+no public real-world time series exists. Every dataset below is *fetched* from its source by `python -m
+edgecar.prep.fetch` (SHA-256 pinned where the source publishes a fixed file) or by hand — none is redistributed here
+(several licences forbid it or are unstated), except a 500-row table derived from TD2D (CC BY 4.0, attributed).
 
 Legend: ✅ in use · 🟡 evaluating · ⛔ access-gated · ❌ rejected
 
@@ -32,7 +33,10 @@ Legend: ✅ in use · 🟡 evaluating · ⛔ access-gated · ❌ rejected
 - **Used for:** battery thermal behaviour, heating load, summer-vs-winter consumption.
 - **Data-quality findings:** trips A24/A25 and A30/A31 overlap in time according to `Overview.xlsx` (A30 and A31
   share a start time) — the later trip of each pair is excluded; trip B02 contains heater readings up to 39.9 kW
-  (the heater peaks at ~7 kW) and 49 samples report throttle above 100 % — removed by plausibility ranges.
+  (the heater peaks at ~7 kW) and 49 samples report throttle above 100 % — removed by plausibility ranges. Two
+  recordings (8 Dec 2019, 2 Jan 2020) kept logging while the car was charging (state of charge 45 → 69 % within one
+  "trip"), which made their driving energy negative; standstill seconds with negative battery power are now excluded
+  from driving energy and reported as charging sessions (found 2026-10-28).
 - **Profiled (2026-10-27, trips > 5 km, distance-weighted, from `Overview.xlsx`):** summer (A, 30 trips,
   mean ambient 22.3 °C) **0.553 % SoC/km**; winter (B, 37 trips, mean ambient 3.9 °C) **0.749 % SoC/km** —
   ≈ 35 % more energy per km, ≈ 26 % less range. Caveat: route mix differs (summer mostly urban Munich East;
@@ -97,8 +101,10 @@ Legend: ✅ in use · 🟡 evaluating · ⛔ access-gated · ❌ rejected
   simulator, with takeover outcome, reaction time, NASA-TLX workload, physiological and eye-tracking data.
 - **Source:** <https://zenodo.org/records/14185964> · paper: *Scientific Data* (2025) s41597-025-04781-8
 - **Licence:** CC BY 4.0. The archive is a single 16.7 GB zip (98 % eye-tracking video); only the 500
-  `takeoverScenarioInformations.csv` files (< 200 kB in total) and `driverInformation.csv` are fetched, each with
-  one exact HTTP range request.
+  `takeoverScenarioInformations.csv` files (< 200 kB in total) and `driverInformation.csv` are read out of it with
+  HTTP range requests (`prep.fetch td2d`, with retries — Zenodo rate-limits bursts). The five columns used ship as
+  `src/edgecar/sim/calibration/td2d_takeovers.csv` (attributed), so builds and CI need no download and sample
+  identically on every platform.
 - **Profiled:** critical events = right pedestrian 174, front vehicle 171, left pedestrian 155. Reaction time
   median **948 ms** (IQR 796–1,208, range 515–2,000). Failure rate **36 %** overall: 14 % at baseline (median
   821 ms) vs. ~60 % under visual-manual distraction (texting 1,303 ms, gaming 1,190 ms, e-book 1,169 ms).

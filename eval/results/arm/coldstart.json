@@ -1,0 +1,22 @@
+{
+  "machine": "aarch64",
+  "threads": 2,
+  "drop_caches": false,
+  "rules_first_answer_s": 0.65,
+  "rules_first_answer": "Your distance driven last week was 31 km. That is 44% lower than the previous period (55 km).",
+  "model_first_boot": {
+    "prefix": "computed",
+    "model_loaded_s": 3.27,
+    "ready_s": 56.65,
+    "first_parse_ms": 523.5,
+    "first_parse_prompt_tokens": 10
+  },
+  "model_next_boot": {
+    "prefix": "restored",
+    "model_loaded_s": 0.75,
+    "ready_s": 0.77,
+    "first_parse_ms": 541.6,
+    "first_parse_prompt_tokens": 10
+  },
+  "saved_prefix_kv_mb": 34.1
+}
