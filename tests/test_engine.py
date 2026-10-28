@@ -30,6 +30,10 @@ def test_explain_change_recovers_injected_factors(store):
     assert factors["Colder air, battery and tyres"] == pytest.approx(2.0, abs=0.01)
     assert sum(factors.values()) == pytest.approx(6.0, abs=0.01)
     assert "fell" in r.headline
+    # what the answer displays adds up: shown change = shown top factors + "other factors"
+    shown_change = round(r.facts["range_after_km"]) - round(r.facts["range_before_km"])
+    shown_top = sum(round(f["delta_range_km"]) for f in r.facts["top_factors"])
+    assert shown_top + r.facts["other_shown"] == shown_change
 
 
 def test_compare_by_temperature(store):
@@ -59,9 +63,9 @@ def test_events_before_finds_root_cause_and_drops_unrelated_events(store):
     r = engine(store).run(Query(intent="events_before", event="battery_overheat_warning", lookback_min=15))
     assert r.facts["anchor_code"] == "BATT_OVERTEMP_WARNING"
     assert r.evidence == ["e2", "e1"]  # the ADAS event (e3) is unrelated to a thermal warning
-    assert r.facts["root_cause_code"] == "P0C73"
+    assert r.facts["root_cause_code"] == "P0534"
     assert r.facts["root_cause_lead_min"] == pytest.approx(10.0)
-    assert r.details[0].startswith("Likely root cause: Coolant pump A control fault")
+    assert r.details[0].startswith("Likely root cause: DTC P0534 — A/C refrigerant charge loss")
 
 
 def test_list_events_explains_an_empty_period(store):

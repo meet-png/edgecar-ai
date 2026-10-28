@@ -96,6 +96,9 @@ CREATE OR REPLACE VIEW frames_energy AS SELECT * FROM frames WHERE provenance NO
 CITY_MAX_KMH = 50.0
 HIGHWAY_MIN_KMH = 80.0
 HARD_BRAKE_MPS2 = -3.0
+# At a standstill a battery can only gain energy from a charger, never from regenerative braking. Such seconds are
+# a charging session the logger kept recording (seen in real TUM trips) and are left out of driving energy.
+CHARGING_KW = -1.0
 
 
 KEY_ENV = "EDGECAR_DB_KEY"  # on the vehicle: released by the secure element / Android Keystore, never stored on disk
@@ -174,7 +177,8 @@ class Store:
                 SELECT *,
                        coalesce(accel_mps2,
                                 (speed_kmh - lag(speed_kmh) OVER w) / 3.6) AS a,
-                       CASE WHEN speed_kmh < 1 AND lag(speed_kmh) OVER w >= 1 THEN 1 ELSE 0 END AS stop_start
+                       CASE WHEN speed_kmh < 1 AND lag(speed_kmh) OVER w >= 1 THEN 1 ELSE 0 END AS stop_start,
+                       coalesce(speed_kmh < 1 AND batt_power_kw < {CHARGING_KW}, FALSE) AS charging
                 FROM frames {where}
                 WINDOW w AS (PARTITION BY trip_id ORDER BY ts)
             ),
@@ -191,12 +195,14 @@ class Store:
                 min(ts), max(ts),
                 date_diff('second', min(ts), max(ts)) / 60.0,
                 sum(speed_kmh) / 3600.0                                        AS distance_km,
-                sum(batt_power_kw) / 3600.0                                    AS energy_kwh,
-                100.0 * sum(batt_power_kw) / nullif(sum(speed_kmh), 0)         AS kwh_per_100km,
-                (sum(batt_power_kw) - coalesce(sum(hvac_heater_kw), 0) - coalesce(sum(hvac_ac_kw), 0)) / 3600.0,
-                coalesce(sum(hvac_heater_kw), 0) / 3600.0,
-                coalesce(sum(hvac_ac_kw), 0) / 3600.0,
-                -sum(least(batt_power_kw, 0)) / 3600.0,
+                sum(batt_power_kw) FILTER (WHERE NOT charging) / 3600.0       AS energy_kwh,
+                100.0 * sum(batt_power_kw) FILTER (WHERE NOT charging) / nullif(sum(speed_kmh), 0),
+                (sum(batt_power_kw) FILTER (WHERE NOT charging)
+                 - coalesce(sum(hvac_heater_kw) FILTER (WHERE NOT charging), 0)
+                 - coalesce(sum(hvac_ac_kw) FILTER (WHERE NOT charging), 0)) / 3600.0,
+                coalesce(sum(hvac_heater_kw) FILTER (WHERE NOT charging), 0) / 3600.0,
+                coalesce(sum(hvac_ac_kw) FILTER (WHERE NOT charging), 0) / 3600.0,
+                -sum(least(batt_power_kw, 0)) FILTER (WHERE NOT charging) / 3600.0,
                 arg_min(soc_pct, ts) FILTER (WHERE soc_pct IS NOT NULL),
                 arg_max(soc_pct, ts) FILTER (WHERE soc_pct IS NOT NULL),
                 avg(speed_kmh),

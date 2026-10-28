@@ -151,7 +151,10 @@ class Engine:
                 f"AND ts >= ? AND ts < ? GROUP BY day ORDER BY day"
             )
             params = [self.vehicle_id, start, end]
-        return self.store.sql(sql, params).dropna(subset=["v"])
+        daily = self.store.sql(sql, params).dropna(subset=["v"])
+        if metric in RATIO_METRICS:  # a consumption or efficiency figure is positive; anything else is a data fault
+            daily = daily[daily["v"] > 0]
+        return daily
 
     def _window(self, q: Query) -> tuple[datetime, datetime]:
         return q.window.resolve(self.now)
@@ -588,6 +591,25 @@ class Engine:
         for r in top:
             extra = f", ≈ {abs(r['delta_range_km']):.0f} km of range" if "delta_range_km" in r else ""
             details.append(f"{r['factor']}: {r['delta_kwh_100km']:+.1f} kWh/100 km{extra}.")
+        # The remaining factors, computed from the *displayed* (rounded) numbers so the answer always adds up.
+        in_range = metric == "range" and capacity and all("delta_range_km" in r for r in top)
+        if in_range:
+            other = round(r_b) - round(r_a) - sum(round(r["delta_range_km"]) for r in top)
+            change, amount = round(r_b) - round(r_a), f"{abs(other):.0f} km of range"
+        else:
+            other = round(round(sb["c"], 1) - round(sa["c"], 1) - sum(round(r["delta_kwh_100km"], 1) for r in top), 1)
+            change, amount = d_total, f"{abs(other):.1f} kWh/100 km"
+        rest = [r for r in table if r not in top]
+        if other and rest:
+            # in range terms a factor's sign is flipped: more consumption, less range
+            sign = (lambda r: -r["delta_kwh_100km"]) if in_range else (lambda r: r["delta_kwh_100km"])
+            names = [
+                (n := r["factor"].removeprefix("Other (").removesuffix(")"))[0].lower() + n[1:]
+                for r in sorted(rest, key=lambda r: -abs(r["delta_kwh_100km"]))
+                if (sign(r) > 0) == (other > 0)
+            ][:2]
+            verb = "offset" if (other > 0) != (change > 0) else "added"
+            details.append(f"Other factors {verb} ≈ {amount}" + (f" ({'; '.join(names)})." if names else "."))
         details.append(
             f"Outside temperature averaged {sb['ambient']:.1f} °C vs {sa['ambient']:.1f} °C; heater energy "
             f"{sb['heater']:.1f} vs {sa['heater']:.1f} kWh/100 km; highway share {sb['highway']:.0f}% vs "
@@ -614,6 +636,8 @@ class Engine:
             "ambient_before": sa["ambient"],
             "ambient_after": sb["ambient"],
             "factors": table,
+            "top_factors": top,
+            "other_shown": other,  # what the top factors leave unexplained, in the units the answer displays
         }
         return Result(
             "explain_change",

@@ -10,9 +10,10 @@ import json
 import pandas as pd
 
 from edgecar.store import Store
-from edgecar.store.db import HARD_BRAKE_MPS2
+from edgecar.store.db import CHARGING_KW, HARD_BRAKE_MPS2
 
 CHARGE_MIN_SOC_GAIN = 3.0  # % gained between two trips counts as a charging session
+CHARGE_MIN_MINUTES = 3.0  # a stationary charging stretch inside a recording that counts as a session
 BATT_TEMP_HIGH_C = 40.0  # sustained pack temperature worth recording
 
 
@@ -69,6 +70,49 @@ def detect_charging(store: Store) -> pd.DataFrame:
                 "provenance": r.provenance,
             }
         )
+    return _events(rows)
+
+
+def detect_charging_while_logging(store: Store) -> pd.DataFrame:
+    """Charging inside a recording: the logger kept running while the car was plugged in (seen in real TUM trips)."""
+    s = store.sql(f"""
+        WITH f AS (
+            SELECT vehicle_id, trip_id, ts, soc_pct, batt_power_kw, provenance,
+                   coalesce(speed_kmh < 1 AND batt_power_kw < {CHARGING_KW}, FALSE) AS charging
+            FROM frames),
+        g AS (  -- consecutive charging seconds share a group number
+            SELECT *, sum(CASE WHEN charging THEN 0 ELSE 1 END) OVER (PARTITION BY trip_id ORDER BY ts) AS grp
+            FROM f)
+        SELECT vehicle_id, trip_id, any_value(provenance) AS provenance, min(ts) AS start_ts, max(ts) AS end_ts,
+               arg_min(soc_pct, ts) FILTER (WHERE soc_pct IS NOT NULL) AS soc_from,
+               arg_max(soc_pct, ts) FILTER (WHERE soc_pct IS NOT NULL) AS soc_to,
+               -sum(batt_power_kw) / 3600.0 AS kwh
+        FROM g WHERE charging
+        GROUP BY vehicle_id, trip_id, grp
+        HAVING date_diff('second', min(ts), max(ts)) >= {CHARGE_MIN_MINUTES * 60}
+           AND arg_max(soc_pct, ts) FILTER (WHERE soc_pct IS NOT NULL)
+               - arg_min(soc_pct, ts) FILTER (WHERE soc_pct IS NOT NULL) >= 1""")
+    rows = [
+        {
+            "event_id": f"{r.vehicle_id}:chg:{r.start_ts:%Y%m%d%H%M%S}",
+            "ts": r.start_ts,
+            "vehicle_id": r.vehicle_id,
+            "trip_id": r.trip_id,
+            "category": "charging",
+            "code": "CHARGE_SESSION",
+            "severity": "info",
+            "source": "BMS",
+            "title": f"Charged from {r.soc_from:.0f}% to {r.soc_to:.0f}%",
+            "detail": {
+                "soc_from": round(r.soc_from, 1),
+                "soc_to": round(r.soc_to, 1),
+                "energy_kwh": round(r.kwh, 2),
+                "parked_hours": round((r.end_ts - r.start_ts).total_seconds() / 3600, 1),
+            },
+            "provenance": r.provenance,
+        }
+        for r in s.itertuples()
+    ]
     return _events(rows)
 
 
@@ -129,7 +173,7 @@ def detect_battery_temperature(store: Store) -> pd.DataFrame:
 
 def detect_all(store: Store) -> int:
     n = 0
-    for detector in (detect_charging, detect_hard_brakes, detect_battery_temperature):
+    for detector in (detect_charging, detect_charging_while_logging, detect_hard_brakes, detect_battery_temperature):
         ev = detector(store)
         if not ev.empty:
             n += store.append_events(ev)
