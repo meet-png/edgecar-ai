@@ -106,7 +106,7 @@ question → decline checks → rules (76 %) ───────────�
 | | Typical "LLM over the data" | EdgeCar AI |
 |---|---|---|
 | Who writes the numbers | The model reads rows and writes figures — they can be invented | The model writes a read-only query; code computes every figure |
-| Memory | Several GB (large model + long context) | 1.58 GB peak for the whole AI zone, measured |
+| Memory | Several GB (large model + long context) | 1.54 GB peak for the whole AI zone, measured |
 | Latency | Seconds per answer | Rules p50 6 ms; model path p95 1.35 s on 2 Arm cores |
 | Can a prompt make the car act? | Depends on tool access | No: the output grammar contains only read-only commands, and there is no transmit path |
 
@@ -141,12 +141,12 @@ Arm Neoverse-N2 (GitHub's Arm64 runner, `.github/workflows/arm-bench.yml`), pinn
 live CAN/SOME/IP ingestion at real-time pace, DuckDB, the assistant and llama-server — in **one cgroup with a hard
 1.75 GB limit and no swap** (256 MB of a 2 GB budget left for the guest OS):
 
-| | Result |
+| | Result (memory in binary units: 1 GB = 1,024 MiB) |
 |---|---|
 | Rules path (146 of 192 questions) | p50 5.7 ms · p95 16 ms |
 | Model path (34 questions) | p50 0.92 s · p95 1.35 s · max 1.35 s |
 | All 192 questions under 2 s | 100 % |
-| Peak memory, whole AI zone | 1,577 MB (330 MB anonymous; the rest is the memory-mapped model, which the kernel can page) · 0 OOM |
+| Peak memory, whole AI zone | 1.54 GB = 1,577 MiB (330 MiB anonymous; the rest is the memory-mapped model, which the kernel can page) · 0 OOM |
 | Ignition → first answer | 0.65 s (rules) · model ready in 0.8 s with the saved prompt cache, 57 s without |
 | Held-out accuracy on Arm | 94.3 % (one borderline answer flips between CPU architectures; 95.7 % on x86) |
 

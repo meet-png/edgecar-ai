@@ -24,7 +24,7 @@ only receives mirrored bus traffic and returns text. Built for the Tata Elxsi TE
 |---|---|---|
 | Who writes the numbers | The model reads rows and writes figures — they can be invented | A small model writes a 2–6-token, read-only command under a grammar; code computes every figure |
 | Common questions | Every question pays for the model | Deterministic rules answer 76 % of questions in milliseconds |
-| Memory | Several GB | 1.58 GB peak for the whole AI zone, measured on ARM |
+| Memory | Several GB | 1.54 GB peak for the whole AI zone, measured on ARM |
 | A prompt asking the car to act | Depends on tool access | Impossible: the grammar has no write commands and the zone has no transmit path |
 
 ```mermaid
@@ -56,7 +56,7 @@ runner. Every push re-runs it ([workflow](.github/workflows/arm-bench.yml), resu
 | Rules path (146 of 192 questions) | p50 **5.7 ms** · p95 16 ms |
 | Model path (34 questions) | p50 **0.92 s** · p95 1.35 s · max 1.35 s |
 | Questions answered in under 2 s | **100 %** of 192 |
-| Peak memory, whole AI zone | **1.58 GB** of 1.75 GB (0.33 GB anonymous; the rest is the memory-mapped model) · 0 OOM |
+| Peak memory, whole AI zone | **1.54 GB** of 1.75 GB (0.32 GB anonymous; the rest is the memory-mapped model) · 0 OOM |
 | Ignition → first answer | 0.65 s (rules) · model ready in **0.8 s** from the saved prompt cache (57 s to compute it) |
 
 **Understanding** (rules + model, x86 laptop limited to 2 threads unless noted):

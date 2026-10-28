@@ -94,6 +94,7 @@ free Arm64 runner (public repo): `gh workflow run arm-bench.yml`, results via `g
 ## 9. Next steps (R2, if shortlisted: 14 Nov → 13 Dec)
 
 1. Fresh evaluation sets written by people outside the project (paraphrases, refusals, ambiguous follow-ups).
+   Known false refusal to include: "Has the battery been running hotter lately?" is declined (model + grounding).
 2. Measure on a Cortex-A76-class core (Pi 5 / Graviton2): estimate is 2–3 s+ for the model path; levers: weight
    repacking (1.6× prompt speed measured, +~0.6 GB), Qwen2.5-0.5B for the entry tier, LoRA fine-tuning.
 3. IVI-style UI with push-to-talk (on-device ASR), evidence cards; service-engineer timeline + export.
@@ -120,7 +121,7 @@ edgecar brief                                                     # the five bri
 
 **ARM** (Neoverse-N2, 2 cores, whole AI zone in a 1,792 MB cgroup, live ingestion running; CI run 40682528585,
 files in `eval/results/arm/`): rules p50 5.7 ms / p95 16 ms; model p50 0.92 s / p95 1.35 s / max 1.35 s; 100 % of
-192 < 2 s; peak 1,577 MB (anon 330 MB) · 0 OOM; cold start: rules 0.65 s, model ready 0.77 s restored vs 56.7 s
+192 < 2 s; peak 1,577 MiB = 1.54 GB (anon 330 MiB) · 0 OOM; cold start: rules 0.65 s, model ready 0.77 s restored vs 56.7 s
 computed; held-out 94.3 %; live commit p50 40 ms; llama-bench 2 threads: pp 34 tok/s (repack 55–61), tg 15 (18).
 
 **Accuracy:** held-out 95.7 % (x86; 92.9 % on the first run with the decline checks, see ADR-0008); dev 93.4 %;
@@ -159,7 +160,7 @@ plus slide-design notes. What was done:
 | 4 | "Listen-only" vs UDS | ✅ passive decoding of the gateway's polls; gateway-side read-only poll list otherwise |
 | 5 | Root cause on one self-injected scenario | ✅ 200 random scenarios with distractors + decoys: 197/200 |
 | 6 | Query accuracy ≠ answer accuracy; refusals; who wrote the questions | ✅ refusal set 40/40 (29/40 before); authorship disclosed. Answer-level eval vs independent ground truth: R2 |
-| 7 | RAM figure leaves out OS, ingest, DB | ✅ whole AI zone 1.58 GB in a 1.75 GB cgroup, 256 MB left for the OS |
+| 7 | RAM figure leaves out OS, ingest, DB | ✅ whole AI zone 1.54 GB in a 1.75 GB cgroup, 256 MB left for the OS |
 | 8 | Hardware, OS, hypervisor, FFI | ✅ docs/ARCHITECTURE.md §1, slide |
 | 9 | Simulation missing from the architecture | ✅ replay & fault-injection block feeding the same interfaces |
 | 10 | Camera feeds | ✅ design: perception metadata + clip references, no raw video (ARCHITECTURE §2) |
@@ -192,6 +193,16 @@ plus slide-design notes. What was done:
   declared it but `cli.py` was missing), ARCHITECTURE.md, ADR-0007/0008.
 - Honest notes kept in the docs: refusal checks designed after seeing baseline failures; held-out set exposed two
   vocabulary gaps (92.9 % → 95.7 % after generic fixes); ARM held-out 94.3 % (one answer flips between CPUs).
+- **R1 slide v6** (`scripts/make_r1_slide.py`, numbers read from `eval/results`): architecture as zones (safety domain,
+  lab simulation, Android Automotive → AI zone with the data path and the question path drawn separately, each box
+  carrying its measured number) + user surfaces; four hero numbers (1.35 s model-path p95 on ARM, 1.54 GB, 95.7 %,
+  197/200); typical-vs-ours strip; the brief's five questions + a paraphrase + a refusal with route, time and the
+  computed answer; footer with security, scaling, QR code and a live link. Calibri (the template's font) instead of
+  Segoe UI; body 10–11.5 pt (was 8–9.5), hero numbers 26 pt; every text/fill pair ≥ 4.5:1 (lowest 6.2:1, checked in
+  code); non-breaking spaces keep numbers with their units; no accent bars. Title slide: "Team Sidemen", the case
+  title and the solution name. Validated (skill validator vs the template), rendered in PowerPoint, PDF exported
+  (`scripts/finalize_deck.ps1`; PowerPoint would not embed Calibri, so the PDF is the reflow-proof copy).
+- Unit slip caught and fixed: the cgroup reports MiB, so the peak is 1.54 GB (not 1.58) against the 1.75 GB limit.
 
 ### 2026-10-28 — Session 2: closing gaps before the slide
 - Gap audit against the brief → all closed except ARM hardware and a UI.

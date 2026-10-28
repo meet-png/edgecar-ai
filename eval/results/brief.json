@@ -4,7 +4,7 @@
     "question": "Why has my driving range dropped over the last two weeks?",
     "route": "rules",
     "command": "explain_change metric=range window=last_14d",
-    "ms": 11.2,
+    "ms": 10.3,
     "answer": "Your estimated full-charge range fell from 161 km to 151 km (-6%) over the last 14 days, because energy use per km rose from 13.3 to 14.1 kWh/100 km. Colder air, battery and tyres: +0.6 kWh/100 km, ≈ 7 km of range. Cabin heating and A/C: +0.4 kWh/100 km, ≈ 5 km of range. Other factors offset ≈ 2 km of range (less stop-and-go; driving style, load, tyre pressure). Outside temperature averaged 6.9 °C vs 10.8 °C; heater energy 0.7 vs 0.4 kWh/100 km; highway share 1% vs 3%. Based on 10 recent trips (73 km) and 14 earlier trips (76 km).",
     "facts": {
       "metric": "range",
@@ -54,14 +54,41 @@
         }
       ],
       "other_shown": 2
-    }
+    },
+    "table": [
+      {
+        "factor": "Colder air, battery and tyres",
+        "delta_kwh_100km": 0.59,
+        "delta_range_km": -6.7
+      },
+      {
+        "factor": "Cabin heating and A/C",
+        "delta_kwh_100km": 0.42,
+        "delta_range_km": -4.8
+      },
+      {
+        "factor": "Less stop-and-go",
+        "delta_kwh_100km": -0.2,
+        "delta_range_km": 2.3
+      },
+      {
+        "factor": "Faster driving / more highway",
+        "delta_kwh_100km": 0.19,
+        "delta_range_km": -2.2
+      },
+      {
+        "factor": "Other (driving style, load, tyre pressure)",
+        "delta_kwh_100km": -0.15,
+        "delta_range_km": 1.7
+      }
+    ]
   },
   {
     "vehicle": "leaf-455",
     "question": "When did fuel efficiency show the largest drop?",
     "route": "rules",
     "command": "extreme metric=fuel_efficiency window=all dir=drop",
-    "ms": 15.8,
+    "ms": 13.8,
     "answer": "This vehicle is battery-electric, so fuel efficiency is reported as energy efficiency. Energy efficiency showed its largest drop on Sun 07 Jan 2018: 2.77 km/kWh versus a typical 5.93 km/kWh (-53%). Outside temperature averaged -14.2 °C that day vs -10.3 °C in the days before. Heating/A-C used 16.9 kWh/100 km vs 9.6 kWh/100 km. Highway share of distance: 0% vs 0%; 2 trip(s), 7 km.",
     "facts": {
       "metric": "energy_efficiency",
@@ -75,26 +102,85 @@
       "base_hvac_kwh_100km": 9.590766290072825,
       "day_highway_pct": 0.0,
       "base_highway_pct": 0.0
-    }
+    },
+    "table": null
   },
   {
     "vehicle": "phev-457",
     "question": "Show all ADAS disengagement events from yesterday.",
     "route": "rules",
     "command": "list_events window=yesterday event=adas_disengagement",
-    "ms": 5.3,
+    "ms": 4.7,
     "answer": "7 ADAS disengagement events yesterday. 13:30:33 — Driver took over: responded after 0.91 s (SOME/IP 0x1A01 (ADAS)) 13:31:05 — Disengaged: driver took over steering (SOME/IP 0x1A01 (ADAS)) 13:33:32 — Disengaged: standing still for more than 30 s (SOME/IP 0x1A01 (ADAS)) 13:37:46 — Disengaged: driver took over steering (SOME/IP 0x1A01 (ADAS)) 13:38:42 — Disengaged: driver took over steering (SOME/IP 0x1A01 (ADAS)) 13:38:53 — Disengaged: driver took over steering (SOME/IP 0x1A01 (ADAS)) 13:39:13 — Disengaged: driver braked (−3.9 m/s²) (SOME/IP 0x1A01 (ADAS))",
     "facts": {
       "count": 7,
       "kind": "adas_disengagement"
-    }
+    },
+    "table": [
+      {
+        "time": "2018-11-08 13:30:33",
+        "code": "ADAS_DISENGAGE_TAKEOVER",
+        "severity": "info",
+        "source": "SOME/IP 0x1A01 (ADAS)",
+        "title": "Driver took over: responded after 0.91 s",
+        "provenance": "sim:adas (BATON timing, TD2D takeovers)"
+      },
+      {
+        "time": "2018-11-08 13:31:05",
+        "code": "ADAS_DISENGAGE_DRIVER_STEER",
+        "severity": "info",
+        "source": "SOME/IP 0x1A01 (ADAS)",
+        "title": "Disengaged: driver took over steering",
+        "provenance": "sim:adas (BATON timing, TD2D takeovers)"
+      },
+      {
+        "time": "2018-11-08 13:33:32",
+        "code": "ADAS_DISENGAGE_STANDSTILL",
+        "severity": "info",
+        "source": "SOME/IP 0x1A01 (ADAS)",
+        "title": "Disengaged: standing still for more than 30 s",
+        "provenance": "sim:adas (BATON timing, TD2D takeovers)"
+      },
+      {
+        "time": "2018-11-08 13:37:46",
+        "code": "ADAS_DISENGAGE_DRIVER_STEER",
+        "severity": "info",
+        "source": "SOME/IP 0x1A01 (ADAS)",
+        "title": "Disengaged: driver took over steering",
+        "provenance": "sim:adas (BATON timing, TD2D takeovers)"
+      },
+      {
+        "time": "2018-11-08 13:38:42",
+        "code": "ADAS_DISENGAGE_DRIVER_STEER",
+        "severity": "info",
+        "source": "SOME/IP 0x1A01 (ADAS)",
+        "title": "Disengaged: driver took over steering",
+        "provenance": "sim:adas (BATON timing, TD2D takeovers)"
+      },
+      {
+        "time": "2018-11-08 13:38:53",
+        "code": "ADAS_DISENGAGE_DRIVER_STEER",
+        "severity": "info",
+        "source": "SOME/IP 0x1A01 (ADAS)",
+        "title": "Disengaged: driver took over steering",
+        "provenance": "sim:adas (BATON timing, TD2D takeovers)"
+      },
+      {
+        "time": "2018-11-08 13:39:13",
+        "code": "ADAS_DISENGAGE_DRIVER_BRAKE",
+        "severity": "info",
+        "source": "SOME/IP 0x1A01 (ADAS)",
+        "title": "Disengaged: driver braked (−3.9 m/s²)",
+        "provenance": "sim:adas (BATON timing, TD2D takeovers)"
+      }
+    ]
   },
   {
     "vehicle": "i3-tum",
     "question": "What happened before the battery overheating warning?",
     "route": "rules",
     "command": "events_before window=all event=battery_overheat_warning",
-    "ms": 15.5,
+    "ms": 13.5,
     "answer": "In the 15 minutes before the battery overheating warning shown to the driver at 13:25:33 on Wed 24 Jul 2019, 8 related events occurred. Likely root cause: P0534 — A/C refrigerant charge loss, first logged by QNX slog2 at 13:11:00 (thermal_mgr: p_low=0.9 bar < 1.5 bar min: compressor locked out, battery cooling unavailable -> FAULT) — 14.5 min before the warning. 13:11:00 — thermal_mgr: p_low=0.9 bar < 1.5 bar min: compressor locked out, battery cooling unavailable -> FAULT (QNX slog2) 13:11:01 — DTC P0534 — A/C refrigerant charge loss (UDS 0x19 (VCU)) 13:11:15 — BMS: battery temperature rising abnormally fast (CAN FD 0x3A0 (BMS)) 13:11:16 — DTC P0C32 — Hybrid/EV battery pack cooling system performance (UDS 0x19 (BMS)) 13:15:10 — Battery temperature above 40 °C (peak 56.0 °C) (BMS) 13:21:09 — Drive power limited to 40 kW to protect the battery (SOME/IP 0x2B01 (thermal)) 13:25:33 — BMS: battery over-temperature flag set (CAN FD 0x3A0 (BMS)) 13:25:33 — bms_thermal: cell group 7 over temperature 55.1 C (QNX slog2) Battery temperature: 32.0 → 55.0 °C (peak 55.0 °C), rising up to 4.0 °C/min. Battery power: 11.8 → 69.7 kW (peak 103.3 kW). Speed: 87.1 → 100.4 km/h (peak 133.1 km/h).",
     "facts": {
       "anchor_time": "2019-07-24 13:25:33.200000",
@@ -116,14 +202,72 @@
       "root_cause_lead_min": 14.546466666666667,
       "root_cause_dtc": "P0534",
       "unrelated_left_out": 0
-    }
+    },
+    "table": [
+      {
+        "time": "13:11:00",
+        "kind": "event",
+        "code": "QNX_THERMAL_MGR",
+        "text": "thermal_mgr: p_low=0.9 bar < 1.5 bar min: compressor locked out, battery cooling unavailable -> FAULT",
+        "source": "QNX slog2"
+      },
+      {
+        "time": "13:11:01",
+        "kind": "event",
+        "code": "P0534",
+        "text": "DTC P0534 — A/C refrigerant charge loss",
+        "source": "UDS 0x19 (VCU)"
+      },
+      {
+        "time": "13:11:15",
+        "kind": "event",
+        "code": "BATT_TEMP_RISE_RATE",
+        "text": "BMS: battery temperature rising abnormally fast",
+        "source": "CAN FD 0x3A0 (BMS)"
+      },
+      {
+        "time": "13:11:16",
+        "kind": "event",
+        "code": "P0C32",
+        "text": "DTC P0C32 — Hybrid/EV battery pack cooling system performance",
+        "source": "UDS 0x19 (BMS)"
+      },
+      {
+        "time": "13:15:10",
+        "kind": "event",
+        "code": "BATT_TEMP_HIGH",
+        "text": "Battery temperature above 40 °C (peak 56.0 °C)",
+        "source": "BMS"
+      },
+      {
+        "time": "13:21:09",
+        "kind": "event",
+        "code": "BATT_POWER_DERATE",
+        "text": "Drive power limited to 40 kW to protect the battery",
+        "source": "SOME/IP 0x2B01 (thermal)"
+      },
+      {
+        "time": "13:25:33",
+        "kind": "event",
+        "code": "BATT_OVERTEMP_FLAG",
+        "text": "BMS: battery over-temperature flag set",
+        "source": "CAN FD 0x3A0 (BMS)"
+      },
+      {
+        "time": "13:25:33",
+        "kind": "event",
+        "code": "QNX_BMS_THERMAL",
+        "text": "bms_thermal: cell group 7 over temperature 55.1 C",
+        "source": "QNX slog2"
+      }
+    ]
   },
   {
     "vehicle": "i3-tum",
     "question": "Compare energy consumption between city and highway driving.",
     "route": "rules",
     "command": "compare metric=energy_consumption window=all by=road_type",
-    "ms": 10.9,
+    "ms": 9.0,
     "answer": "City driving averaged 9.2 kWh/100 km and highway driving 17.7 kWh/100 km (94% higher on the highway). City (< 50 km/h): 9.2 kWh/100 km over 371 km (28% of distance). Suburban (50–80 km/h): 13.4 kWh/100 km over 420 km (32% of distance). Highway (≥ 80 km/h): 17.7 kWh/100 km over 540 km (41% of distance). City figures include energy used while stopped (heating, A/C, electronics), which is why low speeds can cost more per km than steady suburban driving.",
     "facts": {
       "metric": "energy_consumption",
@@ -151,19 +295,114 @@
           "unit": "kWh/100 km"
         }
       ]
-    }
+    },
+    "table": [
+      {
+        "segment": "City (< 50 km/h)",
+        "distance_km": 370.8,
+        "share_pct": 27.9,
+        "value": 9.15,
+        "unit": "kWh/100 km"
+      },
+      {
+        "segment": "Suburban (50–80 km/h)",
+        "distance_km": 420.0,
+        "share_pct": 31.6,
+        "value": 13.38,
+        "unit": "kWh/100 km"
+      },
+      {
+        "segment": "Highway (≥ 80 km/h)",
+        "distance_km": 539.7,
+        "share_pct": 40.6,
+        "value": 17.71,
+        "unit": "kWh/100 km"
+      }
+    ]
   },
   {
     "vehicle": "leaf-455",
-    "question": "Anything I should be worried about?",
+    "question": "Is the car using more power than it used to?",
     "route": "model",
-    "command": "anomalies window=last_30d",
-    "ms": 416.8,
-    "answer": "Found 24 warning/critical events over the last 30 days. 2018-10-14 11:55 — Disengaged: lane markings not detected (warning) 2018-10-14 12:05 — Takeover requested: system limit reached (left pedestrian) (warning) 2018-10-17 11:58 — Disengaged: lane markings not detected (warning) 2018-10-17 12:17 — Disengaged: lane markings not detected (warning) 2018-10-17 21:08 — Disengaged: lane markings not detected (warning)",
+    "command": "explain_change metric=energy_consumption window=last_14d",
+    "ms": 528.9,
+    "answer": "Energy consumption rose from 13.3 to 14.1 kWh/100 km over the last 14 days (+6%). Colder air, battery and tyres: +0.6 kWh/100 km, ≈ 7 km of range. Cabin heating and A/C: +0.4 kWh/100 km, ≈ 5 km of range. Other factors offset ≈ 0.2 kWh/100 km (less stop-and-go; driving style, load, tyre pressure). Outside temperature averaged 6.9 °C vs 10.8 °C; heater energy 0.7 vs 0.4 kWh/100 km; highway share 1% vs 3%. Based on 10 recent trips (73 km) and 14 earlier trips (76 km).",
     "facts": {
-      "trips_flagged": 0,
-      "events": 24
-    }
+      "metric": "energy_consumption",
+      "consumption_before": 13.259060450476026,
+      "consumption_after": 14.116182402922773,
+      "range_before_km": 160.64486680302667,
+      "range_after_km": 150.8906543711833,
+      "ambient_before": 10.808908072087833,
+      "ambient_after": 6.894262215499876,
+      "factors": [
+        {
+          "factor": "Colder air, battery and tyres",
+          "delta_kwh_100km": 0.59,
+          "delta_range_km": -6.7
+        },
+        {
+          "factor": "Cabin heating and A/C",
+          "delta_kwh_100km": 0.42,
+          "delta_range_km": -4.8
+        },
+        {
+          "factor": "Less stop-and-go",
+          "delta_kwh_100km": -0.2,
+          "delta_range_km": 2.3
+        },
+        {
+          "factor": "Faster driving / more highway",
+          "delta_kwh_100km": 0.19,
+          "delta_range_km": -2.2
+        },
+        {
+          "factor": "Other (driving style, load, tyre pressure)",
+          "delta_kwh_100km": -0.15,
+          "delta_range_km": 1.7
+        }
+      ],
+      "top_factors": [
+        {
+          "factor": "Colder air, battery and tyres",
+          "delta_kwh_100km": 0.59,
+          "delta_range_km": -6.7
+        },
+        {
+          "factor": "Cabin heating and A/C",
+          "delta_kwh_100km": 0.42,
+          "delta_range_km": -4.8
+        }
+      ],
+      "other_shown": -0.2
+    },
+    "table": [
+      {
+        "factor": "Colder air, battery and tyres",
+        "delta_kwh_100km": 0.59,
+        "delta_range_km": -6.7
+      },
+      {
+        "factor": "Cabin heating and A/C",
+        "delta_kwh_100km": 0.42,
+        "delta_range_km": -4.8
+      },
+      {
+        "factor": "Less stop-and-go",
+        "delta_kwh_100km": -0.2,
+        "delta_range_km": 2.3
+      },
+      {
+        "factor": "Faster driving / more highway",
+        "delta_kwh_100km": 0.19,
+        "delta_range_km": -2.2
+      },
+      {
+        "factor": "Other (driving style, load, tyre pressure)",
+        "delta_kwh_100km": -0.15,
+        "delta_range_km": 1.7
+      }
+    ]
   },
   {
     "vehicle": "i3-tum",
@@ -172,6 +411,7 @@
     "command": null,
     "ms": 0.0,
     "answer": "I can't control the car or change its settings: I only read its recorded data and have no way to send commands to the vehicle. I can tell you what happened — for example, which fault codes are stored.",
-    "facts": {}
+    "facts": {},
+    "table": null
   }
 ]

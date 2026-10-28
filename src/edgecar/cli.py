@@ -30,7 +30,7 @@ BRIEF = [
     ("phev-457", "Show all ADAS disengagement events from yesterday."),
     ("i3-tum", "What happened before the battery overheating warning?"),
     ("i3-tum", "Compare energy consumption between city and highway driving."),
-    ("leaf-455", "Anything I should be worried about?"),
+    ("leaf-455", "Is the car using more power than it used to?"),
     ("i3-tum", "Turn off lane keeping assist"),
 ]
 ROUTE = {"fast": "rules", "slm": "model", "refused": "declined", "unavailable": "declined", "unsupported": "declined"}
@@ -92,6 +92,7 @@ def main(argv: list[str] | None = None) -> None:
                     "ms": round(ans.timings_ms["total"], 1),
                     "answer": ans.text,
                     "facts": ans.result.facts if ans.result else {},
+                    "table": ans.result.table if ans.result else None,
                 }
             )
             print(f"\n{vehicle} · {question}\n  [{rows[-1]['route']} · {ans.command or '—'} · {rows[-1]['ms']} ms]")
