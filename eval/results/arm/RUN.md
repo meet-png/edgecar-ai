@@ -1,6 +1,7 @@
 # Arm64 edge benchmark — published run
 
-- Run: https://github.com/meet-png/edgecar-ai/actions/runs/40682528585 (2026-10-28, commit "Storage: one real car-year is 5.5 MB…")
+- Run: https://github.com/meet-png/edgecar-ai/actions/runs/40764935436 (2026-10-29, after the decline-check fix of
+  ADR-0008; the previous published run, 40682528585, measured the same latency and memory within 1 %)
 - Runner: GitHub `ubuntu-24.04-arm` (Arm Neoverse-N2), pinned to CPUs 0–1.
 - The whole AI zone in one cgroup: `MemoryMax=1792M`, `MemorySwapMax=0`, page cache dropped first.
 - Store rebuilt in CI from public data only (VED Leafs as real Leaf CAN, PHEV, ADAS over SOME/IP); the TU Munich i3

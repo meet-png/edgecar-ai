@@ -2,61 +2,65 @@
   "cpu": "Neoverse-N2",
   "cores": "0-1",
   "memory_limit_mb": 1792,
-  "memory_peak_mb": 1577,
+  "memory_peak_mb": 1578,
   "sampled_peak_mb": {
     "current": 1577,
     "anon": 330,
     "file": 1265
   },
+  "system_mem_total_mb": 15942,
+  "system_used_peak_mb": 1347,
   "oom_kills": 0,
   "limit_hits": 0,
   "questions": 192,
   "latency_ms": {
     "fast": {
       "n": 146,
-      "p50": 5.7,
-      "p95": 15.9,
-      "max": 23.3
+      "p50": 5.8,
+      "p95": 15.6,
+      "max": 19.9
     },
     "slm": {
       "n": 34,
-      "p50": 923.4,
-      "p95": 1346.5,
-      "max": 1351.7
+      "p50": 939.2,
+      "p95": 1359.6,
+      "max": 1364.6
     },
     "unsupported": {
       "n": 8,
-      "p50": 589.0,
-      "p95": 1153.6,
-      "max": 1072.3
+      "p50": 607.3,
+      "p95": 1128.5,
+      "max": 1060.8
     },
     "all": {
-      "p50": 7.8,
-      "p95": 1099.8,
-      "max": 1351.7,
+      "p50": 7.7,
+      "p95": 1116.1,
+      "max": 1364.6,
       "under_2s_pct": 100.0
     }
   },
   "engine_ms": {
-    "p50": 5.5,
-    "p95": 15.2,
-    "max": 22.9
+    "p50": 5.6,
+    "p95": 14.8,
+    "max": 18.8
   },
   "heldout_accuracy": 0.9428571428571428,
   "heldout_n": 70,
-  "rules_first_answer_s": 0.65,
-  "model_first_boot_s": 56.65,
+  "rules_first_answer_s": 0.57,
+  "model_first_boot_s": 56.82,
   "model_next_boot_s": 0.77,
   "live_commit_ms": {
-    "p50": 40.1,
-    "p95": 50.4
+    "p50": 41.4,
+    "p95": 54.3
   },
   "llama_bench_2_threads": {
     "repack0_pp32_tok_s": 35.8,
-    "repack0_pp128_tok_s": 33.9,
-    "repack0_tg8_tok_s": 15.2,
-    "repack1_pp32_tok_s": 60.9,
-    "repack1_pp128_tok_s": 55.4,
-    "repack1_tg8_tok_s": 17.9
-  }
+    "repack0_pp128_tok_s": 33.8,
+    "repack0_tg8_tok_s": 15.0,
+    "repack1_pp32_tok_s": 59.6,
+    "repack1_pp128_tok_s": 54.4,
+    "repack1_tg8_tok_s": 17.7
+  },
+  "refusal_declined": null,
+  "brief": null
 }
