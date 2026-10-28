@@ -86,6 +86,7 @@ EXAMPLES: tuple[tuple[str, str], ...] = (
 )
 
 
+WARM_UP_TIMEOUT_S = 900.0
 _SENTINEL = "␞question␞"  # placeholder used once to split the formatted prompt around the question
 
 
@@ -116,11 +117,11 @@ class SlmParser:
         self._grammar = command.model_grammar()
         self._frame: tuple[str, str] | None = None  # (prefix, suffix) in the served model's own chat template
 
-    def _post(self, path: str, body: dict) -> dict:
+    def _post(self, path: str, body: dict, timeout_s: float | None = None) -> dict:
         req = urllib.request.Request(
             f"{self.url}{path}", data=json.dumps(body).encode(), headers={"Content-Type": "application/json"}
         )
-        with urllib.request.urlopen(req, timeout=self.timeout_s) as r:
+        with urllib.request.urlopen(req, timeout=timeout_s or self.timeout_s) as r:
             return json.load(r)
 
     def prompt(self, question: str) -> str:
@@ -132,7 +133,7 @@ class SlmParser:
         prefix, suffix = self._frame
         return prefix + question.strip() + suffix
 
-    def parse(self, question: str) -> ParseOutput:
+    def parse(self, question: str, timeout_s: float | None = None) -> ParseOutput:
         body = {
             "prompt": self.prompt(question),
             "grammar": self._grammar,
@@ -142,7 +143,7 @@ class SlmParser:
             "stop": ["\n"],
         }
         t0 = time.perf_counter()
-        out = self._post("/completion", body)
+        out = self._post("/completion", body, timeout_s)
         total = (time.perf_counter() - t0) * 1000
         tm = out.get("timings", {})
         return ParseOutput(
@@ -156,8 +157,9 @@ class SlmParser:
         )
 
     def warm_up(self) -> ParseOutput:
-        """Process the shared prompt prefix once so later requests reuse its KV cache."""
-        return self.parse("how far did I drive")
+        """Process the shared prompt prefix once so later requests reuse its KV cache. On two small ARM cores this
+        one-time step takes tens of seconds — which is why ``ready`` saves the result and restores it at start-up."""
+        return self.parse("how far did I drive", timeout_s=WARM_UP_TIMEOUT_S)
 
     def prefix_cache_name(self, model: Path) -> str:
         """File name for the saved prefix KV cache; changes whenever the model or the prompt changes."""
@@ -231,7 +233,7 @@ class SlmServer:
         self.url = f"http://127.0.0.1:{port}"
         self.proc: subprocess.Popen | None = None
 
-    def start(self, wait_s: float = 60.0) -> None:
+    def start(self, wait_s: float = 180.0) -> None:
         self.proc = subprocess.Popen(self.args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         deadline = time.time() + wait_s
         while time.time() < deadline:

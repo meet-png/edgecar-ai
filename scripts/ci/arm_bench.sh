@@ -9,6 +9,14 @@ mkdir -p "$OUT"
 lscpu > "$OUT/cpu.txt"
 uname -srm >> "$OUT/cpu.txt"
 
+# Raw model throughput on the same two cores, with and without weight repacking (repacking is faster on ARM but
+# keeps a private copy of the weights, so the edge profile turns it off). Outside the cgroup: repack would not fit.
+for repack in 0 1; do
+    LD_LIBRARY_PATH="$PWD/tools/llama.cpp" taskset -c "$CPUS" tools/llama.cpp/llama-bench \
+        -m models/qwen2.5-1.5b-instruct-q4_k_m.gguf -t 2 -p 32,128 -n 8 -r 3 --repack "$repack" -o json \
+        > "$OUT/llama-bench-repack$repack.json" || echo "llama-bench (repack $repack) failed"
+done
+
 sync && echo 3 | sudo tee /proc/sys/vm/drop_caches > /dev/null  # start cold: the model and the store come from disk
 sudo systemd-run --scope --quiet --unit="edgecar-ai-zone-$$" \
     -p MemoryMax="${LIMIT_MB}M" -p MemorySwapMax=0 -p AllowedCPUs="$CPUS" \

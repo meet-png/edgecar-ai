@@ -11,9 +11,12 @@ from pathlib import Path
 d = Path(sys.argv[1])
 
 
-def load(name: str) -> dict:
+def load(name: str):
     p = d / name
-    return json.loads(p.read_text()) if p.exists() else {}
+    try:
+        return json.loads(p.read_text()) if p.exists() else {}
+    except json.JSONDecodeError:
+        return {}
 
 
 cpu_txt = (d / "cpu.txt").read_text() if (d / "cpu.txt").exists() else ""
@@ -21,6 +24,12 @@ cpu = re.search(r"Model name:\s*(.+)", cpu_txt)
 e2e, cold, held, cg = load("e2e.json"), load("coldstart.json"), load("heldout.json"), load("cgroup.json")
 live = (d / "live.txt").read_text() if (d / "live.txt").exists() else ""
 commit = re.search(r"p50 ([\d.]+) ms · p95 ([\d.]+) ms", live)
+
+bench = {}
+for repack in (0, 1):
+    for row in load(f"llama-bench-repack{repack}.json") or []:
+        kind = f"pp{row['n_prompt']}" if row.get("n_prompt") else f"tg{row['n_gen']}"
+        bench[f"repack{repack}_{kind}_tok_s"] = round(row["avg_ts"], 1)
 
 summary = {
     "cpu": cpu.group(1).strip() if cpu else None,
@@ -39,6 +48,7 @@ summary = {
     "model_first_boot_s": cold.get("model_first_boot", {}).get("ready_s"),
     "model_next_boot_s": cold.get("model_next_boot", {}).get("ready_s"),
     "live_commit_ms": {"p50": float(commit.group(1)), "p95": float(commit.group(2))} if commit else None,
+    "llama_bench_2_threads": bench,
 }
 (d / "summary.json").write_text(json.dumps(summary, indent=2))
 
@@ -64,6 +74,7 @@ rows = [
         f"{summary['model_first_boot_s']} s / {summary['model_next_boot_s']} s",
     ),
     ("Live ingest commit latency per 1 s batch", json.dumps(summary["live_commit_ms"])),
+    ("llama-bench, 2 threads (tokens/s)", json.dumps(bench)),
 ]
 print("## EdgeCar AI — ARM64 edge benchmark\n")
 print("| | |\n|---|---|")
