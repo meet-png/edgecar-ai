@@ -1,0 +1,44 @@
+{
+  "vehicle": "leaf-455",
+  "span": "2017-11-04 → 2018-11-04 (52 weeks, 192 days driven, 297 trips, 172,021 1 Hz rows = 48 h of driving)",
+  "tier_mb": {
+    "hot_1hz": 3.94,
+    "warm_1min": 0.8,
+    "cold_trips_events": 0.8
+  },
+  "whole_year_all_tiers_mb": 5.54,
+  "hot_mb_per_week": 0.076,
+  "retention": "1 Hz for 8 weeks, 1-min roll-ups for 12 months, trips + events forever",
+  "retained_mb": 2.2,
+  "query_ms_median": {
+    "average consumption": {
+      "last_8_weeks": 4.9,
+      "whole_year": 4.7
+    },
+    "consumption trend": {
+      "last_8_weeks": 3.2,
+      "whole_year": 3.5
+    },
+    "city vs highway": {
+      "last_8_weeks": 4.5,
+      "whole_year": 8.1
+    },
+    "largest efficiency drop": {
+      "last_8_weeks": 14.2,
+      "whole_year": 12.8
+    },
+    "why range changed": {
+      "last_8_weeks": 6.8,
+      "whole_year": 10.0
+    },
+    "list all events": {
+      "last_8_weeks": 5.6,
+      "whole_year": 22.3
+    },
+    "anything unusual": {
+      "last_8_weeks": 7.9,
+      "whole_year": 8.6
+    }
+  },
+  "threads": 2
+}

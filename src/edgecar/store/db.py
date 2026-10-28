@@ -245,6 +245,19 @@ class Store:
         """)
         return self.con.execute("SELECT count(*) FROM frames_1min").fetchone()[0]
 
+    def wipe(self, vehicle_id: str) -> int:
+        """Delete everything recorded for a vehicle — the driver's "erase my data" (DPDP Act 2023 / GDPR). On the
+        vehicle the store's key is destroyed as well, which makes any copy of the old file unreadable."""
+        n = 0
+        for table in ("frames", "frames_1min", "trips", "events"):
+            if self.con.execute(
+                "SELECT count(*) FROM information_schema.tables WHERE table_name = ?", [table]
+            ).fetchone()[0]:
+                n += self.con.execute(f"SELECT count(*) FROM {table} WHERE vehicle_id = ?", [vehicle_id]).fetchone()[0]
+                self.con.execute(f"DELETE FROM {table} WHERE vehicle_id = ?", [vehicle_id])
+        self.con.execute("CHECKPOINT")
+        return n
+
     def apply_retention(self, now: pd.Timestamp, warm_days: int) -> int:
         """Drop 1 Hz frames older than ``warm_days``; trips, events and minute roll-ups are kept."""
         cutoff = now - pd.Timedelta(days=warm_days)
