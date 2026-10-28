@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EdgeCar AI</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%2713%27 fill=%27none%27 stroke=%27%2367d3f7%27 stroke-width=%273%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%275%27 fill=%27%2367d3f7%27/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/static/app.css">
+<script src="/static/app.js" defer></script>
+</head>
+<body>
+<header class="bar">
+  <div class="brand">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="13" /><circle cx="16" cy="16" r="4.5" /></svg>
+    <span>EdgeCar <b>AI</b></span>
+  </div>
+  <label class="vehicle-pick">
+    <span class="sr">Vehicle</span>
+    <select id="vehicle"></select>
+  </label>
+  <div class="roles" role="radiogroup" aria-label="View">
+    <button role="radio" data-role="driver" aria-checked="true">Driver</button>
+    <button role="radio" data-role="service" aria-checked="false">Service</button>
+    <button role="radio" data-role="fleet" aria-checked="false">Fleet</button>
+  </div>
+  <div class="badges">
+    <span class="badge ok" title="No network connection is used: speech, language model and data all stay on this machine"><i></i>On-device</span>
+    <span class="badge" id="model-badge" title="Language model used when the rules don't match">Rules only</span>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="rail" aria-label="Vehicle">
+    <h2 id="v-name">—</h2>
+    <p class="muted" id="v-source"></p>
+    <div class="gauge">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <circle class="track" cx="60" cy="60" r="50" />
+        <circle class="fill" id="soc-arc" cx="60" cy="60" r="50" />
+      </svg>
+      <div class="gauge-text"><strong id="soc">—</strong><span id="range"></span></div>
+    </div>
+    <dl class="readings">
+      <div><dt>Outside</dt><dd id="ambient">—</dd></div>
+      <div><dt>Battery</dt><dd id="batt-temp">—</dd></div>
+      <div><dt>Data as of</dt><dd id="as-of">—</dd></div>
+    </dl>
+    <h3>On the bus</h3>
+    <ul class="sources">
+      <li>CAN</li><li>CAN FD</li><li>SOME/IP</li><li>Android VHAL</li><li>UDS</li><li>QNX slog2</li>
+    </ul>
+    <p class="fine">Reads a one-way mirror of the vehicle networks and answers in text. It has no way to send a command
+      to the car, and nothing leaves the vehicle.</p>
+  </aside>
+
+  <section class="talk" aria-label="Conversation">
+    <div class="log" id="log" aria-live="polite">
+      <div class="empty" id="empty">
+        <h1>Ask your car</h1>
+        <p>Range, energy or fuel use, battery temperature, charging, driver-assist events, fault codes — in your own
+          words, typed or spoken.</p>
+      </div>
+    </div>
+    <div class="suggest" id="suggest"></div>
+    <form class="composer" id="composer" autocomplete="off">
+      <button type="button" class="mic" id="mic" aria-label="Hold to speak" title="Hold to speak (or press Space)" hidden>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2Z"/></svg>
+      </button>
+      <input id="q" type="text" placeholder="Ask about range, energy, faults or driver-assist events…" aria-label="Question" maxlength="300">
+      <button type="submit" class="send" aria-label="Ask">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20.5 21 12 3 3.5v6.6L15 12 3 13.9v6.6Z"/></svg>
+      </button>
+      <label class="speak-toggle" id="speak-toggle" hidden><input type="checkbox" id="speak" checked> Spoken replies</label>
+    </form>
+  </section>
+</main>
+
+<template id="card">
+  <article class="card">
+    <header>
+      <span class="route"></span>
+      <span class="intent"></span>
+    </header>
+    <p class="headline"></p>
+    <ul class="details"></ul>
+    <div class="evidence"></div>
+    <footer>
+      <button type="button" class="more" hidden>Show evidence</button>
+      <code class="cmd"></code>
+      <span class="meta"></span>
+    </footer>
+  </article>
+</template>
+</body>
+</html>

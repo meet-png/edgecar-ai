@@ -10,6 +10,8 @@ baton       BATON ADAS handover tables — github.com/OpenLKA/BATON via Git LFS 
 td2d        TD2D takeover tables — only the 501 small CSVs, read out of the 16.7 GB Zenodo zip with HTTP range
             requests (CC BY 4.0)
 model       Qwen2.5-1.5B-Instruct Q4_K_M GGUF — huggingface.co/Qwen (Apache-2.0)
+voice       on-device speech for the app: Moonshine Tiny recogniser (MIT) and a Piper voice trained on public-domain
+            LibriVox recordings, both from github.com/k2-fsa/sherpa-onnx releases — optional, not part of "all"
 ==========  ==============================================================================================
 
 The TU Munich BMW i3 data needs a free IEEE DataPort login and is downloaded by hand (see docs/DATASETS.md).
@@ -23,6 +25,7 @@ import hashlib
 import io
 import shutil
 import subprocess
+import tarfile
 import time
 import zipfile
 from pathlib import Path
@@ -50,6 +53,15 @@ MODEL = (
     "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf",
     "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
 )
+VOICE = {
+    "asr-models/sherpa-onnx-moonshine-tiny-en-quantized-2026-02-27.tar.bz2": (
+        "9ec31b342d8fa3240c3b81b8f82e1cf7e3ac467c93ca5a999b741d5887164f8d"
+    ),
+    "tts-models/vits-piper-en_US-kristin-medium-int8.tar.bz2": (
+        "16289d7ee8e6b2311a0a0af6531a55f498f82499644a1bb6fddb991fe6fa950c"
+    ),
+}
+VOICE_URL = "https://github.com/k2-fsa/sherpa-onnx/releases/download/{}"
 
 
 def _sha256(path: Path) -> str:
@@ -114,6 +126,19 @@ def fetch_ved(client: httpx.Client, raw: Path) -> None:
     print(f"  ✓ {out}: {len(list(out.glob('VED_*_week.csv')))} weekly files")
 
 
+def fetch_voice(client: httpx.Client, out: Path) -> None:
+    for rel, digest in VOICE.items():
+        name = rel.rsplit("/", 1)[1]
+        target = out / name.removesuffix(".tar.bz2")
+        if target.exists():
+            print(f"  ✓ {target} (already present)")
+            continue
+        archive = download(client, VOICE_URL.format(rel), out / name, digest)
+        with tarfile.open(archive, "r:bz2") as tar:
+            tar.extractall(out, filter="data")
+        archive.unlink()
+
+
 def fetch_pinned(client: httpx.Client, url: str, files: dict[str, str], out: Path) -> None:
     for name, digest in files.items():
         download(client, url.format(name), out / name, digest)
@@ -170,7 +195,7 @@ def fetch_td2d(client: httpx.Client, out: Path) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("what", nargs="+", choices=["all", "ved", "dbc", "baton", "td2d", "model"])
+    ap.add_argument("what", nargs="+", choices=["all", "ved", "dbc", "baton", "td2d", "model", "voice"])
     ap.add_argument("--data", type=Path, default=Path("data"))
     ap.add_argument("--models", type=Path, default=Path("models"))
     a = ap.parse_args()
@@ -193,6 +218,9 @@ def main() -> None:
             print("model")
             url, digest = MODEL
             download(client, url, a.models / url.rsplit("/", 1)[1], digest)
+        if "voice" in want:
+            print("voice")
+            fetch_voice(client, a.models / "voice")
     if not (raw / "tum_bmw_i3").exists():
         print("note: the TU Munich BMW i3 data needs a free IEEE DataPort login — see docs/DATASETS.md")
 

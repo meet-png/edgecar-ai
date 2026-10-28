@@ -2,6 +2,7 @@
 
     edgecar ask "Why has my range dropped over the last two weeks?" --vehicle leaf-455
     edgecar brief --out eval/results/brief.json
+    edgecar serve                       # the in-car app on http://127.0.0.1:8080
 
 With a model file present, llama-server is started (prompt prefix restored from ``data/cache`` after the first
 run); without one, only the rules path answers.
@@ -11,14 +12,13 @@ from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import sys
 from contextlib import nullcontext
 from pathlib import Path
 
 from edgecar.assistant import Assistant
 from edgecar.fleet import VEHICLES
-from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer
+from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer, find_server, prompt_style
 from edgecar.privacy import Role
 from edgecar.store import Store
 
@@ -36,22 +36,19 @@ BRIEF = [
 ROUTE = {"fast": "rules", "slm": "model", "refused": "declined", "unavailable": "declined", "unsupported": "declined"}
 
 
-def _server_binary(given: Path | None) -> Path | None:
-    for p in [given, Path("tools/llama.cpp/llama-server.exe"), Path("tools/llama.cpp/llama-server")]:
-        if p is not None and p.exists():
-            return p
-    found = shutil.which("llama-server")
-    return Path(found) if found else None
-
-
 def _model_context(a: argparse.Namespace):
-    server = _server_binary(a.server)
+    server = find_server(a.server)
     if a.no_model or server is None or not a.model.exists():
         return nullcontext(None)
     return SlmServer(server, a.model, threads=a.threads, cache_dir=Path("data/cache"), **PROFILES["edge"])
 
 
 def main(argv: list[str] | None = None) -> None:
+    argv = sys.argv[1:] if argv is None else argv
+    if argv[:1] == ["serve"]:
+        from edgecar.app.server import main as serve
+
+        return serve(argv[1:])
     ap = argparse.ArgumentParser(
         prog="edgecar", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -61,6 +58,7 @@ def main(argv: list[str] | None = None) -> None:
     ask.add_argument("--vehicle", default="leaf-455", choices=sorted(VEHICLES))
     ask.add_argument("--role", default="driver", choices=[r.value for r in Role])
     brief = sub.add_parser("brief", help="the case study's example questions, with route and latency")
+    sub.add_parser("serve", help="the in-car app (edgecar serve --help)")
     brief.add_argument("--out", type=Path, default=None)
     for p in (ask, brief):
         p.add_argument("--store", type=Path, default=Path("data/edgecar.duckdb"))
@@ -72,7 +70,7 @@ def main(argv: list[str] | None = None) -> None:
 
     store = Store(a.store, read_only=True, threads=a.threads)
     with _model_context(a) as srv:
-        slm = SlmParser(srv.url) if srv else None
+        slm = SlmParser(srv.url, style=prompt_style(a.model)) if srv else None
         if slm:
             slm.ready(a.model)
         if a.cmd == "ask":

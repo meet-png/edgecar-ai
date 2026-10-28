@@ -17,7 +17,7 @@ from pathlib import Path
 
 from edgecar.nlu import command
 from edgecar.nlu.pipeline import understand
-from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer
+from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer, prompt_style
 
 
 def normalise(line: str, gold: str) -> str:
@@ -95,7 +95,7 @@ def main() -> None:
         res = run(questions, "fast", None)
     else:
         with SlmServer(a.server, a.model, threads=a.threads, **PROFILES[a.profile]) as srv:
-            slm = SlmParser(srv.url)
+            slm = SlmParser(srv.url, style=prompt_style(a.model))
             slm.warm_up()
             res = run(questions, a.mode, slm)
     res["model"] = a.model.name if a.mode != "fast" else None

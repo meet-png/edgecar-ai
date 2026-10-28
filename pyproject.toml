@@ -27,6 +27,10 @@ dependencies = [
 [project.optional-dependencies]
 # Offline data preparation (dataset conversion) — not needed on the vehicle.
 prep = ["pandas>=2.2", "openpyxl>=3.1"]
+# On-device speech for the app (sherpa-onnx 1.13: its Piper voices still include the espeak-ng phonemiser).
+voice = ["sherpa-onnx==1.13.8"]
+# Fine-tuning the command model on a workstation GPU (install torch from the PyTorch index for CUDA).
+train = ["torch>=2.6", "transformers>=4.51", "peft>=0.15", "safetensors>=0.5"]
 dev = ["pytest==9.1.1", "ruff==0.17.0"]
 
 [project.scripts]

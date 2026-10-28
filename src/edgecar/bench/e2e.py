@@ -17,7 +17,7 @@ from pathlib import Path
 import psutil
 
 from edgecar.assistant import Assistant
-from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer
+from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer, prompt_style
 from edgecar.store import Store
 
 
@@ -49,7 +49,7 @@ def main() -> None:
     t_boot = time.perf_counter()
     with SlmServer(a.server, a.model, threads=a.threads, **PROFILES[a.profile]) as srv:
         server = psutil.Process(srv.pid)
-        slm = SlmParser(srv.url)
+        slm = SlmParser(srv.url, style=prompt_style(a.model))
         warm = slm.warm_up()
         boot_s = time.perf_counter() - t_boot
         store = Store(a.store, read_only=True, threads=a.threads)

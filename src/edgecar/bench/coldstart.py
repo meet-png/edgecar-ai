@@ -23,7 +23,7 @@ import tempfile
 import time
 from pathlib import Path
 
-from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer
+from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer, prompt_style
 
 FIRST_QUESTION = "How far did I drive last week?"
 
@@ -51,7 +51,7 @@ def model_ready(server: Path, model: Path, threads: int, profile: str, cache_dir
     t0 = time.perf_counter()
     with SlmServer(server, model, threads=threads, cache_dir=cache_dir, **PROFILES[profile]) as srv:
         loaded = time.perf_counter() - t0
-        slm = SlmParser(srv.url)
+        slm = SlmParser(srv.url, style=prompt_style(model))
         how = slm.ready(model)
         ready = time.perf_counter() - t0
         first = slm.parse("why did my range drop")  # the first model answer after start-up

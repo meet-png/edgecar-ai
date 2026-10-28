@@ -16,7 +16,7 @@ from pathlib import Path
 import psutil
 
 from edgecar.bench.nlu_eval import run
-from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer
+from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer, prompt_style
 
 CANDIDATES = [
     "qwen2.5-0.5b-instruct-q4_k_m.gguf",
@@ -49,7 +49,7 @@ def main() -> None:
             continue
         with SlmServer(a.server, path, threads=a.threads, **PROFILES["edge"]) as srv:
             proc = psutil.Process(srv.pid)
-            slm = SlmParser(srv.url)
+            slm = SlmParser(srv.url, style=prompt_style(path))
             warm = slm.warm_up()
             only = run(dev + test, "slm", slm)
             hybrid = run(test, "hybrid", slm)

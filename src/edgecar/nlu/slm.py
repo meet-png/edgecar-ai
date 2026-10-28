@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 import subprocess
 import time
 import urllib.error
@@ -86,11 +87,24 @@ EXAMPLES: tuple[tuple[str, str], ...] = (
 )
 
 
+# A model fine-tuned on the command language (``edgecar.train``) needs neither the instructions nor the examples:
+# one short line instead of ~1,100 prompt tokens, so there is almost nothing to warm up at ignition.
+TUNED_INSTRUCTIONS = "Write the EdgeCar command for this question about the vehicle's recorded data, or unsupported."
+TUNED_PREFIX = "edgecar-"  # file-name prefix of our fine-tuned models
+
+
+def prompt_style(model: Path) -> str:
+    """ "tuned" for our fine-tuned models, "fewshot" for stock instruct models."""
+    return "tuned" if Path(model).name.startswith(TUNED_PREFIX) else "fewshot"
+
+
 WARM_UP_TIMEOUT_S = 900.0
 _SENTINEL = "␞question␞"  # placeholder used once to split the formatted prompt around the question
 
 
-def messages(question: str) -> list[dict]:
+def messages(question: str, style: str = "fewshot") -> list[dict]:
+    if style == "tuned":
+        return [{"role": "system", "content": TUNED_INSTRUCTIONS}, {"role": "user", "content": question}]
     msgs = [{"role": "system", "content": INSTRUCTIONS}]
     for q, a in EXAMPLES:
         msgs += [{"role": "user", "content": q}, {"role": "assistant", "content": a}]
@@ -111,9 +125,10 @@ class ParseOutput:
 class SlmParser:
     """Client for a running ``llama-server``; see ``SlmServer`` to start one."""
 
-    def __init__(self, url: str = "http://127.0.0.1:8089", timeout_s: float = 30.0) -> None:
+    def __init__(self, url: str = "http://127.0.0.1:8089", timeout_s: float = 30.0, style: str = "fewshot") -> None:
         self.url = url.rstrip("/")
         self.timeout_s = timeout_s
+        self.style = style
         self._grammar = command.model_grammar()
         self._frame: tuple[str, str] | None = None  # (prefix, suffix) in the served model's own chat template
 
@@ -127,7 +142,7 @@ class SlmParser:
     def prompt(self, question: str) -> str:
         """The full prompt in the model's chat template (fetched once from the server, then reused)."""
         if self._frame is None:
-            formatted = self._post("/apply-template", {"messages": messages(_SENTINEL)})["prompt"]
+            formatted = self._post("/apply-template", {"messages": messages(_SENTINEL, self.style)})["prompt"]
             prefix, suffix = formatted.split(_SENTINEL)
             self._frame = (prefix, suffix)
         prefix, suffix = self._frame
@@ -191,6 +206,15 @@ PROFILES: dict[str, dict] = {
     "default": {"ctx": 4096, "extra_args": ()},
     "edge": {"ctx": 2048, "extra_args": ("--no-repack", "-b", "512", "-ub", "256", "-cram", "0")},
 }
+
+
+def find_server(given: Path | None = None) -> Path | None:
+    """The llama-server binary: the given path, ``tools/llama.cpp/``, or ``PATH``."""
+    for p in [given, Path("tools/llama.cpp/llama-server.exe"), Path("tools/llama.cpp/llama-server")]:
+        if p is not None and p.exists():
+            return p
+    found = shutil.which("llama-server")
+    return Path(found) if found else None
 
 
 class SlmServer:
