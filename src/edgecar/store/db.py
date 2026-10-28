@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS vehicles (
     location VARCHAR,
     timezone VARCHAR,
     provenance VARCHAR,
-    source_ref VARCHAR
+    source_ref VARCHAR,
+    battery_cooling VARCHAR
 );
 
 CREATE TABLE IF NOT EXISTS frames (

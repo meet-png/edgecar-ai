@@ -17,6 +17,7 @@ class Vehicle:
     timezone: str
     provenance: Provenance
     source_ref: str
+    battery_cooling: str | None = None  # "refrigerant" | "liquid" | "passive" — decides what can overheat the pack
 
 
 VEHICLES: dict[str, Vehicle] = {
@@ -31,6 +32,7 @@ VEHICLES: dict[str, Vehicle] = {
             "America/Detroit",
             Provenance.REAL_VED,
             "VED VehId 455",
+            "passive",
         ),
         Vehicle(
             "leaf-010",
@@ -41,6 +43,7 @@ VEHICLES: dict[str, Vehicle] = {
             "America/Detroit",
             Provenance.REAL_VED,
             "VED VehId 10",
+            "passive",
         ),
         Vehicle(
             "phev-457",
@@ -61,6 +64,7 @@ VEHICLES: dict[str, Vehicle] = {
             "Europe/Berlin",
             Provenance.REAL_TUM,
             "TUM 'Battery and Heating Data in Real Driving Cycles'",
+            "refrigerant",
         ),
     ]
 }

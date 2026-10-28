@@ -16,6 +16,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from edgecar import diagnosis
 from edgecar.analytics.metrics import BEV_EQUIVALENT, METRICS, MetricSpec, fmt
 from edgecar.query import Query
 from edgecar.store import Store
@@ -722,6 +723,13 @@ class Engine:
             window=(start, end),
         )
 
+    def _trip_start(self, event: pd.Series, default: datetime) -> datetime:
+        if isinstance(event.get("trip_id"), str):
+            t = self.store.sql("SELECT start_ts FROM trips WHERE trip_id = ?", [event["trip_id"]])
+            if not t.empty:
+                return pd.Timestamp(t["start_ts"][0]).to_pydatetime()
+        return default
+
     def _events_before(self, q: Query) -> Result:
         kind = q.event or "battery_overheat_warning"
         start, end = self._window(q) if q.window.kind != "last_days" else (datetime(1970, 1, 1), self.now)
@@ -737,6 +745,12 @@ class Engine:
         # keep what can plausibly relate to the anchor (same subsystem family); unrelated noise is left out
         related = RELATED_CATEGORIES.get(anchor["category"], {anchor["category"]})
         prior = prior[prior["category"].isin(related)]
+        # … including faults from subsystems that cannot lead to it on this vehicle (its fault-propagation map)
+        causes = diagnosis.possible_causes(anchor["code"], self.vehicle.get("battery_cooling"))
+        unrelated = prior["code"].map(lambda c: (sub := diagnosis.subsystem(c)) is not None and sub not in causes)
+        left_out = int(unrelated.sum()) if causes is not None else 0
+        if causes is not None:
+            prior = prior[~unrelated]
         sig = self.store.sql(
             """
             SELECT ts, speed_kmh, batt_power_kw, coalesce(batt_temp_max_c, batt_temp_c) AS batt_temp,
@@ -772,8 +786,24 @@ class Engine:
                     facts["batt_temp_max_rise_c_per_min"] = rise
                     line += f", rising up to {rise:.1f} °C/min"
                 signal_lines.append(line + ".")
-        # likely root cause: the earliest fault (diagnostic code or system error) in the window
-        faults = prior[prior["category"].isin(["dtc", "system"]) & prior["severity"].isin(["warning", "critical"])]
+        # Likely root cause. Without a fault-propagation map for this anchor: the earliest fault (diagnostic code or
+        # system error) in the window. With one: only faults from subsystems that can lead to the anchor, searched
+        # back to the start of the trip (a cooling fault can precede an over-temperature by far more than the
+        # timeline's look-back), and the cause must come before the symptom began — the most recent such fault before
+        # the onset, not the first fault of the drive (transient glitches in the same subsystem are common).
+        faults = prior
+        if causes is not None:
+            since = self._trip_start(anchor, t1 - timedelta(hours=2))
+            faults = self._events("any", since, t1 + timedelta(microseconds=1))
+            onset = faults[faults["code"] == diagnosis.SYMPTOM_ONSET.get(anchor["code"])]["ts"]
+            faults = faults[
+                (faults["event_id"] != anchor["event_id"])
+                & faults["code"].map(lambda c: diagnosis.subsystem(c) in causes)
+            ]
+        faults = faults[faults["category"].isin(["dtc", "system"]) & faults["severity"].isin(["warning", "critical"])]
+        if causes is not None and not onset.empty and (faults["ts"] <= onset.iloc[0]).any():
+            latest = faults[faults["ts"] <= onset.iloc[0]]["ts"].iloc[-1]
+            faults = faults[faults["ts"] >= latest - timedelta(seconds=10)]  # where that fault was first logged
         cause_line = None
         if not faults.empty:
             first = faults.iloc[0]
@@ -801,8 +831,10 @@ class Engine:
         headline = (
             f"In the {lookback.total_seconds() / 60:.0f} minutes before the {anchor['title'].lower()} at "
             f"{t1:%H:%M:%S} on {_d(t1)}, {len(prior)} related event{'s' if len(prior) != 1 else ''} "
-            f"occurred."
+            f"occurred"
+            + (f" ({left_out} unrelated fault{'s' if left_out != 1 else ''} left out)." if left_out else ".")
         )
+        facts["unrelated_left_out"] = left_out
         details = (
             ([cause_line] if cause_line else [])
             + [f"{e['time']} — {e['text']} ({e['source']})" for e in timeline[:8]]

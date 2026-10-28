@@ -19,7 +19,7 @@ SUB_BY_STATUS_MASK = 0x02
 POSITIVE = 0x40
 
 # ISO 15765-4 11-bit OBD addressing: request 0x7E0+n, response 0x7E8+n
-ECU_ADDRESSES = {"VCU": (0x7E0, 0x7E8), "BMS": (0x7E4, 0x7EC)}
+ECU_ADDRESSES = {"VCU": (0x7E0, 0x7E8), "GW": (0x7E2, 0x7EA), "BMS": (0x7E4, 0x7EC)}
 
 STATUS_BITS = (
     "testFailed",

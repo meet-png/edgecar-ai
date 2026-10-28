@@ -1,0 +1,5010 @@
+{
+  "summary": {
+    "scenarios": 200,
+    "root_cause_correct": "197/200",
+    "code_correct": "197/200",
+    "earliest_fault_rule_correct": "34/200",
+    "map_only_rule_correct": "161/200",
+    "with_a_same_subsystem_decoy": 131,
+    "events_recovered": "2409/2409",
+    "with_a_distractor_before_the_fault": 95,
+    "fault_more_than_15_min_before_warning": 121,
+    "by_kind": {
+      "cell_degradation": {
+        "n": 108,
+        "root_cause": "105/108",
+        "rule": "21/108"
+      },
+      "refrigerant_loss": {
+        "n": 31,
+        "root_cause": "31/31",
+        "rule": "4/31"
+      },
+      "valve_stuck": {
+        "n": 61,
+        "root_cause": "61/61",
+        "rule": "9/61"
+      }
+    }
+  },
+  "rows": [
+    {
+      "seed": 1000,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 329,
+        "r_ohm": 0.248,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 11.2,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "P0562"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1001,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 724,
+        "r_ohm": 0.323,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 47.7,
+      "distractors": [
+        "U0155",
+        "QNX_THERMAL_MGR",
+        "QNX_HMI_SVC",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1002,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 364,
+        "r_ohm": 0.239,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 36.5,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "P0C73",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "P0562",
+        "QNX_BMS_THERMAL",
+        "U0121"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1003,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 764,
+        "r_ohm": 0.213,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 28.7,
+      "distractors": [
+        "P0562",
+        "QNX_BMS_THERMAL",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1004,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1385,
+        "r_ohm": 0.193,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 33.1,
+      "distractors": [
+        "U0155",
+        "QNX_NAV_GNSS",
+        "P0C73",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1005,
+      "base_trip": "i3-tum:20191208-093826",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 388,
+        "r_ohm": 0.242,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 16.9,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "QNX_BMS_THERMAL",
+        "QNX_THERMAL_MGR",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1006,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 538,
+        "r_ohm": 0.561,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 4.4,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "U0155",
+        "QNX_BMS_THERMAL",
+        "P0C73",
+        "P0562"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1007,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 250,
+        "r_ohm": 0.188,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 11.4,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "P0C73",
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_BMS_THERMAL",
+        "P0562"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 15,
+      "events_recovered": 15
+    },
+    {
+      "seed": 1008,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 404,
+        "r_ohm": 0.595,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 5.2,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "P0C73",
+        "U0155"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1009,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1017,
+        "r_ohm": 0.156,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 42.4,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1010,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 849,
+        "r_ohm": 0.185,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 62.4,
+      "distractors": [
+        "U0121",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1011,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 716,
+        "r_ohm": 0.247,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 3.4,
+      "distractors": [
+        "P0562",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1012,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1453,
+        "r_ohm": 0.376,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 52.4,
+      "distractors": [
+        "U0155",
+        "QNX_MEDIA_SVC",
+        "U0121",
+        "P0C73",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1013,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1049,
+        "r_ohm": 0.207,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 25.6,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1014,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 775,
+        "r_ohm": 0.18,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 63.6,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1015,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 637,
+        "r_ohm": 0.191,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 37.5,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "U0155",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1016,
+      "base_trip": "i3-tum:20191207-174935",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 556,
+        "r_ohm": 0.473,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 13.0,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1017,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1155,
+        "r_ohm": 0.21,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 35.6,
+      "distractors": [
+        "U0155",
+        "QNX_HMI_SVC",
+        "QNX_NAV_GNSS",
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC",
+        "U0121"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1018,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1374,
+        "r_ohm": 0.168,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 53.7,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "QNX_THERMAL_MGR",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_HMI_SVC",
+        "QNX_BMS_THERMAL"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1019,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 299,
+        "r_ohm": 0.364,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 43.1,
+      "distractors": [
+        "U0121",
+        "QNX_NAV_GNSS",
+        "QNX_THERMAL_MGR",
+        "U0155",
+        "QNX_BMS_THERMAL"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1020,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 677,
+        "r_ohm": 0.327,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 9.1,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "P0C73",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1021,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 186,
+        "r_ohm": 0.473,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 9.4,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "U0121",
+        "QNX_MEDIA_SVC",
+        "P0562",
+        "U0155"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1022,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 894,
+        "r_ohm": 0.238,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 26.5,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1023,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1084,
+        "r_ohm": 0.246,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 29.9,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_BMS_THERMAL",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1024,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 243,
+        "r_ohm": 0.139,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 11.9,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_MEDIA_SVC",
+        "P0562",
+        "U0155",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1025,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 961,
+        "r_ohm": 0.223,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 8.6,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "U0121"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1026,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1266,
+        "r_ohm": 0.215,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 21.2,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1027,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1499,
+        "r_ohm": 0.57,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 16.4,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "U0155",
+        "U0121"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1028,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1417,
+        "r_ohm": 0.416,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 24.4,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "U0121",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1029,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 684,
+        "r_ohm": 0.155,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 34.9,
+      "distractors": [
+        "U0155",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1030,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 189,
+        "r_ohm": 0.201,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 12.3,
+      "distractors": [
+        "U0121",
+        "QNX_HMI_SVC",
+        "P0C73"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1031,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 529,
+        "r_ohm": 0.585,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 16.5,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_HMI_SVC",
+        "P0562",
+        "QNX_NAV_GNSS",
+        "U0121",
+        "P0C73"
+      ],
+      "distractors_before_fault": 5,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1032,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 665,
+        "r_ohm": 0.48,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 12.4,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_MEDIA_SVC",
+        "U0155",
+        "U0121",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1033,
+      "base_trip": "i3-tum:20191207-174935",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 842,
+        "r_ohm": 0.562,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 8.2,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "U0121"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1034,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 231,
+        "r_ohm": 0.553,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 21.4,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "U0155"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1035,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1324,
+        "r_ohm": 0.447,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 19.4,
+      "distractors": [
+        "U0155",
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_THERMAL_MGR",
+        "QNX_NAV_GNSS",
+        "P0562"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1036,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 148,
+        "r_ohm": 0.463,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 39.8,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_NAV_GNSS",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1037,
+      "base_trip": "i3-tum:20191208-093826",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 264,
+        "r_ohm": 0.426,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 17.6,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_MEDIA_SVC",
+        "U0121",
+        "QNX_HMI_SVC",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1038,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 540,
+        "r_ohm": 0.184,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 39.1,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1039,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 149,
+        "r_ohm": 0.499,
+        "cell_group": 10
+      },
+      "fault_to_warning_min": 22.9,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "P0C73",
+        "QNX_BMS_THERMAL",
+        "QNX_HMI_SVC",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "P0562"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1040,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 833,
+        "r_ohm": 0.362,
+        "cell_group": 10
+      },
+      "fault_to_warning_min": 6.7,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "QNX_MEDIA_SVC",
+        "P0C73",
+        "P0562",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 5,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1041,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 357,
+        "r_ohm": 0.42,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 20.9,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "P0562",
+        "P0C73",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1042,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 306,
+        "r_ohm": 0.156,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 53.4,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC",
+        "QNX_NAV_GNSS",
+        "U0121"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1043,
+      "base_trip": "i3-tum:20190628-100215",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 372,
+        "r_ohm": 0.343,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 8.2,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "P0562",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1044,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 985,
+        "r_ohm": 0.4,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 26.4,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "U0121",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1045,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 775,
+        "r_ohm": 0.118,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 52.0,
+      "distractors": [
+        "U0155",
+        "QNX_MEDIA_SVC",
+        "QNX_BMS_THERMAL",
+        "QNX_HMI_SVC",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1046,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 746,
+        "r_ohm": 0.143,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 65.5,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1047,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 590,
+        "r_ohm": 0.325,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 38.3,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "QNX_BMS_THERMAL",
+        "QNX_HMI_SVC",
+        "P0562"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1048,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 516,
+        "r_ohm": 0.54,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 14.1,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_MEDIA_SVC",
+        "P0562"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1049,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 572,
+        "r_ohm": 0.388,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 38.5,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC",
+        "QNX_NAV_GNSS",
+        "P0562"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1050,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 1164,
+        "r_ohm": 0.146,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 41.2,
+      "distractors": [
+        "P0C73",
+        "U0121",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1051,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1334,
+        "r_ohm": 0.375,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 25.8,
+      "distractors": [
+        "P0C73",
+        "P0562",
+        "QNX_HMI_SVC",
+        "QNX_NAV_GNSS",
+        "U0155",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1052,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 200,
+        "r_ohm": 0.1,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 66.1,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "P0C73",
+        "U0121",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1053,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1456,
+        "r_ohm": 0.206,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 27.0,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_MEDIA_SVC",
+        "U0155",
+        "QNX_NAV_GNSS",
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1054,
+      "base_trip": "i3-tum:20190628-100215",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 674,
+        "r_ohm": 0.419,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 2.3,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_HMI_SVC",
+        "U0155"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1055,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 1087,
+        "r_ohm": 0.169,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 40.0,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "U0155",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1056,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 612,
+        "r_ohm": 0.337,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 11.9,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_BMS_THERMAL"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": false,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1057,
+      "base_trip": "i3-tum:20191208-093826",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 436,
+        "r_ohm": 0.462,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 14.7,
+      "distractors": [
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "P0C73",
+        "QNX_BMS_THERMAL",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1058,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 198,
+        "r_ohm": 0.359,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 11.5,
+      "distractors": [
+        "U0121",
+        "U0155",
+        "QNX_HMI_SVC",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1059,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 665,
+        "r_ohm": 0.324,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 9.5,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "P0562"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1060,
+      "base_trip": "i3-tum:20190704-155148",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 613,
+        "r_ohm": 0.471,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 6.3,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "P0C73",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1061,
+      "base_trip": "i3-tum:20190712-104136",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 569,
+        "r_ohm": 0.486,
+        "cell_group": 4
+      },
+      "fault_to_warning_min": 16.2,
+      "distractors": [
+        "U0155",
+        "QNX_THERMAL_MGR",
+        "P0562",
+        "P0C73"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": false,
+      "code_correct": false,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1062,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 675,
+        "r_ohm": 0.33,
+        "cell_group": 10
+      },
+      "fault_to_warning_min": 31.7,
+      "distractors": [
+        "P0C73",
+        "QNX_BMS_THERMAL",
+        "P0562"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1063,
+      "base_trip": "i3-tum:20190712-104136",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1202,
+        "r_ohm": 0.541,
+        "cell_group": 4
+      },
+      "fault_to_warning_min": 5.6,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "QNX_NAV_GNSS",
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1064,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 1384,
+        "r_ohm": 0.156,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 36.5,
+      "distractors": [
+        "U0121",
+        "QNX_MEDIA_SVC",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1065,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1477,
+        "r_ohm": 0.361,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 18.2,
+      "distractors": [
+        "P0562",
+        "U0121",
+        "P0C73",
+        "QNX_NAV_GNSS",
+        "U0155",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1066,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 264,
+        "r_ohm": 0.217,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 38.2,
+      "distractors": [
+        "P0562",
+        "QNX_MEDIA_SVC",
+        "P0C73",
+        "QNX_BMS_THERMAL",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1067,
+      "base_trip": "i3-tum:20190701-090525",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1353,
+        "r_ohm": 0.586,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 18.4,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "QNX_THERMAL_MGR",
+        "U0121",
+        "P0C73"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1068,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 521,
+        "r_ohm": 0.53,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 5.8,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "P0562",
+        "QNX_MEDIA_SVC",
+        "P0C73"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1069,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 449,
+        "r_ohm": 0.224,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 40.5,
+      "distractors": [
+        "U0155",
+        "QNX_HMI_SVC",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1070,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 366,
+        "r_ohm": 0.582,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 4.1,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_HMI_SVC",
+        "U0155",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1071,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1268,
+        "r_ohm": 0.397,
+        "cell_group": 10
+      },
+      "fault_to_warning_min": 21.6,
+      "distractors": [
+        "U0155",
+        "P0562",
+        "QNX_THERMAL_MGR",
+        "U0121",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1072,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 502,
+        "r_ohm": 0.203,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 10.9,
+      "distractors": [
+        "P0C73",
+        "U0155",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1073,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 551,
+        "r_ohm": 0.164,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 18.0,
+      "distractors": [
+        "U0121",
+        "P0562",
+        "QNX_THERMAL_MGR",
+        "P0C73",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 4,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1074,
+      "base_trip": "i3-tum:20190704-155148",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 334,
+        "r_ohm": 0.406,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 10.9,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_THERMAL_MGR",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": false,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1075,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1273,
+        "r_ohm": 0.592,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 4.1,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "P0562",
+        "QNX_BMS_THERMAL"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1076,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 217,
+        "r_ohm": 0.127,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 14.3,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "U0155",
+        "QNX_MEDIA_SVC",
+        "QNX_THERMAL_MGR",
+        "P0C73",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1077,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 397,
+        "r_ohm": 0.592,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 15.3,
+      "distractors": [
+        "P0562",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1078,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 992,
+        "r_ohm": 0.347,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 60.1,
+      "distractors": [
+        "P0C73",
+        "P0562",
+        "QNX_HMI_SVC",
+        "QNX_BMS_THERMAL",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1079,
+      "base_trip": "i3-tum:20191208-093826",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 537,
+        "r_ohm": 0.51,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 13.0,
+      "distractors": [
+        "P0562",
+        "QNX_BMS_THERMAL",
+        "U0121",
+        "P0C73"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": false,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1080,
+      "base_trip": "i3-tum:20191207-174935",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1047,
+        "r_ohm": 0.557,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 4.8,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "P0C73",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1081,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 621,
+        "r_ohm": 0.24,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 36.2,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_BMS_THERMAL",
+        "U0121"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1082,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 740,
+        "r_ohm": 0.404,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 35.7,
+      "distractors": [
+        "P0562",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1083,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 140,
+        "r_ohm": 0.362,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 45.7,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "U0121"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1084,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 536,
+        "r_ohm": 0.244,
+        "cell_group": 10
+      },
+      "fault_to_warning_min": 6.1,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_NAV_GNSS",
+        "P0C73",
+        "U0121",
+        "U0155"
+      ],
+      "distractors_before_fault": 5,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1085,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 402,
+        "r_ohm": 0.195,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 14.9,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "U0121",
+        "P0562",
+        "QNX_NAV_GNSS",
+        "U0155"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1086,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1387,
+        "r_ohm": 0.479,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 19.1,
+      "distractors": [
+        "P0562",
+        "QNX_HMI_SVC",
+        "QNX_BMS_THERMAL",
+        "QNX_THERMAL_MGR",
+        "QNX_MEDIA_SVC",
+        "U0155"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1087,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 799,
+        "r_ohm": 0.556,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 6.7,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "U0155"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1088,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 332,
+        "r_ohm": 0.198,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 47.8,
+      "distractors": [
+        "U0155",
+        "QNX_MEDIA_SVC",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1089,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 260,
+        "r_ohm": 0.167,
+        "cell_group": 10
+      },
+      "fault_to_warning_min": 53.1,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1090,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 844,
+        "r_ohm": 0.174,
+        "cell_group": 4
+      },
+      "fault_to_warning_min": 62.5,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "P0C73",
+        "QNX_HMI_SVC",
+        "QNX_NAV_GNSS",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1091,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1064,
+        "r_ohm": 0.366,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 9.2,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_MEDIA_SVC",
+        "U0121",
+        "U0155",
+        "QNX_BMS_THERMAL",
+        "P0C73"
+      ],
+      "distractors_before_fault": 5,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1092,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1369,
+        "r_ohm": 0.524,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 6.3,
+      "distractors": [
+        "P0C73",
+        "QNX_HMI_SVC",
+        "QNX_BMS_THERMAL",
+        "P0562"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": false,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1093,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1277,
+        "r_ohm": 0.462,
+        "cell_group": 10
+      },
+      "fault_to_warning_min": 20.2,
+      "distractors": [
+        "P0562",
+        "QNX_THERMAL_MGR",
+        "QNX_BMS_THERMAL",
+        "U0121",
+        "P0C73"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1094,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1069,
+        "r_ohm": 0.336,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 11.6,
+      "distractors": [
+        "P0C73",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_BMS_THERMAL",
+        "P0562",
+        "U0155",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1095,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 980,
+        "r_ohm": 0.197,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 10.7,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "P0C73",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1096,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 379,
+        "r_ohm": 0.568,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 6.9,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1097,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 556,
+        "r_ohm": 0.178,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 11.5,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "U0155",
+        "QNX_HMI_SVC",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1098,
+      "base_trip": "i3-tum:20191207-174935",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 718,
+        "r_ohm": 0.484,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 10.3,
+      "distractors": [
+        "U0155",
+        "QNX_BMS_THERMAL",
+        "U0121",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": false,
+      "code_correct": false,
+      "named": "QNX_BMS_THERMAL",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1099,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 549,
+        "r_ohm": 0.238,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 33.6,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_THERMAL_MGR",
+        "QNX_MEDIA_SVC",
+        "U0155",
+        "U0121"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1100,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1138,
+        "r_ohm": 0.175,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 57.6,
+      "distractors": [
+        "P0C73",
+        "QNX_THERMAL_MGR",
+        "P0562",
+        "QNX_NAV_GNSS",
+        "U0155"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1101,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1324,
+        "r_ohm": 0.313,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 55.5,
+      "distractors": [
+        "U0121",
+        "QNX_NAV_GNSS",
+        "U0155"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1102,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 228,
+        "r_ohm": 0.191,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 39.1,
+      "distractors": [
+        "U0121",
+        "QNX_BMS_THERMAL",
+        "QNX_THERMAL_MGR",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1103,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 375,
+        "r_ohm": 0.567,
+        "cell_group": 4
+      },
+      "fault_to_warning_min": 16.0,
+      "distractors": [
+        "P0C73",
+        "QNX_THERMAL_MGR",
+        "QNX_HMI_SVC",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "P0562"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1104,
+      "base_trip": "i3-tum:20190704-155148",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 728,
+        "r_ohm": 0.447,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 4.4,
+      "distractors": [
+        "U0155",
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "P0562",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 4,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1105,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1281,
+        "r_ohm": 0.161,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 55.3,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_THERMAL_MGR",
+        "QNX_BMS_THERMAL"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1106,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 280,
+        "r_ohm": 0.557,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 7.8,
+      "distractors": [
+        "P0562",
+        "P0C73",
+        "QNX_HMI_SVC",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1107,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 678,
+        "r_ohm": 0.452,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 31.0,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1108,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1064,
+        "r_ohm": 0.191,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 25.3,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "U0155",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_MEDIA_SVC",
+        "P0562",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1109,
+      "base_trip": "i3-tum:20191208-093826",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 155,
+        "r_ohm": 0.222,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 19.7,
+      "distractors": [
+        "P0C73",
+        "QNX_MEDIA_SVC",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1110,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1482,
+        "r_ohm": 0.317,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 52.4,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1111,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 303,
+        "r_ohm": 0.213,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 37.6,
+      "distractors": [
+        "U0121",
+        "QNX_THERMAL_MGR",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1112,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 396,
+        "r_ohm": 0.181,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 69.9,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_MEDIA_SVC",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1113,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 141,
+        "r_ohm": 0.315,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 16.9,
+      "distractors": [
+        "P0562",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1114,
+      "base_trip": "i3-tum:20191208-093826",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 666,
+        "r_ohm": 0.537,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 10.8,
+      "distractors": [
+        "U0121",
+        "P0C73",
+        "U0155",
+        "QNX_MEDIA_SVC",
+        "QNX_THERMAL_MGR",
+        "P0562"
+      ],
+      "distractors_before_fault": 4,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1115,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 168,
+        "r_ohm": 0.241,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 39.5,
+      "distractors": [
+        "U0155",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1116,
+      "base_trip": "i3-tum:20191207-174935",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 160,
+        "r_ohm": 0.522,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 19.5,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_HMI_SVC",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1117,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 162,
+        "r_ohm": 0.168,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 12.2,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_BMS_THERMAL",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1118,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 686,
+        "r_ohm": 0.229,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 31.2,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "U0155",
+        "U0121"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1119,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 812,
+        "r_ohm": 0.527,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 27.9,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "U0155",
+        "QNX_BMS_THERMAL"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1120,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 672,
+        "r_ohm": 0.315,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 36.9,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_HMI_SVC",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "U0121",
+        "U0155"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1121,
+      "base_trip": "i3-tum:20190701-090525",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 960,
+        "r_ohm": 0.588,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 25.0,
+      "distractors": [
+        "P0C73",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1122,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1271,
+        "r_ohm": 0.439,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 6.5,
+      "distractors": [
+        "U0155",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1123,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1037,
+        "r_ohm": 0.226,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 7.1,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_THERMAL_MGR",
+        "P0562",
+        "U0121",
+        "QNX_MEDIA_SVC",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 5,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1124,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 700,
+        "r_ohm": 0.166,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 64.9,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1125,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1163,
+        "r_ohm": 0.325,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 40.3,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "QNX_MEDIA_SVC",
+        "U0155",
+        "P0C73",
+        "QNX_THERMAL_MGR",
+        "U0121"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1126,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 162,
+        "r_ohm": 0.427,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 10.5,
+      "distractors": [
+        "U0121",
+        "P0562"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1127,
+      "base_trip": "i3-tum:20191207-174935",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 447,
+        "r_ohm": 0.545,
+        "cell_group": 10
+      },
+      "fault_to_warning_min": 14.7,
+      "distractors": [
+        "U0121",
+        "P0C73",
+        "U0155"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1128,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 902,
+        "r_ohm": 0.427,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 33.0,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "U0155",
+        "P0562",
+        "QNX_NAV_GNSS",
+        "U0121"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1129,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1316,
+        "r_ohm": 0.21,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 20.8,
+      "distractors": [
+        "U0121",
+        "QNX_HMI_SVC",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1130,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 702,
+        "r_ohm": 0.16,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 39.6,
+      "distractors": [
+        "P0562",
+        "QNX_THERMAL_MGR",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1131,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 224,
+        "r_ohm": 0.131,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 14.2,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "P0C73",
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1132,
+      "base_trip": "i3-tum:20190704-155148",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 227,
+        "r_ohm": 0.545,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 12.1,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_HMI_SVC",
+        "U0155",
+        "U0121",
+        "QNX_MEDIA_SVC",
+        "P0562"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1133,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 123,
+        "r_ohm": 0.338,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 44.2,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1134,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 249,
+        "r_ohm": 0.248,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 47.6,
+      "distractors": [
+        "P0C73",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "U0121",
+        "P0562",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1135,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 612,
+        "r_ohm": 0.464,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 31.2,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_MEDIA_SVC",
+        "P0C73",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1136,
+      "base_trip": "i3-tum:20190712-104136",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 509,
+        "r_ohm": 0.526,
+        "cell_group": 4
+      },
+      "fault_to_warning_min": 16.1,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_NAV_GNSS",
+        "QNX_HMI_SVC",
+        "U0121"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1137,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 928,
+        "r_ohm": 0.222,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 26.0,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "U0121",
+        "U0155"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1138,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1433,
+        "r_ohm": 0.586,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 3.8,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_MEDIA_SVC",
+        "P0562"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1139,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 958,
+        "r_ohm": 0.248,
+        "cell_group": 4
+      },
+      "fault_to_warning_min": 26.6,
+      "distractors": [
+        "U0121",
+        "QNX_BMS_THERMAL",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1140,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 124,
+        "r_ohm": 0.236,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 44.5,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_NAV_GNSS",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1141,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 551,
+        "r_ohm": 0.217,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 32.2,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1142,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 979,
+        "r_ohm": 0.545,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 7.2,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC",
+        "QNX_NAV_GNSS",
+        "P0562",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 4,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1143,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 595,
+        "r_ohm": 0.425,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 7.1,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_HMI_SVC",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1144,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 468,
+        "r_ohm": 0.327,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 8.9,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_MEDIA_SVC",
+        "P0562",
+        "QNX_NAV_GNSS",
+        "U0155",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1145,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 447,
+        "r_ohm": 0.416,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 8.0,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "P0C73",
+        "QNX_NAV_GNSS",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1146,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1468,
+        "r_ohm": 0.235,
+        "cell_group": 10
+      },
+      "fault_to_warning_min": 23.7,
+      "distractors": [
+        "P0562",
+        "QNX_THERMAL_MGR",
+        "QNX_MEDIA_SVC",
+        "U0121",
+        "QNX_NAV_GNSS",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1147,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 153,
+        "r_ohm": 0.165,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 20.6,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "P0562",
+        "QNX_BMS_THERMAL",
+        "QNX_HMI_SVC",
+        "QNX_NAV_GNSS",
+        "P0C73"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1148,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1238,
+        "r_ohm": 0.521,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 21.9,
+      "distractors": [
+        "P0C73",
+        "QNX_NAV_GNSS",
+        "U0155",
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1149,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1316,
+        "r_ohm": 0.397,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 19.6,
+      "distractors": [
+        "P0C73",
+        "U0121",
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1150,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 705,
+        "r_ohm": 0.19,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 31.2,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "P0562",
+        "U0121",
+        "QNX_THERMAL_MGR",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1151,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1138,
+        "r_ohm": 0.237,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 23.9,
+      "distractors": [
+        "U0155",
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "P0562",
+        "P0C73",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1152,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 575,
+        "r_ohm": 0.305,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 14.0,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1153,
+      "base_trip": "i3-tum:20191207-174935",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 809,
+        "r_ohm": 0.586,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 8.7,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "U0155",
+        "P0562",
+        "QNX_MEDIA_SVC",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 4,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1154,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 636,
+        "r_ohm": 0.245,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 41.2,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "QNX_THERMAL_MGR",
+        "QNX_NAV_GNSS",
+        "QNX_MEDIA_SVC",
+        "P0C73",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1155,
+      "base_trip": "i3-tum:20191207-174935",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 452,
+        "r_ohm": 0.545,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 14.7,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "P0C73",
+        "QNX_BMS_THERMAL",
+        "P0562",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1156,
+      "base_trip": "i3-tum:20200107-100247",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 771,
+        "r_ohm": 0.577,
+        "cell_group": 4
+      },
+      "fault_to_warning_min": 12.4,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_MEDIA_SVC",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "U0155"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": false,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1157,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 522,
+        "r_ohm": 0.6,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 14.6,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC",
+        "U0155",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": false,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1158,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1030,
+        "r_ohm": 0.598,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 23.0,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1159,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 292,
+        "r_ohm": 0.39,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 15.4,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "P0562",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1160,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 891,
+        "r_ohm": 0.163,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 31.4,
+      "distractors": [
+        "P0562",
+        "QNX_BMS_THERMAL",
+        "U0121",
+        "QNX_HMI_SVC",
+        "P0C73",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1161,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 786,
+        "r_ohm": 0.224,
+        "cell_group": 4
+      },
+      "fault_to_warning_min": 3.1,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "U0121",
+        "QNX_NAV_GNSS",
+        "P0562",
+        "QNX_MEDIA_SVC",
+        "P0C73"
+      ],
+      "distractors_before_fault": 6,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 15,
+      "events_recovered": 15
+    },
+    {
+      "seed": 1162,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 525,
+        "r_ohm": 0.227,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 32.6,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1163,
+      "base_trip": "i3-tum:20191208-093826",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 217,
+        "r_ohm": 0.234,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 18.5,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "P0562",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1164,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1445,
+        "r_ohm": 0.463,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 18.5,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_HMI_SVC",
+        "QNX_BMS_THERMAL",
+        "P0562",
+        "QNX_NAV_GNSS",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": false,
+      "code_correct": false,
+      "named": "QNX_BMS_THERMAL",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1165,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 673,
+        "r_ohm": 0.563,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 12.9,
+      "distractors": [
+        "U0155",
+        "P0562",
+        "U0121",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1166,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 357,
+        "r_ohm": 0.316,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 9.6,
+      "distractors": [
+        "P0562",
+        "U0155",
+        "U0121",
+        "P0C73"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1167,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 362,
+        "r_ohm": 0.169,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 38.2,
+      "distractors": [
+        "U0121",
+        "QNX_HMI_SVC",
+        "P0562",
+        "QNX_THERMAL_MGR"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1168,
+      "base_trip": "i3-tum:20190628-100215",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 241,
+        "r_ohm": 0.236,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 8.4,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_MEDIA_SVC",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_THERMAL_MGR",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1169,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 588,
+        "r_ohm": 0.248,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 32.7,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_BMS_THERMAL",
+        "U0121",
+        "QNX_NAV_GNSS",
+        "P0C73",
+        "P0562"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 15,
+      "events_recovered": 15
+    },
+    {
+      "seed": 1170,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 535,
+        "r_ohm": 0.244,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 33.8,
+      "distractors": [
+        "P0C73",
+        "QNX_THERMAL_MGR",
+        "QNX_HMI_SVC",
+        "P0562",
+        "QNX_BMS_THERMAL"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1171,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 897,
+        "r_ohm": 0.191,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 28.1,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC",
+        "QNX_HMI_SVC",
+        "P0562",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1172,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 572,
+        "r_ohm": 0.477,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 33.0,
+      "distractors": [
+        "P0562",
+        "QNX_HMI_SVC",
+        "QNX_NAV_GNSS",
+        "U0155",
+        "QNX_BMS_THERMAL"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1173,
+      "base_trip": "i3-tum:20190704-155148",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 201,
+        "r_ohm": 0.229,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 14.1,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "U0121",
+        "P0562",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1174,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 587,
+        "r_ohm": 0.188,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 14.7,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_NAV_GNSS",
+        "P0C73"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1175,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 621,
+        "r_ohm": 0.391,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 3.5,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "P0562",
+        "QNX_NAV_GNSS",
+        "P0C73",
+        "QNX_MEDIA_SVC",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 5,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1176,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 842,
+        "r_ohm": 0.129,
+        "cell_group": 3
+      },
+      "fault_to_warning_min": 48.9,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "QNX_BMS_THERMAL",
+        "QNX_HMI_SVC",
+        "U0155"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1177,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 905,
+        "r_ohm": 0.47,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 5.2,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "U0121"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1178,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 1251,
+        "r_ohm": 0.203,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 34.5,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_MEDIA_SVC",
+        "P0C73",
+        "QNX_THERMAL_MGR",
+        "P0562",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 15,
+      "events_recovered": 15
+    },
+    {
+      "seed": 1179,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 558,
+        "r_ohm": 0.237,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 9.0,
+      "distractors": [
+        "QNX_MEDIA_SVC",
+        "QNX_BMS_THERMAL",
+        "QNX_THERMAL_MGR",
+        "U0121"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1180,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1471,
+        "r_ohm": 0.517,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 18.0,
+      "distractors": [
+        "U0155",
+        "U0121"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1181,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 202,
+        "r_ohm": 0.217,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 14.8,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_BMS_THERMAL"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": false,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1182,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 885,
+        "r_ohm": 0.113,
+        "cell_group": 8
+      },
+      "fault_to_warning_min": 51.5,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_MEDIA_SVC",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "P0562"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1183,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 220,
+        "r_ohm": 0.232,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 44.2,
+      "distractors": [
+        "P0C73",
+        "QNX_BMS_THERMAL",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_HMI_SVC",
+        "P0562"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1184,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 189,
+        "r_ohm": 0.226,
+        "cell_group": 4
+      },
+      "fault_to_warning_min": 11.3,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0C32",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1185,
+      "base_trip": "i3-tum:20191208-134718",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1140,
+        "r_ohm": 0.537,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 2.9,
+      "distractors": [
+        "QNX_BMS_THERMAL",
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": false,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1186,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 599,
+        "r_ohm": 0.386,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 33.0,
+      "distractors": [
+        "QNX_NAV_GNSS",
+        "QNX_BMS_THERMAL",
+        "QNX_MEDIA_SVC",
+        "U0155"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1187,
+      "base_trip": "i3-tum:20200105-110825",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 484,
+        "r_ohm": 0.438,
+        "cell_group": 10
+      },
+      "fault_to_warning_min": 33.4,
+      "distractors": [
+        "ADAS_DISENGAGE_LANE_LOST",
+        "U0155"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1188,
+      "base_trip": "i3-tum:20191207-174935",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 724,
+        "r_ohm": 0.441,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 11.7,
+      "distractors": [
+        "U0121",
+        "U0155",
+        "P0562",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "P0C73"
+      ],
+      "distractors_before_fault": 3,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1189,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 1192,
+        "r_ohm": 0.181,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 37.2,
+      "distractors": [
+        "P0C73",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1190,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 1496,
+        "r_ohm": 0.546,
+        "cell_group": 1
+      },
+      "fault_to_warning_min": 15.7,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "P0562"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1191,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 482,
+        "r_ohm": 0.528,
+        "cell_group": 4
+      },
+      "fault_to_warning_min": 6.3,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 11,
+      "events_recovered": 11
+    },
+    {
+      "seed": 1192,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 467,
+        "r_ohm": 0.57,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 6.5,
+      "distractors": [
+        "U0121",
+        "P0562",
+        "QNX_THERMAL_MGR",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1193,
+      "base_trip": "i3-tum:20190701-125948",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 968,
+        "r_ohm": 0.534,
+        "cell_group": 11
+      },
+      "fault_to_warning_min": 4.5,
+      "distractors": [
+        "QNX_THERMAL_MGR",
+        "QNX_NAV_GNSS",
+        "U0155",
+        "QNX_HMI_SVC",
+        "QNX_MEDIA_SVC"
+      ],
+      "distractors_before_fault": 5,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": false,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1194,
+      "base_trip": "i3-tum:20200102-134521",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 589,
+        "r_ohm": 0.217,
+        "cell_group": 5
+      },
+      "fault_to_warning_min": 33.5,
+      "distractors": [
+        "U0121",
+        "QNX_BMS_THERMAL",
+        "U0155",
+        "QNX_MEDIA_SVC",
+        "QNX_HMI_SVC",
+        "ADAS_DISENGAGE_LANE_LOST"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1195,
+      "base_trip": "i3-tum:20200103-105036",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 944,
+        "r_ohm": 0.411,
+        "cell_group": 9
+      },
+      "fault_to_warning_min": 5.7,
+      "distractors": [
+        "U0155",
+        "QNX_HMI_SVC"
+      ],
+      "distractors_before_fault": 1,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": true,
+      "map_only_rule_correct": true,
+      "events_expected": 10,
+      "events_recovered": 10
+    },
+    {
+      "seed": 1196,
+      "base_trip": "i3-tum:20190722-125655",
+      "fault": {
+        "kind": "refrigerant_loss",
+        "after_s": 232,
+        "r_ohm": 0.143,
+        "cell_group": 12
+      },
+      "fault_to_warning_min": 12.0,
+      "distractors": [
+        "QNX_HMI_SVC",
+        "QNX_NAV_GNSS",
+        "P0C73"
+      ],
+      "distractors_before_fault": 2,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0534",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 12,
+      "events_recovered": 12
+    },
+    {
+      "seed": 1197,
+      "base_trip": "i3-tum:20200112-111256",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 233,
+        "r_ohm": 0.179,
+        "cell_group": 6
+      },
+      "fault_to_warning_min": 39.6,
+      "distractors": [
+        "P0C73",
+        "P0562",
+        "U0121",
+        "QNX_THERMAL_MGR",
+        "U0155",
+        "QNX_BMS_THERMAL"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 14,
+      "events_recovered": 14
+    },
+    {
+      "seed": 1198,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "valve_stuck",
+        "after_s": 750,
+        "r_ohm": 0.197,
+        "cell_group": 2
+      },
+      "fault_to_warning_min": 35.5,
+      "distractors": [
+        "U0155",
+        "QNX_THERMAL_MGR",
+        "QNX_BMS_THERMAL",
+        "QNX_HMI_SVC",
+        "P0C73"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "QNX_THERMAL_MGR",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 13,
+      "events_recovered": 13
+    },
+    {
+      "seed": 1199,
+      "base_trip": "i3-tum:20191207-123500",
+      "fault": {
+        "kind": "cell_degradation",
+        "after_s": 470,
+        "r_ohm": 0.421,
+        "cell_group": 7
+      },
+      "fault_to_warning_min": 40.2,
+      "distractors": [
+        "U0121",
+        "ADAS_DISENGAGE_LANE_LOST",
+        "QNX_NAV_GNSS"
+      ],
+      "distractors_before_fault": 0,
+      "root_cause_correct": true,
+      "code_correct": true,
+      "named": "P0A7F",
+      "earliest_fault_rule_correct": false,
+      "map_only_rule_correct": true,
+      "events_expected": 11,
+      "events_recovered": 11
+    }
+  ]
+}

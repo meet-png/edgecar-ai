@@ -58,6 +58,28 @@ PROVENANCE = "sim:scenario/battery_overheat (base i3-tum:A07)"
 
 STATUS_CONFIRMED = 0x2F  # testFailed | thisCycle | pending | confirmed | sinceLastClear
 STATUS_PENDING = 0x07  # testFailed | thisCycle | pending
+ACTIVE_TAU_S = 400.0  # cooling still working: heat leaves the cell group faster
+HEALTHY_GROUP_OHM = 0.035
+
+
+@dataclass(frozen=True)
+class Fault:
+    """What fails, when, and how hard. The defaults are the demo scenario in the store.
+
+    ``refrigerant_loss``  refrigerant charge lost → compressor locked out → no battery cooling (P0534, then P0C32)
+    ``valve_stuck``       battery refrigerant valve stuck closed → no battery cooling, cabin A/C still works (no DTC
+                          for the valve itself; the thermal manager logs it, the BMS later sets P0C32)
+    ``cell_degradation``  a cell group's resistance jumps (internal damage); cooling works but cannot keep up (P0A7F)
+    """
+
+    kind: str = "refrigerant_loss"
+    after_s: int = FAIL_AFTER_S
+    r_ohm: float = R_FAULT_OHM
+    cell_group: int = 7
+
+
+KINDS = ("refrigerant_loss", "valve_stuck", "cell_degradation")
+DEMO_FAULT = Fault()
 
 
 @dataclass
@@ -68,6 +90,8 @@ class ScenarioTraffic:
     someip_records: list[tuple[float, bytes]] = field(default_factory=list)
     vhal_values: list[vhal.PropValue] = field(default_factory=list)
     truth: list[tuple[pd.Timestamp, str]] = field(default_factory=list)  # ground-truth (time, event code)
+    fault_time: pd.Timestamp | None = None  # when the root cause happened
+    fault_dtc: str | None = None  # the diagnostic code that names it, if the fault has one
 
 
 def _posix(ts: pd.Timestamp) -> float:
@@ -88,89 +112,127 @@ def _uds_poll(at: pd.Timestamp, ecu: str, dtcs: list[uds.DtcRecord]) -> list[Fra
     return out
 
 
-def battery_overheat(base: pd.DataFrame) -> ScenarioTraffic:
-    """Build the scenario from the base trip's canonical 1 Hz frames."""
+def _log(at: pd.Timestamp, process: str, pid: int, buffer: str, severity: int, message: str) -> str:
+    return format_record(LogRecord(at.to_pydatetime(), process, pid, buffer, severity, message))
+
+
+def battery_overheat(
+    base: pd.DataFrame, fault: Fault = DEMO_FAULT, trip_id: str = SCENARIO_TRIP, start: pd.Timestamp = START
+) -> ScenarioTraffic:
+    """Build a scenario from a real trip's canonical 1 Hz frames. Raises ``ValueError`` if, on this trip, the fault
+    never heats the battery to the warning threshold (the caller then picks another trip or fault)."""
     base = base.sort_values("ts").reset_index(drop=True)
     f = base.copy()
-    f["ts"] = f["ts"] + (START - f["ts"].iloc[0])
-    f["trip_id"] = SCENARIO_TRIP
+    f["ts"] = f["ts"] + (start - f["ts"].iloc[0])
+    f["trip_id"] = trip_id
+    k_fail = fault.after_s
+    if k_fail >= len(f) - 120:
+        raise ValueError("the trip ends too soon after the fault")
 
     i2 = f["batt_current_a"].fillna(0).to_numpy() ** 2
-    t_base = base["batt_temp_max_c"].ffill().to_numpy()
+    t_base = base["batt_temp_max_c"].ffill().bfill().to_numpy()
+    tau = ACTIVE_TAU_S if fault.kind == "cell_degradation" else PASSIVE_TAU_S  # is the pack still being cooled?
     temp = np.empty(len(f))
     temp[0] = t_base[0]
     for k in range(1, len(f)):
-        heat = i2[k] * R_FAULT_OHM / MC_J_PER_K if k >= FAIL_AFTER_S else 0.0
-        temp[k] = temp[k - 1] + heat - (temp[k - 1] - t_base[k]) / PASSIVE_TAU_S
+        heat = i2[k] * fault.r_ohm / MC_J_PER_K if k >= k_fail else 0.0
+        temp[k] = temp[k - 1] + heat - (temp[k - 1] - t_base[k]) / tau
     f["batt_temp_max_c"] = temp
     f["batt_temp_c"] = base["batt_temp_c"].to_numpy() + 0.25 * (temp - t_base)  # one hot group lifts the average
-    if "hvac_ac_kw" in f:
-        f.loc[FAIL_AFTER_S:, "hvac_ac_kw"] = 0.0  # the compressor is locked out: no cabin A/C either
+    if fault.kind == "refrigerant_loss" and "hvac_ac_kw" in f:
+        f.loc[k_fail:, "hvac_ac_kw"] = 0.0  # the compressor is locked out: no cabin A/C either
 
     rate = pd.Series(temp).diff(60).to_numpy()  # °C per minute
     idx = np.arange(len(f))
-    k_rise = int(np.flatnonzero((rate >= RISE_RATE_C_PER_MIN) & (idx > FAIL_AFTER_S))[0])
-    k_derate = int(np.flatnonzero(temp >= DERATE_C)[0])
-    k_warn = int(np.flatnonzero(temp >= WARN_C)[0])
+    rising, derate, warn = (rate >= RISE_RATE_C_PER_MIN) & (idx > k_fail), temp >= DERATE_C, temp >= WARN_C
+    if not (rising.any() and derate.any() and warn.any()):
+        raise ValueError("the battery never reaches the warning threshold on this trip")
+    k_rise, k_derate, k_warn = (int(np.flatnonzero(x)[0]) for x in (rising, derate, warn))
     level = np.zeros(len(f), dtype=int)
     level[k_rise:] = 1
     level[k_warn:] = 3
     f["thermal_warning"] = level
 
     ts = f["ts"]
-    t_fail, t_derate, t_warn = ts[FAIL_AFTER_S], ts[k_derate], ts[k_warn]
-    tr = ScenarioTraffic(frames=f)
+    t_fail, t_rise, t_derate, t_warn = ts[k_fail], ts[k_rise], ts[k_derate], ts[k_warn]
+    group = fault.cell_group
+    tr = ScenarioTraffic(frames=f, fault_time=t_fail)
 
-    # QNX system log: routine refrigerant-circuit telemetry every minute, then the lock-out and the BMS report
+    # QNX system log: routine refrigerant-circuit telemetry every minute, then the fault and the BMS report
     routine = "p_low=2.9 bar p_high=12.1 bar batt_valve=open"
-    for k in range(0, FAIL_AFTER_S, 60):
-        tr.slog2_lines.append(format_record(LogRecord(ts[k].to_pydatetime(), "thermal_mgr", 412, "refrig", 5, routine)))
-    tr.slog2_lines += [
-        format_record(
-            LogRecord(
-                (t_fail + pd.Timedelta(milliseconds=412)).to_pydatetime(),
+    for k in range(0, k_fail, 60):
+        tr.slog2_lines.append(_log(ts[k], "thermal_mgr", 412, "refrig", 5, routine))
+    at_fail = t_fail + pd.Timedelta(milliseconds=412)
+    tr.slog2_lines.append(
+        {
+            "refrigerant_loss": _log(
+                at_fail,
                 "thermal_mgr",
                 412,
                 "refrig",
                 3,
                 "p_low=0.9 bar < 1.5 bar min: compressor locked out, battery cooling unavailable -> FAULT",
-            )
-        ),
-        format_record(
-            LogRecord(
-                (t_derate + pd.Timedelta(milliseconds=50)).to_pydatetime(),
+            ),
+            "valve_stuck": _log(
+                at_fail,
                 "thermal_mgr",
                 412,
-                "policy",
-                4,
-                f"derating drive power to {POWER_LIMIT_KW} kW",
-            )
-        ),
-        format_record(
-            LogRecord(
-                (t_warn + pd.Timedelta(milliseconds=100)).to_pydatetime(),
+                "refrig",
+                3,
+                "batt_valve cmd=open fb=closed: battery cooling blocked -> FAULT",
+            ),
+            "cell_degradation": _log(
+                at_fail,
                 "bms_thermal",
                 377,
                 "cellgrp",
-                1,
-                f"cell group 7 over temperature {temp[k_warn]:.1f} C",
-            )
+                3,
+                f"cell group {group} resistance {fault.r_ohm * 1000:.0f} mOhm "
+                f"({fault.r_ohm / HEALTHY_GROUP_OHM:.1f}x pack median) -> WARN",
+            ),
+        }[fault.kind]
+    )
+    tr.slog2_lines += [
+        _log(
+            t_derate + pd.Timedelta(milliseconds=50),
+            "thermal_mgr",
+            412,
+            "policy",
+            4,
+            f"derating drive power to {POWER_LIMIT_KW} kW",
+        ),
+        _log(
+            t_warn + pd.Timedelta(milliseconds=100),
+            "bms_thermal",
+            377,
+            "cellgrp",
+            1,
+            f"cell group {group} over temperature {temp[k_warn]:.1f} C",
         ),
     ]
     # UDS: the gateway polls after each new fault indication (EdgeCar only listens to these exchanges)
-    t_rise = ts[k_rise]
-    tr.diag_frames += _uds_poll(
-        t_fail + pd.Timedelta(seconds=1), "VCU", [uds.DtcRecord("P0534", 0x00, STATUS_CONFIRMED)]
-    )
-    tr.diag_frames += _uds_poll(t_rise + pd.Timedelta(seconds=1), "BMS", [uds.DtcRecord("P0C32", 0x00, STATUS_PENDING)])
-    tr.diag_frames += _uds_poll(
-        t_warn + pd.Timedelta(seconds=1), "VCU", [uds.DtcRecord("P0534", 0x00, STATUS_CONFIRMED)]
-    )
-    tr.diag_frames += _uds_poll(
-        t_warn + pd.Timedelta(seconds=1.2),
-        "BMS",
-        [uds.DtcRecord("P0C32", 0x00, STATUS_CONFIRMED), uds.DtcRecord("P0A7E", 0x00, STATUS_CONFIRMED)],
-    )
+    confirmed = [uds.DtcRecord("P0A7E", 0x00, STATUS_CONFIRMED)]
+    if fault.kind == "refrigerant_loss":
+        tr.fault_dtc = "P0534"
+        tr.diag_frames += _uds_poll(
+            t_fail + pd.Timedelta(seconds=1), "VCU", [uds.DtcRecord("P0534", 0, STATUS_CONFIRMED)]
+        )
+    if fault.kind == "cell_degradation":
+        tr.fault_dtc = "P0A7F"
+        tr.diag_frames += _uds_poll(
+            t_fail + pd.Timedelta(seconds=1), "BMS", [uds.DtcRecord("P0A7F", 0, STATUS_CONFIRMED)]
+        )
+        confirmed.insert(0, uds.DtcRecord("P0A7F", 0x00, STATUS_CONFIRMED))
+    else:  # cooling lost: the BMS sees the pack warm up despite its cooling request
+        tr.diag_frames += _uds_poll(
+            t_rise + pd.Timedelta(seconds=1), "BMS", [uds.DtcRecord("P0C32", 0, STATUS_PENDING)]
+        )
+        confirmed.insert(0, uds.DtcRecord("P0C32", 0x00, STATUS_CONFIRMED))
+    if fault.kind == "refrigerant_loss":
+        tr.diag_frames += _uds_poll(
+            t_warn + pd.Timedelta(seconds=1), "VCU", [uds.DtcRecord("P0534", 0, STATUS_CONFIRMED)]
+        )
+    tr.diag_frames += _uds_poll(t_warn + pd.Timedelta(seconds=1.2), "BMS", confirmed)
     # SOME/IP: thermal management announces the power limit
     payload = someip.THERMAL_PAYLOAD.pack(POWER_LIMIT_KW, round(temp[k_derate] * 10), 1)
     tr.someip_records.append(
@@ -181,17 +243,23 @@ def battery_overheat(base: pd.DataFrame) -> ScenarioTraffic:
         vhal.PropValue((t_warn + pd.Timedelta(milliseconds=200)).value, vhal.VENDOR_BATTERY_THERMAL_WARNING, 1)
     )
 
-    tr.truth = sorted(
-        [
-            (t_fail, "QNX_THERMAL_MGR"),
-            (t_fail, "P0534"),
-            (t_rise, "BATT_TEMP_RISE_RATE"),
-            (t_rise, "P0C32"),
-            (t_derate, "BATT_POWER_DERATE"),
-            (t_warn, "BATT_OVERTEMP_FLAG"),
-            (t_warn, "QNX_BMS_THERMAL"),
-            (t_warn, "BATT_OVERTEMP_WARNING"),
-            (t_warn, "P0A7E"),
-        ]
-    )
+    first = {
+        "refrigerant_loss": "QNX_THERMAL_MGR",
+        "valve_stuck": "QNX_THERMAL_MGR",
+        "cell_degradation": "QNX_BMS_THERMAL",
+    }
+    truth = [
+        (t_fail, first[fault.kind]),
+        (t_rise, "BATT_TEMP_RISE_RATE"),
+        (t_derate, "BATT_POWER_DERATE"),
+        (t_warn, "BATT_OVERTEMP_FLAG"),
+        (t_warn, "QNX_BMS_THERMAL"),
+        (t_warn, "BATT_OVERTEMP_WARNING"),
+        (t_warn, "P0A7E"),
+    ]
+    if tr.fault_dtc:
+        truth.append((t_fail, tr.fault_dtc))
+    if fault.kind != "cell_degradation":
+        truth.append((t_rise, "P0C32"))
+    tr.truth = sorted(truth)
     return tr

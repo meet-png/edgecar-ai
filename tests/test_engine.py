@@ -1,3 +1,6 @@
+from datetime import datetime
+
+import pandas as pd
 import pytest
 from conftest import CAPACITY_KWH, NOW
 
@@ -79,3 +82,37 @@ def test_list_events_explains_an_empty_period(store):
 def test_status_uses_latest_frame(store):
     r = engine(store).run(Query(intent="status"))
     assert r.facts["soc_pct"] == pytest.approx(80.0, abs=0.01)
+
+
+def test_root_cause_ignores_unrelated_faults_and_same_subsystem_glitches(store):
+    """An earlier unrelated fault (lost CAN communication) and an earlier glitch in the same subsystem are not the
+    cause; the most recent relevant fault before the symptom began is."""
+
+    def event(eid, minute, category, code, severity, title):
+        return {
+            "event_id": eid,
+            "ts": datetime(2024, 1, 28, 8, minute),
+            "vehicle_id": "ev-1",
+            "trip_id": "ev-1:027",
+            "category": category,
+            "code": code,
+            "severity": severity,
+            "source": "test",
+            "title": title,
+            "detail": "{}",
+            "provenance": "sim:test",
+        }
+
+    store.append_events(
+        pd.DataFrame(
+            [
+                event("d1", 2, "dtc", "U0155", "warning", "DTC U0155 — lost communication with the cluster"),
+                event("d2", 3, "system", "QNX_THERMAL_MGR", "warning", "thermal_mgr: sensor glitch, recovered"),
+                event("o1", 6, "thermal", "BATT_TEMP_RISE_RATE", "warning", "BMS: temperature rising fast"),
+            ]
+        )
+    )
+    r = engine(store).run(Query(intent="events_before", event="battery_overheat_warning", lookback_min=15))
+    assert r.facts["root_cause_code"] == "P0534"
+    assert "U0155" not in [e["code"] for e in r.table]  # an unrelated fault is left out of the timeline
+    assert r.facts["unrelated_left_out"] == 1
