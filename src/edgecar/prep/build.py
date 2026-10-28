@@ -130,55 +130,60 @@ def build(data_dir: Path, out: Path) -> None:
             print(f"  {vehicle_id:9s} direct (no public DBC for this vehicle)")
         store.append_frames(frames, str(VEHICLES[vehicle_id].provenance))
 
-    fd_codec = CanCodec(REFERENCE_DBC_DIR, I3_FD_DBC_FILES, I3_FD_SIGNALS)
-    i3 = tum.to_canonical(data_dir / "raw" / "tum_bmw_i3")
-    decoded, _ = replay_over_canfd_vhal(fd_codec, i3, "i3-tum", wire)
-    store.append_frames(segment_trips(decoded, "i3-tum"), str(VEHICLES["i3-tum"].provenance))
+    tum_dir = data_dir / "raw" / "tum_bmw_i3"
+    scenario = None
+    if tum_dir.exists():
+        fd_codec = CanCodec(REFERENCE_DBC_DIR, I3_FD_DBC_FILES, I3_FD_SIGNALS)
+        i3 = tum.to_canonical(tum_dir)
+        decoded, _ = replay_over_canfd_vhal(fd_codec, i3, "i3-tum", wire)
+        store.append_frames(segment_trips(decoded, "i3-tum"), str(VEHICLES["i3-tum"].provenance))
 
-    scenario = thermal.battery_overheat(i3[i3["trip_id"] == thermal.BASE_TRIP])
-    sc_frames, sc_vhal = replay_over_canfd_vhal(fd_codec, scenario.frames, "scenario", wire, scenario.vhal_values)
-    sc_frames = segment_trips(sc_frames, "i3-tum").assign(trip_id=thermal.SCENARIO_TRIP)
-    store.append_frames(sc_frames, thermal.PROVENANCE)
+        scenario = thermal.battery_overheat(i3[i3["trip_id"] == thermal.BASE_TRIP])
+        sc_frames, sc_vhal = replay_over_canfd_vhal(fd_codec, scenario.frames, "scenario", wire, scenario.vhal_values)
+        sc_frames = segment_trips(sc_frames, "i3-tum").assign(trip_id=thermal.SCENARIO_TRIP)
+        store.append_frames(sc_frames, thermal.PROVENANCE)
+    else:
+        print(f"  i3-tum    skipped: {tum_dir} not found (the TU Munich data needs a manual download)")
 
     print(f"trips: {store.rebuild_trips():,}   minute roll-ups: {store.rebuild_rollups():,}")
 
     print("events:")
     print(f"  detected from real signals (charging, hard braking, battery temperature): {detect_all(store):,}")
 
-    # overheat scenario: every event comes out of a protocol decoder
-    qnx_log, diag_log, sc_pcap = (
-        wire / "scenario.qnx.log",
-        wire / "scenario.diag.can.log",
-        wire / "scenario.someip.pcap",
-    )
-    qnx_log.write_text("\n".join(scenario.slog2_lines) + "\n", encoding="utf-8")
-    write_log(scenario.diag_frames, diag_log)
-    someip.write_pcap(scenario.someip_records, sc_pcap)
-    year = thermal.START.year
-    sc_events = pd.concat(
-        [
-            adapters.slog2_events(
-                (r for r in (parse_line(x, year) for x in qnx_log.read_text().splitlines()) if r),
-                "i3-tum",
-                thermal.PROVENANCE,
-            ),
-            adapters.uds_events(read_log(diag_log), "i3-tum", thermal.PROVENANCE),
-            adapters.someip_events(someip.read_pcap(sc_pcap), "i3-tum", thermal.PROVENANCE),
-            adapters.vhal_events(sc_vhal, "i3-tum", thermal.PROVENANCE),
-            adapters.canfd_thermal_events(sc_frames, "i3-tum", thermal.PROVENANCE),
-        ],
-        ignore_index=True,
-    )
-    store.append_events(adapters.assign_trips(sc_events, store))
-    got, want = set(sc_events["code"]), {code for _, code in scenario.truth}
-    print(
-        f"  overheat scenario: {len(sc_events)} events decoded from QNX slog2, UDS/ISO-TP, SOME/IP, VHAL, CAN FD; "
-        f"ground truth recovered {len(want & got)}/{len(want)}"
-        + (f" — MISSING {sorted(want - got)}" if want - got else "")
-    )
+    if scenario is not None:  # overheat scenario: every event comes out of a protocol decoder
+        qnx_log, diag_log, sc_pcap = (
+            wire / "scenario.qnx.log",
+            wire / "scenario.diag.can.log",
+            wire / "scenario.someip.pcap",
+        )
+        qnx_log.write_text("\n".join(scenario.slog2_lines) + "\n", encoding="utf-8")
+        write_log(scenario.diag_frames, diag_log)
+        someip.write_pcap(scenario.someip_records, sc_pcap)
+        year = thermal.START.year
+        sc_events = pd.concat(
+            [
+                adapters.slog2_events(
+                    (r for r in (parse_line(x, year) for x in qnx_log.read_text().splitlines()) if r),
+                    "i3-tum",
+                    thermal.PROVENANCE,
+                ),
+                adapters.uds_events(read_log(diag_log), "i3-tum", thermal.PROVENANCE),
+                adapters.someip_events(someip.read_pcap(sc_pcap), "i3-tum", thermal.PROVENANCE),
+                adapters.vhal_events(sc_vhal, "i3-tum", thermal.PROVENANCE),
+                adapters.canfd_thermal_events(sc_frames, "i3-tum", thermal.PROVENANCE),
+            ],
+            ignore_index=True,
+        )
+        store.append_events(adapters.assign_trips(sc_events, store))
+        got, want = set(sc_events["code"]), {code for _, code in scenario.truth}
+        print(
+            f"  overheat scenario: {len(sc_events)} events decoded from QNX slog2, UDS/ISO-TP, SOME/IP, VHAL, "
+            f"CAN FD; ground truth recovered {len(want & got)}/{len(want)}"
+            + (f" — MISSING {sorted(want - got)}" if want - got else "")
+        )
 
     baton, td2d = data_dir / "raw" / "baton", data_dir / "raw" / "td2d"
-    if (baton / "takeover_events_or.csv").exists() and td2d.exists():
+    if (baton / "takeover_events_or.csv").exists():  # TD2D: original files if fetched, else the packaged table
         cal = adas.load_calibration(baton, td2d)
         total = 0
         for vehicle_id in VEHICLES:

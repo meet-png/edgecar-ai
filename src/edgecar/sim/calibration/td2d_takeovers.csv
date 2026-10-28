@@ -1,0 +1,501 @@
+driver,condition,criticalEventType,reactionTime,takeoverResult
+D01,0back,right_pedestrian,600,Success
+D01,1back,right_pedestrian,684,Success
+D01,2back,left_pedestrian,785,Success
+D01,audiobook listening,right_pedestrian,848,Success
+D01,auditory gaming,front_vehicle,1714,Failure
+D01,auditory texting,front_vehicle,1187,Success
+D01,baseline,left_pedestrian,1063,Success
+D01,ebook reading,left_pedestrian,2000,Failure
+D01,gaming,front_vehicle,1211,Success
+D01,texting,right_pedestrian,707,Success
+D02,0back,left_pedestrian,859,Success
+D02,1back,right_pedestrian,781,Success
+D02,2back,right_pedestrian,932,Success
+D02,audiobook listening,left_pedestrian,813,Success
+D02,auditory gaming,right_pedestrian,789,Success
+D02,auditory texting,front_vehicle,1113,Success
+D02,baseline,front_vehicle,1008,Success
+D02,ebook reading,front_vehicle,1665,Failure
+D02,gaming,left_pedestrian,1892,Failure
+D02,texting,right_pedestrian,869,Success
+D03,0back,right_pedestrian,616,Success
+D03,1back,right_pedestrian,761,Success
+D03,2back,left_pedestrian,615,Success
+D03,audiobook listening,left_pedestrian,761,Failure
+D03,auditory gaming,front_vehicle,1126,Failure
+D03,auditory texting,front_vehicle,1241,Failure
+D03,baseline,left_pedestrian,667,Success
+D03,ebook reading,front_vehicle,2000,Failure
+D03,gaming,front_vehicle,1888,Failure
+D03,texting,right_pedestrian,1150,Failure
+D04,0back,left_pedestrian,770,Success
+D04,1back,right_pedestrian,794,Success
+D04,2back,left_pedestrian,893,Success
+D04,audiobook listening,right_pedestrian,847,Failure
+D04,auditory gaming,front_vehicle,906,Success
+D04,auditory texting,front_vehicle,1101,Success
+D04,baseline,front_vehicle,1051,Success
+D04,ebook reading,left_pedestrian,1719,Failure
+D04,gaming,left_pedestrian,903,Failure
+D04,texting,front_vehicle,2000,Failure
+D05,0back,front_vehicle,1426,Success
+D05,1back,right_pedestrian,1076,Success
+D05,2back,front_vehicle,1336,Success
+D05,audiobook listening,left_pedestrian,1180,Success
+D05,auditory gaming,right_pedestrian,1233,Success
+D05,auditory texting,left_pedestrian,1034,Success
+D05,baseline,front_vehicle,1325,Failure
+D05,ebook reading,left_pedestrian,1185,Success
+D05,gaming,left_pedestrian,1120,Success
+D05,texting,right_pedestrian,911,Success
+D06,0back,left_pedestrian,780,Success
+D06,1back,left_pedestrian,958,Failure
+D06,2back,front_vehicle,989,Success
+D06,audiobook listening,right_pedestrian,652,Failure
+D06,auditory gaming,left_pedestrian,840,Failure
+D06,auditory texting,front_vehicle,1143,Success
+D06,baseline,left_pedestrian,717,Success
+D06,ebook reading,front_vehicle,2000,Failure
+D06,gaming,right_pedestrian,670,Success
+D06,texting,right_pedestrian,1347,Failure
+D07,0back,right_pedestrian,1037,Success
+D07,1back,front_vehicle,1244,Success
+D07,2back,left_pedestrian,1381,Success
+D07,audiobook listening,left_pedestrian,1133,Success
+D07,auditory gaming,front_vehicle,1257,Success
+D07,auditory texting,right_pedestrian,1043,Success
+D07,baseline,right_pedestrian,870,Success
+D07,ebook reading,front_vehicle,1791,Failure
+D07,gaming,right_pedestrian,1255,Success
+D07,texting,front_vehicle,1896,Failure
+D08,0back,left_pedestrian,679,Success
+D08,1back,left_pedestrian,690,Success
+D08,2back,front_vehicle,962,Success
+D08,audiobook listening,right_pedestrian,682,Success
+D08,auditory gaming,left_pedestrian,724,Success
+D08,auditory texting,right_pedestrian,824,Success
+D08,baseline,right_pedestrian,772,Success
+D08,ebook reading,right_pedestrian,933,Success
+D08,gaming,front_vehicle,1007,Success
+D08,texting,left_pedestrian,1130,Success
+D09,0back,left_pedestrian,772,Success
+D09,1back,right_pedestrian,769,Success
+D09,2back,right_pedestrian,1063,Success
+D09,audiobook listening,left_pedestrian,908,Success
+D09,auditory gaming,right_pedestrian,767,Success
+D09,auditory texting,front_vehicle,1050,Success
+D09,baseline,left_pedestrian,874,Success
+D09,ebook reading,right_pedestrian,677,Success
+D09,gaming,left_pedestrian,1199,Failure
+D09,texting,front_vehicle,1434,Failure
+D10,0back,right_pedestrian,675,Success
+D10,1back,right_pedestrian,682,Success
+D10,2back,right_pedestrian,813,Success
+D10,audiobook listening,left_pedestrian,884,Success
+D10,auditory gaming,left_pedestrian,777,Success
+D10,auditory texting,left_pedestrian,865,Success
+D10,baseline,right_pedestrian,777,Success
+D10,ebook reading,front_vehicle,1240,Success
+D10,gaming,front_vehicle,1217,Success
+D10,texting,left_pedestrian,1253,Success
+D11,0back,left_pedestrian,1161,Failure
+D11,1back,left_pedestrian,1181,Failure
+D11,2back,right_pedestrian,768,Success
+D11,audiobook listening,right_pedestrian,590,Success
+D11,auditory gaming,front_vehicle,1619,Failure
+D11,auditory texting,front_vehicle,1054,Success
+D11,baseline,right_pedestrian,671,Failure
+D11,ebook reading,right_pedestrian,817,Success
+D11,gaming,left_pedestrian,1307,Failure
+D11,texting,front_vehicle,1613,Failure
+D12,0back,right_pedestrian,627,Success
+D12,1back,right_pedestrian,578,Success
+D12,2back,right_pedestrian,817,Success
+D12,audiobook listening,front_vehicle,1068,Success
+D12,auditory gaming,front_vehicle,1058,Success
+D12,auditory texting,left_pedestrian,923,Success
+D12,baseline,front_vehicle,1297,Success
+D12,ebook reading,right_pedestrian,874,Success
+D12,gaming,left_pedestrian,969,Failure
+D12,texting,front_vehicle,1727,Failure
+D13,0back,left_pedestrian,815,Success
+D13,1back,right_pedestrian,861,Failure
+D13,2back,front_vehicle,1440,Failure
+D13,audiobook listening,front_vehicle,911,Success
+D13,auditory gaming,right_pedestrian,665,Success
+D13,auditory texting,left_pedestrian,729,Success
+D13,baseline,left_pedestrian,716,Success
+D13,ebook reading,left_pedestrian,967,Failure
+D13,gaming,right_pedestrian,1979,Failure
+D13,texting,front_vehicle,1217,Failure
+D14,0back,front_vehicle,1389,Failure
+D14,1back,right_pedestrian,801,Success
+D14,2back,left_pedestrian,821,Success
+D14,audiobook listening,left_pedestrian,718,Success
+D14,auditory gaming,right_pedestrian,746,Success
+D14,auditory texting,left_pedestrian,827,Success
+D14,baseline,front_vehicle,997,Success
+D14,ebook reading,front_vehicle,2000,Failure
+D14,gaming,right_pedestrian,1180,Failure
+D14,texting,right_pedestrian,694,Success
+D15,0back,right_pedestrian,643,Success
+D15,1back,left_pedestrian,905,Success
+D15,2back,right_pedestrian,711,Failure
+D15,audiobook listening,front_vehicle,1407,Failure
+D15,auditory gaming,left_pedestrian,875,Success
+D15,auditory texting,front_vehicle,1173,Success
+D15,baseline,front_vehicle,968,Success
+D15,ebook reading,left_pedestrian,780,Success
+D15,gaming,front_vehicle,2000,Failure
+D15,texting,right_pedestrian,1788,Failure
+D16,0back,left_pedestrian,793,Success
+D16,1back,front_vehicle,1195,Failure
+D16,2back,right_pedestrian,730,Success
+D16,audiobook listening,front_vehicle,1346,Failure
+D16,auditory gaming,right_pedestrian,737,Success
+D16,auditory texting,left_pedestrian,809,Success
+D16,baseline,front_vehicle,1106,Success
+D16,ebook reading,right_pedestrian,748,Success
+D16,gaming,left_pedestrian,1826,Failure
+D16,texting,front_vehicle,1505,Failure
+D17,0back,front_vehicle,807,Success
+D17,1back,right_pedestrian,731,Success
+D17,2back,front_vehicle,1069,Success
+D17,audiobook listening,front_vehicle,972,Success
+D17,auditory gaming,left_pedestrian,778,Success
+D17,auditory texting,front_vehicle,954,Success
+D17,baseline,left_pedestrian,820,Success
+D17,ebook reading,right_pedestrian,771,Success
+D17,gaming,right_pedestrian,857,Success
+D17,texting,left_pedestrian,870,Success
+D18,0back,left_pedestrian,670,Success
+D18,1back,front_vehicle,1600,Failure
+D18,2back,left_pedestrian,671,Success
+D18,audiobook listening,right_pedestrian,634,Success
+D18,auditory gaming,front_vehicle,1192,Success
+D18,auditory texting,front_vehicle,1479,Failure
+D18,baseline,right_pedestrian,628,Success
+D18,ebook reading,left_pedestrian,817,Success
+D18,gaming,left_pedestrian,1065,Failure
+D18,texting,front_vehicle,1250,Failure
+D19,0back,right_pedestrian,681,Failure
+D19,1back,right_pedestrian,834,Success
+D19,2back,right_pedestrian,958,Success
+D19,audiobook listening,front_vehicle,1106,Success
+D19,auditory gaming,left_pedestrian,883,Success
+D19,auditory texting,left_pedestrian,821,Success
+D19,baseline,front_vehicle,1287,Success
+D19,ebook reading,front_vehicle,1537,Failure
+D19,gaming,left_pedestrian,960,Success
+D19,texting,left_pedestrian,965,Success
+D20,0back,front_vehicle,1434,Failure
+D20,1back,left_pedestrian,1456,Failure
+D20,2back,front_vehicle,1397,Failure
+D20,audiobook listening,right_pedestrian,893,Success
+D20,auditory gaming,left_pedestrian,1283,Failure
+D20,auditory texting,front_vehicle,1435,Failure
+D20,baseline,right_pedestrian,1108,Success
+D20,ebook reading,right_pedestrian,2000,Failure
+D20,gaming,right_pedestrian,938,Failure
+D20,texting,front_vehicle,2000,Failure
+D21,0back,front_vehicle,1058,Success
+D21,1back,right_pedestrian,1060,Failure
+D21,2back,right_pedestrian,1255,Failure
+D21,audiobook listening,left_pedestrian,921,Failure
+D21,auditory gaming,front_vehicle,1009,Success
+D21,auditory texting,left_pedestrian,1381,Failure
+D21,baseline,right_pedestrian,643,Success
+D21,ebook reading,left_pedestrian,895,Failure
+D21,gaming,right_pedestrian,2000,Failure
+D21,texting,front_vehicle,1460,Failure
+D22,0back,front_vehicle,1158,Success
+D22,1back,front_vehicle,1120,Success
+D22,2back,right_pedestrian,983,Failure
+D22,audiobook listening,right_pedestrian,819,Success
+D22,auditory gaming,front_vehicle,1202,Failure
+D22,auditory texting,left_pedestrian,923,Failure
+D22,baseline,right_pedestrian,931,Failure
+D22,ebook reading,left_pedestrian,972,Failure
+D22,gaming,left_pedestrian,1119,Failure
+D22,texting,front_vehicle,2000,Failure
+D23,0back,right_pedestrian,865,Failure
+D23,1back,left_pedestrian,773,Success
+D23,2back,right_pedestrian,777,Failure
+D23,audiobook listening,front_vehicle,1227,Success
+D23,auditory gaming,front_vehicle,1207,Success
+D23,auditory texting,left_pedestrian,821,Success
+D23,baseline,left_pedestrian,1024,Failure
+D23,ebook reading,front_vehicle,1931,Failure
+D23,gaming,front_vehicle,1338,Failure
+D23,texting,right_pedestrian,718,Success
+D24,0back,right_pedestrian,775,Success
+D24,1back,left_pedestrian,1117,Success
+D24,2back,front_vehicle,1164,Success
+D24,audiobook listening,right_pedestrian,777,Success
+D24,auditory gaming,front_vehicle,1310,Success
+D24,auditory texting,left_pedestrian,929,Success
+D24,baseline,left_pedestrian,864,Success
+D24,ebook reading,right_pedestrian,820,Success
+D24,gaming,front_vehicle,1141,Success
+D24,texting,front_vehicle,2000,Failure
+D25,0back,front_vehicle,1085,Success
+D25,1back,left_pedestrian,927,Failure
+D25,2back,front_vehicle,1484,Failure
+D25,audiobook listening,left_pedestrian,887,Failure
+D25,auditory gaming,left_pedestrian,971,Failure
+D25,auditory texting,right_pedestrian,910,Failure
+D25,baseline,right_pedestrian,675,Success
+D25,ebook reading,front_vehicle,1294,Failure
+D25,gaming,front_vehicle,2000,Failure
+D25,texting,right_pedestrian,726,Success
+D26,0back,front_vehicle,826,Success
+D26,1back,left_pedestrian,729,Success
+D26,2back,right_pedestrian,777,Success
+D26,audiobook listening,left_pedestrian,721,Success
+D26,auditory gaming,front_vehicle,858,Success
+D26,auditory texting,left_pedestrian,612,Success
+D26,baseline,front_vehicle,795,Success
+D26,ebook reading,right_pedestrian,779,Failure
+D26,gaming,right_pedestrian,726,Success
+D26,texting,right_pedestrian,515,Success
+D27,0back,right_pedestrian,633,Success
+D27,1back,front_vehicle,1167,Success
+D27,2back,left_pedestrian,1005,Failure
+D27,audiobook listening,right_pedestrian,708,Success
+D27,auditory gaming,right_pedestrian,772,Failure
+D27,auditory texting,front_vehicle,1540,Failure
+D27,baseline,front_vehicle,913,Success
+D27,ebook reading,front_vehicle,2000,Failure
+D27,gaming,left_pedestrian,883,Failure
+D27,texting,right_pedestrian,723,Success
+D28,0back,front_vehicle,910,Success
+D28,1back,right_pedestrian,767,Success
+D28,2back,right_pedestrian,817,Success
+D28,audiobook listening,front_vehicle,1000,Success
+D28,auditory gaming,left_pedestrian,866,Success
+D28,auditory texting,front_vehicle,1099,Success
+D28,baseline,left_pedestrian,927,Success
+D28,ebook reading,front_vehicle,1762,Failure
+D28,gaming,right_pedestrian,1020,Failure
+D28,texting,right_pedestrian,1102,Success
+D29,0back,front_vehicle,965,Success
+D29,1back,left_pedestrian,1014,Success
+D29,2back,right_pedestrian,824,Success
+D29,audiobook listening,right_pedestrian,824,Success
+D29,auditory gaming,right_pedestrian,827,Success
+D29,auditory texting,front_vehicle,1255,Failure
+D29,baseline,left_pedestrian,768,Success
+D29,ebook reading,left_pedestrian,882,Success
+D29,gaming,left_pedestrian,975,Success
+D29,texting,front_vehicle,1699,Success
+D30,0back,right_pedestrian,1621,Failure
+D30,1back,left_pedestrian,916,Success
+D30,2back,front_vehicle,1206,Success
+D30,audiobook listening,left_pedestrian,796,Success
+D30,auditory gaming,right_pedestrian,634,Success
+D30,auditory texting,right_pedestrian,808,Success
+D30,baseline,left_pedestrian,787,Success
+D30,ebook reading,front_vehicle,1862,Failure
+D30,gaming,right_pedestrian,676,Success
+D30,texting,front_vehicle,1790,Failure
+D31,0back,left_pedestrian,847,Success
+D31,1back,front_vehicle,1087,Success
+D31,2back,front_vehicle,1093,Success
+D31,audiobook listening,right_pedestrian,894,Success
+D31,auditory gaming,left_pedestrian,733,Success
+D31,auditory texting,right_pedestrian,746,Success
+D31,baseline,right_pedestrian,617,Success
+D31,ebook reading,right_pedestrian,914,Failure
+D31,gaming,front_vehicle,1263,Success
+D31,texting,front_vehicle,1443,Failure
+D32,0back,left_pedestrian,778,Success
+D32,1back,front_vehicle,2000,Failure
+D32,2back,left_pedestrian,1168,Failure
+D32,audiobook listening,right_pedestrian,630,Success
+D32,auditory gaming,right_pedestrian,701,Success
+D32,auditory texting,front_vehicle,1464,Failure
+D32,baseline,right_pedestrian,826,Failure
+D32,ebook reading,right_pedestrian,911,Failure
+D32,gaming,left_pedestrian,905,Success
+D32,texting,front_vehicle,2000,Failure
+D33,0back,right_pedestrian,567,Success
+D33,1back,left_pedestrian,787,Failure
+D33,2back,right_pedestrian,746,Failure
+D33,audiobook listening,right_pedestrian,661,Success
+D33,auditory gaming,front_vehicle,995,Success
+D33,auditory texting,right_pedestrian,707,Success
+D33,baseline,front_vehicle,964,Success
+D33,ebook reading,left_pedestrian,790,Success
+D33,gaming,left_pedestrian,812,Success
+D33,texting,front_vehicle,1299,Success
+D34,0back,right_pedestrian,816,Failure
+D34,1back,left_pedestrian,866,Success
+D34,2back,right_pedestrian,977,Failure
+D34,audiobook listening,left_pedestrian,815,Success
+D34,auditory gaming,left_pedestrian,813,Success
+D34,auditory texting,right_pedestrian,932,Failure
+D34,baseline,front_vehicle,1352,Failure
+D34,ebook reading,right_pedestrian,2000,Failure
+D34,gaming,front_vehicle,1492,Failure
+D34,texting,front_vehicle,2000,Failure
+D35,0back,front_vehicle,1231,Success
+D35,1back,left_pedestrian,668,Success
+D35,2back,front_vehicle,1016,Success
+D35,audiobook listening,front_vehicle,1108,Success
+D35,auditory gaming,right_pedestrian,579,Success
+D35,auditory texting,left_pedestrian,873,Success
+D35,baseline,right_pedestrian,679,Success
+D35,ebook reading,right_pedestrian,1152,Failure
+D35,gaming,front_vehicle,1483,Failure
+D35,texting,left_pedestrian,1306,Success
+D36,0back,right_pedestrian,777,Success
+D36,1back,front_vehicle,1052,Success
+D36,2back,front_vehicle,1205,Success
+D36,audiobook listening,left_pedestrian,1156,Success
+D36,auditory gaming,right_pedestrian,1095,Failure
+D36,auditory texting,left_pedestrian,1260,Failure
+D36,baseline,right_pedestrian,724,Success
+D36,ebook reading,right_pedestrian,1212,Failure
+D36,gaming,front_vehicle,2000,Failure
+D36,texting,left_pedestrian,1164,Failure
+D37,0back,right_pedestrian,1073,Failure
+D37,1back,front_vehicle,1201,Failure
+D37,2back,right_pedestrian,678,Failure
+D37,audiobook listening,left_pedestrian,1372,Failure
+D37,auditory gaming,left_pedestrian,906,Success
+D37,auditory texting,left_pedestrian,2000,Failure
+D37,baseline,right_pedestrian,677,Failure
+D37,ebook reading,front_vehicle,1574,Failure
+D37,gaming,front_vehicle,2000,Failure
+D37,texting,front_vehicle,1106,Success
+D38,0back,left_pedestrian,865,Success
+D38,1back,front_vehicle,1126,Success
+D38,2back,right_pedestrian,1004,Success
+D38,audiobook listening,right_pedestrian,807,Success
+D38,auditory gaming,front_vehicle,1774,Failure
+D38,auditory texting,left_pedestrian,1005,Failure
+D38,baseline,right_pedestrian,674,Success
+D38,ebook reading,front_vehicle,2000,Failure
+D38,gaming,right_pedestrian,1287,Failure
+D38,texting,left_pedestrian,1987,Failure
+D39,0back,front_vehicle,921,Success
+D39,1back,right_pedestrian,867,Failure
+D39,2back,left_pedestrian,1102,Failure
+D39,audiobook listening,front_vehicle,954,Success
+D39,auditory gaming,front_vehicle,1297,Failure
+D39,auditory texting,right_pedestrian,821,Success
+D39,baseline,left_pedestrian,822,Success
+D39,ebook reading,right_pedestrian,885,Failure
+D39,gaming,front_vehicle,2000,Failure
+D39,texting,right_pedestrian,1762,Failure
+D40,0back,front_vehicle,952,Success
+D40,1back,left_pedestrian,867,Success
+D40,2back,front_vehicle,1186,Success
+D40,audiobook listening,right_pedestrian,687,Success
+D40,auditory gaming,left_pedestrian,629,Failure
+D40,auditory texting,left_pedestrian,813,Success
+D40,baseline,front_vehicle,1150,Success
+D40,ebook reading,left_pedestrian,1013,Success
+D40,gaming,right_pedestrian,783,Success
+D40,texting,right_pedestrian,813,Success
+D41,0back,left_pedestrian,878,Success
+D41,1back,right_pedestrian,890,Failure
+D41,2back,front_vehicle,964,Success
+D41,audiobook listening,front_vehicle,1232,Failure
+D41,auditory gaming,front_vehicle,1361,Success
+D41,auditory texting,right_pedestrian,954,Success
+D41,baseline,left_pedestrian,792,Success
+D41,ebook reading,left_pedestrian,959,Success
+D41,gaming,right_pedestrian,2000,Failure
+D41,texting,right_pedestrian,1342,Failure
+D42,0back,left_pedestrian,812,Success
+D42,1back,left_pedestrian,819,Success
+D42,2back,right_pedestrian,872,Success
+D42,audiobook listening,left_pedestrian,870,Success
+D42,auditory gaming,front_vehicle,970,Success
+D42,auditory texting,front_vehicle,1002,Success
+D42,baseline,front_vehicle,813,Success
+D42,ebook reading,front_vehicle,1481,Failure
+D42,gaming,right_pedestrian,672,Success
+D42,texting,left_pedestrian,920,Success
+D43,0back,right_pedestrian,634,Success
+D43,1back,left_pedestrian,1062,Failure
+D43,2back,front_vehicle,999,Success
+D43,audiobook listening,left_pedestrian,861,Failure
+D43,auditory gaming,front_vehicle,1080,Success
+D43,auditory texting,right_pedestrian,619,Success
+D43,baseline,left_pedestrian,820,Success
+D43,ebook reading,right_pedestrian,2000,Failure
+D43,gaming,front_vehicle,2000,Failure
+D43,texting,right_pedestrian,1188,Failure
+D44,0back,right_pedestrian,707,Success
+D44,1back,front_vehicle,953,Success
+D44,2back,front_vehicle,905,Success
+D44,audiobook listening,left_pedestrian,805,Success
+D44,auditory gaming,right_pedestrian,794,Success
+D44,auditory texting,left_pedestrian,850,Failure
+D44,baseline,front_vehicle,1038,Success
+D44,ebook reading,front_vehicle,1514,Failure
+D44,gaming,left_pedestrian,1820,Failure
+D44,texting,right_pedestrian,1777,Failure
+D45,0back,front_vehicle,881,Success
+D45,1back,right_pedestrian,943,Failure
+D45,2back,right_pedestrian,952,Failure
+D45,audiobook listening,front_vehicle,1231,Failure
+D45,auditory gaming,right_pedestrian,808,Success
+D45,auditory texting,left_pedestrian,930,Failure
+D45,baseline,front_vehicle,1027,Success
+D45,ebook reading,front_vehicle,1876,Failure
+D45,gaming,left_pedestrian,1096,Failure
+D45,texting,right_pedestrian,1715,Failure
+D46,0back,left_pedestrian,894,Failure
+D46,1back,left_pedestrian,902,Success
+D46,2back,front_vehicle,857,Success
+D46,audiobook listening,right_pedestrian,665,Success
+D46,auditory gaming,front_vehicle,1054,Success
+D46,auditory texting,left_pedestrian,1217,Failure
+D46,baseline,right_pedestrian,659,Success
+D46,ebook reading,right_pedestrian,748,Success
+D46,gaming,left_pedestrian,979,Success
+D46,texting,right_pedestrian,1870,Failure
+D47,0back,left_pedestrian,914,Success
+D47,1back,right_pedestrian,1008,Success
+D47,2back,right_pedestrian,823,Success
+D47,audiobook listening,right_pedestrian,920,Success
+D47,auditory gaming,front_vehicle,1421,Failure
+D47,auditory texting,left_pedestrian,1123,Success
+D47,baseline,front_vehicle,1245,Success
+D47,ebook reading,left_pedestrian,928,Success
+D47,gaming,front_vehicle,1579,Failure
+D47,texting,front_vehicle,1307,Failure
+D48,0back,front_vehicle,807,Success
+D48,1back,front_vehicle,908,Success
+D48,2back,front_vehicle,1041,Success
+D48,audiobook listening,right_pedestrian,692,Success
+D48,auditory gaming,right_pedestrian,874,Success
+D48,auditory texting,left_pedestrian,779,Success
+D48,baseline,left_pedestrian,678,Success
+D48,ebook reading,left_pedestrian,722,Success
+D48,gaming,right_pedestrian,1149,Success
+D48,texting,front_vehicle,1244,Success
+D49,0back,right_pedestrian,618,Success
+D49,1back,right_pedestrian,717,Success
+D49,2back,front_vehicle,896,Success
+D49,audiobook listening,front_vehicle,1202,Failure
+D49,auditory gaming,left_pedestrian,754,Success
+D49,auditory texting,front_vehicle,890,Success
+D49,baseline,left_pedestrian,664,Success
+D49,ebook reading,front_vehicle,1435,Failure
+D49,gaming,left_pedestrian,971,Failure
+D49,texting,right_pedestrian,1028,Failure
+D50,0back,front_vehicle,1051,Success
+D50,1back,right_pedestrian,881,Failure
+D50,2back,front_vehicle,1004,Success
+D50,audiobook listening,right_pedestrian,668,Success
+D50,auditory gaming,right_pedestrian,780,Success
+D50,auditory texting,right_pedestrian,777,Success
+D50,baseline,left_pedestrian,779,Success
+D50,ebook reading,left_pedestrian,883,Failure
+D50,gaming,front_vehicle,2000,Failure
+D50,texting,left_pedestrian,1299,Failure

@@ -44,6 +44,7 @@ SENSOR_BLOCK_C = -2.0
 CAUSE_PRIORS = {"driver_steer": 0.70, "lane_markings_lost": 0.15, "tor": 0.10, "sensor_blocked": 0.05}
 
 PROVENANCE = "sim:adas (BATON timing, TD2D takeovers)"
+TD2D_TABLE = Path(__file__).with_name("calibration") / "td2d_takeovers.csv"
 DISENGAGED, ENGAGED, TAKEOVER_REQUEST = 0, 1, 2
 
 
@@ -74,7 +75,7 @@ class AdasChange:
         )
 
 
-def load_calibration(baton_dir: Path, td2d_dir: Path) -> Calibration:
+def load_calibration(baton_dir: Path, td2d_dir: Path | None = None) -> Calibration:
     act = pd.read_csv(Path(baton_dir) / "activation_events_or.csv").assign(kind="on")
     tko = pd.read_csv(Path(baton_dir) / "takeover_events_or.csv").assign(kind="off")
     ev = pd.concat([act, tko]).sort_values(["route_id", "event_time_sec"])
@@ -86,12 +87,22 @@ def load_calibration(baton_dir: Path, td2d_dir: Path) -> Calibration:
                 episodes.append(t[i + 1] - t[i])
             elif kind[i] == "off" and kind[i + 1] == "on":
                 gaps.append(t[i + 1] - t[i])
+    return Calibration(np.array(episodes), np.array(gaps), td2d_table(td2d_dir))
+
+
+def td2d_table(td2d_dir: Path | None = None) -> pd.DataFrame:
+    """The 500 TD2D takeover cases, from the original files when present, else from the table extracted from them
+    (``calibration/td2d_takeovers.csv``, CC BY 4.0). Rows are in sorted path order on every platform."""
+    pattern = str(Path(td2d_dir or ".") / "TD2D" / "D*" / "*" / "takeoverScenarioInformations.csv")
+    files = sorted(glob.glob(pattern)) if td2d_dir else []
+    if not files:
+        return pd.read_csv(TD2D_TABLE)
     rows = []
-    for f in glob.glob(str(Path(td2d_dir) / "TD2D" / "D*" / "*" / "takeoverScenarioInformations.csv")):
+    for f in files:
         d = pd.read_csv(f)
-        d["condition"] = Path(f).parent.name
-        rows.append(d[["criticalEventType", "reactionTime", "takeoverResult", "condition"]])
-    return Calibration(np.array(episodes), np.array(gaps), pd.concat(rows, ignore_index=True))
+        d["driver"], d["condition"] = Path(f).parent.parent.name, Path(f).parent.name
+        rows.append(d[["driver", "condition", "criticalEventType", "reactionTime", "takeoverResult"]])
+    return pd.concat(rows, ignore_index=True)
 
 
 def _rng(trip_id: str) -> np.random.Generator:
