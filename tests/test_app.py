@@ -1,10 +1,11 @@
 from datetime import datetime
 
 import numpy as np
+import pytest
 from fastapi.testclient import TestClient
 
 from edgecar import voice
-from edgecar.app.server import MAX_AUDIO_BYTES, Zone, create_app, plain
+from edgecar.app.server import MAX_AUDIO_BYTES, Zone, create_app, main, plain
 from edgecar.privacy import Role
 
 
@@ -79,3 +80,8 @@ def test_listen_takes_short_wav_recordings_only(store):
     assert c.post("/api/listen", content=one_second).json()["text"] == "16000 samples"
     assert c.post("/api/listen", content=b"not audio").status_code == 400
     assert c.post("/api/listen", content=b"x" * (MAX_AUDIO_BYTES + 1)).status_code == 413
+
+
+def test_serve_refuses_a_wildcard_address():
+    with pytest.raises(SystemExit):
+        main(["--host", "0.0.0.0", "--role", "fleet", "--no-model", "--no-voice"])

@@ -184,7 +184,7 @@ def create_app(zone: Zone, hosts: tuple[str, ...] = LOCAL_HOSTS) -> FastAPI:
             return Response("cross-origin request refused", status_code=403)
         return await call_next(request)
 
-    app.add_middleware(TrustedHostMiddleware, allowed_hosts=list(hosts))  # outermost: refuse rebinding first
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=list(hosts))  # runs before the origin check
 
     @app.middleware("http")
     async def offline_headers(request: Request, call_next):
@@ -279,6 +279,8 @@ def main(argv: list[str] | None = None) -> None:
         help="the most this display may show: driver (the owner's own car, the default on localhost), service or fleet",
     )
     a = ap.parse_args(argv)
+    if a.host in ("0.0.0.0", "::"):  # requests must name this host, and none names a wildcard
+        ap.error(f"--host {a.host}: bind the address viewers will use, e.g. --host 192.168.1.20")
     if a.role is None:
         if a.host not in LOCAL_HOSTS:
             ap.error(f"--host {a.host} is reachable from other machines: say which view it may show with --role")

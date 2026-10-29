@@ -18,7 +18,7 @@ from __future__ import annotations
 import dataclasses
 import re
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timedelta
 from enum import StrEnum
 
 from edgecar.analytics import Result
@@ -63,8 +63,14 @@ def _to_hour(v):
     if isinstance(v, datetime):  # pandas Timestamps too
         return v.replace(minute=0, second=0, microsecond=0)
     if isinstance(v, str):
-        return _CLOCK.sub(r":xx", v)
+        return _CLOCK.sub(r"\1:xx", v)
     return v
+
+
+def _up_to_hour(v: datetime) -> datetime:
+    """The end of a window rounded up to the hour, so the rounded window still contains all it did."""
+    start = _to_hour(v)
+    return start if start == v else start + timedelta(hours=1)
 
 
 def redact(result: Result, role: Role | str, consent_behaviour: bool = False) -> Result:
@@ -107,7 +113,7 @@ def redact(result: Result, role: Role | str, consent_behaviour: bool = False) ->
     if policy.hour_resolution:
         r.facts = {k: _to_hour(v) for k, v in r.facts.items()}
         if r.window:
-            r.window = (_to_hour(r.window[0]), _to_hour(r.window[1]))
+            r.window = (_to_hour(r.window[0]), _up_to_hour(r.window[1]))
     if r.chart:
         chart = dict(r.chart)
         if hide_behaviour:

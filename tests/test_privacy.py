@@ -109,5 +109,6 @@ def test_structured_answer_follows_the_policy_too():
     fleet = redact(_before_overheat(), Role.FLEET)  # to the hour: no per-second trace, no exact times
     assert fleet.chart is None
     assert fleet.facts["anchor_time"] == datetime(2024, 3, 5, 13)
-    assert fleet.window == (datetime(2024, 3, 5, 13), datetime(2024, 3, 5, 13))
+    assert fleet.window == (datetime(2024, 3, 5, 13), datetime(2024, 3, 5, 14))  # still contains 13:04–13:19
+    assert redact(Result("x", "", {"logged": "at 13:19:51"}), Role.FLEET).facts["logged"] == "at 13:xx"
     assert _before_overheat().chart["series"]["speed (km/h)"]  # the original is untouched
