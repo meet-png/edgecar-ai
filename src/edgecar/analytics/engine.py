@@ -855,6 +855,8 @@ class Engine:
                     "speed (km/h)": [None if pd.isna(v) else round(float(v), 1) for v in sig["speed_kmh"]],
                 },
                 "unit": "",
+                "behaviour": ["speed (km/h)"],  # series that trace the driver (see edgecar.privacy)
+                "clock": True,  # x is time of day to the second
             }
         return Result(
             "events_before",

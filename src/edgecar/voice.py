@@ -81,8 +81,8 @@ class Voice:
             )
             self.can_listen = True
         tts = root / TTS_MODEL
-        if tts.exists():
-            onnx = next(tts.glob("*.onnx"))
+        onnx = next(tts.glob("*.onnx"), None) if tts.exists() else None
+        if onnx is not None:
             config = sherpa_onnx.OfflineTtsConfig(
                 model=sherpa_onnx.OfflineTtsModelConfig(
                     vits=sherpa_onnx.OfflineTtsVitsModelConfig(
@@ -113,5 +113,8 @@ def load(root: Path = ROOT, threads: int = 2) -> Voice | None:
     try:
         v = Voice(root, threads)
     except ImportError:
+        return None
+    except Exception as e:  # a damaged or partial download: the app still works, by text
+        print(f"voice: off — could not load the speech models in {root} ({type(e).__name__}: {e})")
         return None
     return v if (v.can_listen or v.can_speak) else None

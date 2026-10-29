@@ -19,3 +19,11 @@ def test_units_are_read_out():
 
 def test_app_runs_text_only_without_speech_models(tmp_path):
     assert voice.load(root=tmp_path) is None
+
+
+def test_damaged_speech_models_fall_back_to_text(tmp_path):
+    stt = tmp_path / voice.STT_MODEL
+    stt.mkdir()
+    (stt / "encoder_model.ort").write_bytes(b"truncated download")
+    (tmp_path / voice.TTS_MODEL).mkdir()  # a voice folder without its .onnx
+    assert voice.load(root=tmp_path) is None

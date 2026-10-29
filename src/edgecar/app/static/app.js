@@ -486,7 +486,10 @@ async function init() {
   state.vehicle = state.meta.vehicles[0]?.id;
   sel.onchange = () => { state.vehicle = sel.value; loadStatus(); };
   $("#model-badge").textContent = state.meta.model ? `Model: ${state.meta.model.replace(/\.gguf$/, "")}` : "Rules only";
+  state.role = state.meta.roles[0];
   document.querySelectorAll(".roles button").forEach((b) => {
+    b.hidden = !state.meta.roles.includes(b.dataset.role);
+    b.setAttribute("aria-checked", String(b.dataset.role === state.role));
     b.onclick = () => {
       document.querySelectorAll(".roles button").forEach((x) => x.setAttribute("aria-checked", String(x === b)));
       state.role = b.dataset.role;

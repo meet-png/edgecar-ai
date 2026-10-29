@@ -18,6 +18,7 @@ from __future__ import annotations
 import dataclasses
 import re
 from dataclasses import dataclass
+from datetime import datetime
 from enum import StrEnum
 
 from edgecar.analytics import Result
@@ -53,6 +54,17 @@ _CLOCK = re.compile(r"\b(\d{2}):\d{2}:\d{2}\b")
 _REACTION = re.compile(r"responded after \d+\.\d+ s")
 _LATLON = re.compile(r"\b-?\d{1,3}\.\d{4,}\s*,\s*-?\d{1,3}\.\d{4,}\b")
 _RAW_LOG_QUOTE = re.compile(r" \([a-z_]+: [^)]*\)")  # a quoted raw log line, e.g. " (thermal_mgr: pwm_fb=0 …)"
+_BEHAVIOUR_FACT = re.compile(r"^(speed|hard_brake|reaction)")  # facts that trace the driver, e.g. speed_kmh_max
+_SPEED_LINE = re.compile(r"^Speed: ")  # the speed summary in a timeline's signal lines
+
+
+def _to_hour(v):
+    """A timestamp, or a clock time inside text, cut to the hour; anything else unchanged."""
+    if isinstance(v, datetime):  # pandas Timestamps too
+        return v.replace(minute=0, second=0, microsecond=0)
+    if isinstance(v, str):
+        return _CLOCK.sub(r":xx", v)
+    return v
 
 
 def redact(result: Result, role: Role | str, consent_behaviour: bool = False) -> Result:
@@ -88,6 +100,20 @@ def redact(result: Result, role: Role | str, consent_behaviour: bool = False) ->
     r.headline = line(r.headline)
     r.details = [line(d) for d in r.details]
     r.facts = {k: v for k, v in r.facts.items() if policy.location or k not in ("lat", "lon", "location")}
+    # The structured parts of the answer — what the app draws and ships as JSON — follow the same policy as the text.
+    if hide_behaviour:
+        r.facts = {k: v for k, v in r.facts.items() if not _BEHAVIOUR_FACT.search(k)}
+        r.details = [d for d in r.details if not _SPEED_LINE.search(d)]
+    if policy.hour_resolution:
+        r.facts = {k: _to_hour(v) for k, v in r.facts.items()}
+        if r.window:
+            r.window = (_to_hour(r.window[0]), _to_hour(r.window[1]))
+    if r.chart:
+        chart = dict(r.chart)
+        if hide_behaviour:
+            chart["series"] = {k: v for k, v in chart["series"].items() if k not in chart.get("behaviour", ())}
+        # a per-second trace would undo hour resolution even with its labels rounded, so it is not drawn at all
+        r.chart = chart if chart["series"] and not (policy.hour_resolution and chart.get("clock")) else None
     if not policy.raw_logs:
         r.details = [_RAW_LOG_QUOTE.sub("", d) for d in r.details if "(QNX slog2)" not in d]
     r.notes = [*r.notes, f"Shown with the {Role(role).value} privacy policy."] if Role(role) != Role.DRIVER else r.notes

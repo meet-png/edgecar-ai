@@ -5,6 +5,10 @@
 A question arrives as text (or as speech, recognised on-device — see ``edgecar.voice``) and the answer comes back
 with the evidence the engine used: the chart, the event timeline or table, the route it took (rules or model), the
 command it ran and how long it took. The server binds to localhost and the page loads nothing from the network.
+
+Who may see what is decided here, not by the page: ``--role`` sets the most a viewer may see (the owner's car:
+driver), and a request can only ask for a narrower view (driver ⊃ service ⊃ fleet). Requests must name this host
+(no DNS rebinding) and may not come from another origin.
 """
 
 from __future__ import annotations
@@ -13,6 +17,7 @@ import argparse
 import math
 import threading
 import time
+import wave
 from contextlib import nullcontext
 from datetime import date, datetime
 from pathlib import Path
@@ -25,14 +30,18 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from edgecar.assistant import Answer, Assistant
 from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer, find_server, prompt_style
-from edgecar.privacy import Role
+from edgecar.privacy import Role, redact
 from edgecar.query import Query, TimeWindow
 from edgecar.store import Store
 
 STATIC = Path(__file__).with_name("static")
+EXPOSURE = (Role.FLEET, Role.SERVICE, Role.DRIVER)  # each sees a subset of the next (see edgecar.privacy)
+LOCAL_HOSTS = ("127.0.0.1", "localhost")
+MAX_AUDIO_BYTES = 400_000  # a 16 kHz 16-bit WAV of the 9 s the recogniser takes is ~290 kB
 ROUTE = {"fast": "rules", "slm": "model", "refused": "declined", "unavailable": "declined", "unsupported": "declined"}
 
 # Starting points shown under the input, per demo car: the case study's questions on the car they fit, then others.
@@ -119,12 +128,17 @@ class Zone:
     """Everything the page talks to: the store, the model, optional speech, one lock (one driver, one question at a
     time — the model serves one request at once anyway)."""
 
-    def __init__(self, store: Store, slm: SlmParser | None, model_name: str | None, voice=None) -> None:
+    def __init__(
+        self, store: Store, slm: SlmParser | None, model_name: str | None, voice=None, max_role: Role = Role.DRIVER
+    ) -> None:
         self.store, self.slm, self.model_name, self.voice = store, slm, model_name, voice
+        self.roles = [r for r in reversed(EXPOSURE) if EXPOSURE.index(r) <= EXPOSURE.index(max_role)]
         self.lock = threading.Lock()
         self._assistants: dict[tuple[str, Role], Assistant] = {}
 
     def assistant(self, vehicle: str, role: Role) -> Assistant:
+        if role not in self.roles:
+            raise HTTPException(403, f"this display may show at most the {self.roles[0].value} view")
         key = (vehicle, role)
         if key not in self._assistants:
             if vehicle not in {v["id"] for v in self.vehicles()}:
@@ -158,9 +172,19 @@ class Zone:
         return plain(out)
 
 
-def create_app(zone: Zone) -> FastAPI:
+def create_app(zone: Zone, hosts: tuple[str, ...] = LOCAL_HOSTS) -> FastAPI:
     app = FastAPI(title="EdgeCar AI", docs_url=None, redoc_url=None)
     app.mount("/static", StaticFiles(directory=STATIC), name="static")
+
+    @app.middleware("http")
+    async def same_origin_only(request: Request, call_next):
+        # A page from elsewhere may not post questions or audio here (the browser sends Origin on such requests).
+        origin = request.headers.get("origin")
+        if request.method != "GET" and origin and origin.split("://", 1)[-1] != request.headers.get("host"):
+            return Response("cross-origin request refused", status_code=403)
+        return await call_next(request)
+
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=list(hosts))  # outermost: refuse rebinding first
 
     @app.middleware("http")
     async def offline_headers(request: Request, call_next):
@@ -181,7 +205,7 @@ def create_app(zone: Zone) -> FastAPI:
             vehicles = zone.vehicles()
         return {
             "vehicles": vehicles,
-            "roles": [r.value for r in Role],
+            "roles": [r.value for r in zone.roles],
             "model": zone.model_name,
             "voice": {
                 "listen": bool(zone.voice and zone.voice.can_listen),
@@ -200,9 +224,10 @@ def create_app(zone: Zone) -> FastAPI:
 
     @app.get("/api/status")
     def status(vehicle: str = "leaf-455") -> dict:
+        role = zone.roles[0]  # the widest view this display allows
         with zone.lock:
-            res = zone.assistant(vehicle, Role.DRIVER).engine.run(
-                Query(intent="status", window=TimeWindow(kind="today"))
+            res = redact(
+                zone.assistant(vehicle, role).engine.run(Query(intent="status", window=TimeWindow(kind="today"))), role
             )
         return plain({"headline": res.headline, "facts": res.facts})
 
@@ -210,10 +235,19 @@ def create_app(zone: Zone) -> FastAPI:
     async def listen(request: Request) -> dict:
         if not (zone.voice and zone.voice.can_listen):
             raise HTTPException(501, "speech recognition is not installed")
-        audio = await request.body()
+        if int(request.headers.get("content-length") or 0) > MAX_AUDIO_BYTES:
+            raise HTTPException(413, "recording too long")
+        audio = bytearray()
+        async for chunk in request.stream():  # chunked uploads carry no length: count as they arrive
+            audio += chunk
+            if len(audio) > MAX_AUDIO_BYTES:
+                raise HTTPException(413, "recording too long")
         t0 = time.perf_counter()
-        with zone.lock:
-            text = zone.voice.transcribe(audio)
+        try:
+            with zone.lock:
+                text = zone.voice.transcribe(bytes(audio))
+        except (wave.Error, ValueError, EOFError) as e:
+            raise HTTPException(400, f"not a 16-bit PCM WAV recording: {e}") from None
         return {"text": text, "ms": round((time.perf_counter() - t0) * 1000, 1)}
 
     @app.post("/api/speak")
@@ -237,7 +271,18 @@ def main(argv: list[str] | None = None) -> None:
     ap.add_argument("--no-voice", action="store_true")
     ap.add_argument("--host", default="127.0.0.1")
     ap.add_argument("--port", type=int, default=8080)
+    ap.add_argument(
+        "--role",
+        type=Role,
+        choices=list(Role),
+        default=None,
+        help="the most this display may show: driver (the owner's own car, the default on localhost), service or fleet",
+    )
     a = ap.parse_args(argv)
+    if a.role is None:
+        if a.host not in LOCAL_HOSTS:
+            ap.error(f"--host {a.host} is reachable from other machines: say which view it may show with --role")
+        a.role = Role.DRIVER
 
     store = Store(a.store, read_only=True, threads=a.threads)
     server = find_server(a.server)
@@ -259,8 +304,8 @@ def main(argv: list[str] | None = None) -> None:
             print(f"model: {a.model.name} — prompt prefix {slm.ready(a.model)}")
         else:
             print("model: none — rules only")
-        zone = Zone(store, slm, a.model.name if slm else None, voice)
-        app = create_app(zone)
+        zone = Zone(store, slm, a.model.name if slm else None, voice, max_role=a.role)
+        app = create_app(zone, hosts=tuple(dict.fromkeys((*LOCAL_HOSTS, a.host))))
         print(f"EdgeCar AI on http://{a.host}:{a.port}")
         uvicorn.run(app, host=a.host, port=a.port, log_level="warning")
 
