@@ -29,6 +29,7 @@ from edgecar.ingest import adapters
 from edgecar.protocols import someip
 from edgecar.protocols.can import TRIP_GAP_S, CanCodec, Frame, read_log
 from edgecar.sim.adas import PROVENANCE as ADAS_PROVENANCE
+from edgecar.stats import percentile
 from edgecar.store import Store
 
 BATCH_S = 1.0
@@ -144,7 +145,7 @@ def main() -> None:
         )
         print(
             f"commit latency per 1 s batch: p50 {statistics.median(lat):.1f} ms · "
-            f"p95 {statistics.quantiles(lat, n=20)[18] if len(lat) > 1 else lat[0]:.1f} ms · max {max(lat):.1f} ms"
+            f"p95 {percentile(lat, 95):.1f} ms · max {max(lat):.1f} ms"
         )
         ans = Assistant(store, a.vehicle).ask("How far did I drive today?")
         print(f"query while live → {ans.text}  [{ans.timings_ms['total']:.0f} ms]")

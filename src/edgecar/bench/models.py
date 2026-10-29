@@ -17,6 +17,7 @@ import psutil
 
 from edgecar.bench.nlu_eval import run
 from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer, prompt_style
+from edgecar.stats import percentile
 
 CANDIDATES = [
     "qwen2.5-0.5b-instruct-q4_k_m.gguf",
@@ -60,7 +61,7 @@ def main() -> None:
                 "slm_only_accuracy_192": round(only["accuracy"], 3),
                 "hybrid_heldout_accuracy_70": round(hybrid["accuracy"], 3),
                 "slm_p50_ms": round(statistics.median(r["ms"] for r in only["rows"]), 0),
-                "slm_p95_ms": round(statistics.quantiles([r["ms"] for r in only["rows"]], n=20)[18], 0),
+                "slm_p95_ms": round(percentile([r["ms"] for r in only["rows"]], 95), 0),
                 "rss_mb": round(mem.rss / 1e6),
                 "private_mb": round(mem.private / 1e6) if hasattr(mem, "private") else None,
                 "prefix_tokens": warm.prompt_tokens,

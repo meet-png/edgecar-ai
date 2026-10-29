@@ -38,11 +38,12 @@ def complete(fields: dict, question: str) -> Query:
     return Query(**fields, **extra)
 
 
-def understand(question: str, slm: SlmParser | None, *, use_fast: bool = True) -> Understanding:
+def understand(question: str, slm: SlmParser | None, *, use_fast: bool = True, use_guard: bool = True) -> Understanding:
+    """``use_guard=False`` switches the decline checks off, before and after the model — for ablations only."""
     t0 = time.perf_counter()
-    if guard.action_request(question):
+    if use_guard and guard.action_request(question):
         return Understanding(None, "refused", timings_ms={"fastpath": (time.perf_counter() - t0) * 1000})
-    if (missing := guard.not_recorded(question)) is not None:
+    if use_guard and (missing := guard.not_recorded(question)) is not None:
         return Understanding(
             None, "unavailable", timings_ms={"fastpath": (time.perf_counter() - t0) * 1000}, note=missing
         )
@@ -62,6 +63,6 @@ def understand(question: str, slm: SlmParser | None, *, use_fast: bool = True) -
         fields = command.parse_model(out.line)
     except ValueError:
         return Understanding(None, "unparsed", out.line, timings, tokens)
-    if fields is None or not guard.grounded(question, fields):
+    if fields is None or (use_guard and not guard.grounded(question, fields)):
         return Understanding(None, "unsupported", out.line, timings, tokens)
     return Understanding(complete(fields, question), "slm", out.line, timings, tokens)

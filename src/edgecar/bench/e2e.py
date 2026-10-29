@@ -10,7 +10,6 @@ from __future__ import annotations
 import argparse
 import json
 import platform
-import statistics
 import time
 from pathlib import Path
 
@@ -18,11 +17,12 @@ import psutil
 
 from edgecar.assistant import Assistant
 from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer, prompt_style
+from edgecar.stats import percentile
 from edgecar.store import Store
 
 
 def pctl(xs: list[float], p: int) -> float:
-    return round(statistics.quantiles(xs, n=100)[p - 1], 1) if len(xs) >= 2 else round(xs[0], 1)
+    return round(percentile(xs, p), 1)
 
 
 def main() -> None:
