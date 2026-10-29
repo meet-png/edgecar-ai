@@ -142,6 +142,14 @@ The question sets were written by the author with an AI pair-programmer; the hel
 were frozen, and its first run exposed two vocabulary gaps (fixed generically), so it is no longer blind for those
 checks.
 
+**As people type and say them** ([robustness](eval/results/robustness.md), [repair](eval/results/repair.md)): the
+held-out questions mistyped, with numbers written as words, and spoken through Piper → Moonshine on the device. A
+deterministic repair step ([`nlu/normalise.py`](src/edgecar/nlu/normalise.py), 0.18 ms, designed on dev questions
+only) now runs first. Rules + edgecar-1.5b, paired exact McNemar: typed noise 75.7 → 94.3 % (p = 0.0002); numbers
+spoken as words 84.3 → 95.7 % (p = 0.008); synthetic speech, limited by mishearings, 78.6 → 84.3 % on the same
+transcripts (not significant). Nothing that was right is lost, and refusals stay 40/40 in every wording. The blind
+sets were run twice — a bug found on clean questions was fixed in between — and both runs are reported.
+
 **Analytics and data:**
 
 | | Result |
