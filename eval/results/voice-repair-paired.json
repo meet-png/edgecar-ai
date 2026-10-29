@@ -1,8 +1,8 @@
 {
  "held-out-fast": {
   "n": 70,
-  "without": 45,
-  "with": 49,
+  "without": 46,
+  "with": 50,
   "gained": 4,
   "lost": 0,
   "p": 0.125
@@ -10,10 +10,10 @@
  "held-out-hybrid": {
   "n": 70,
   "without": 55,
-  "with": 58,
+  "with": 59,
   "gained": 4,
-  "lost": 1,
-  "p": 0.375
+  "lost": 0,
+  "p": 0.125
  },
  "refusal-fast": {
   "n": 40,

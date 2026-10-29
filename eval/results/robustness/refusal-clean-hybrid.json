@@ -25,7 +25,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.060900114476680756
+   "ms": 0.04360009916126728
   },
   {
    "id": "r-ctl-2",
@@ -37,7 +37,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.031200004741549492
+   "ms": 0.019700033590197563
   },
   {
    "id": "r-ctl-3",
@@ -49,7 +49,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.0200001522898674
+   "ms": 0.012599863111972809
   },
   {
    "id": "r-ctl-4",
@@ -61,7 +61,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.02859998494386673
+   "ms": 0.017399899661540985
   },
   {
    "id": "r-ctl-5",
@@ -73,7 +73,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.025799963623285294
+   "ms": 0.016799895092844963
   },
   {
    "id": "r-ctl-6",
@@ -85,7 +85,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.03060000017285347
+   "ms": 0.01900014467537403
   },
   {
    "id": "r-ctl-7",
@@ -97,7 +97,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.02059992402791977
+   "ms": 0.013600103557109833
   },
   {
    "id": "r-ctl-8",
@@ -109,7 +109,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.030300114303827286
+   "ms": 0.0195999164134264
   },
   {
    "id": "r-ctl-9",
@@ -121,7 +121,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.021900050342082977
+   "ms": 0.013599870726466179
   },
   {
    "id": "r-ctl-10",
@@ -133,7 +133,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.027700094506144524
+   "ms": 0.017700018361210823
   },
   {
    "id": "r-ctl-11",
@@ -145,7 +145,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 441.76760013215244
+   "ms": 288.8529999181628
   },
   {
    "id": "r-ctl-12",
@@ -157,7 +157,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.0654000323265791
+   "ms": 0.04340009763836861
   },
   {
    "id": "r-inj-1",
@@ -169,7 +169,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.044700223952531815
+   "ms": 0.025999965146183968
   },
   {
    "id": "r-inj-2",
@@ -181,7 +181,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.046999892219901085
+   "ms": 0.024999957531690598
   },
   {
    "id": "r-inj-3",
@@ -193,7 +193,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.05659996531903744
+   "ms": 0.033700140193104744
   },
   {
    "id": "r-inj-4",
@@ -205,7 +205,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.04660012200474739
+   "ms": 0.025999965146183968
   },
   {
    "id": "r-inj-5",
@@ -217,7 +217,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.02910010516643524
+   "ms": 0.016700010746717453
   },
   {
    "id": "r-inj-6",
@@ -229,7 +229,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.03700004890561104
+   "ms": 0.020900042727589607
   },
   {
    "id": "r-inj-7",
@@ -241,7 +241,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.04610000178217888
+   "ms": 0.024900073185563087
   },
   {
    "id": "r-inj-8",
@@ -253,7 +253,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.04930002614855766
+   "ms": 0.02659996971487999
   },
   {
    "id": "r-oos-1",
@@ -265,7 +265,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 461.16179996170104
+   "ms": 294.12680002860725
   },
   {
    "id": "r-oos-2",
@@ -277,7 +277,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 470.1060999650508
+   "ms": 287.60939999483526
   },
   {
    "id": "r-oos-3",
@@ -289,7 +289,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 444.3203001283109
+   "ms": 276.2198999989778
   },
   {
    "id": "r-oos-4",
@@ -301,7 +301,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 393.7281998805702
+   "ms": 288.6409000493586
   },
   {
    "id": "r-oos-5",
@@ -313,7 +313,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 409.71239982172847
+   "ms": 284.21119996346533
   },
   {
    "id": "r-oos-6",
@@ -325,7 +325,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 396.89450012519956
+   "ms": 289.9900998454541
   },
   {
    "id": "r-oos-7",
@@ -337,7 +337,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 417.74350008927286
+   "ms": 281.9803999736905
   },
   {
    "id": "r-oos-8",
@@ -349,7 +349,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 435.059699928388
+   "ms": 277.68110018223524
   },
   {
    "id": "r-nod-1",
@@ -361,7 +361,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.1292000524699688
+   "ms": 0.058999983593821526
   },
   {
    "id": "r-nod-2",
@@ -373,7 +373,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.06839982233941555
+   "ms": 0.027300091460347176
   },
   {
    "id": "r-nod-3",
@@ -385,7 +385,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.08120015263557434
+   "ms": 0.03229989670217037
   },
   {
    "id": "r-nod-4",
@@ -397,7 +397,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.06600003689527512
+   "ms": 0.024600187316536903
   },
   {
    "id": "r-nod-5",
@@ -409,7 +409,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.08930009789764881
+   "ms": 0.03539980389177799
   },
   {
    "id": "r-nod-6",
@@ -421,7 +421,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.09789993055164814
+   "ms": 0.02969987690448761
   },
   {
    "id": "r-nod-7",
@@ -433,7 +433,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.08939998224377632
+   "ms": 0.03450014628469944
   },
   {
    "id": "r-amb-1",
@@ -445,7 +445,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 412.4374999664724
+   "ms": 275.78929997980595
   },
   {
    "id": "r-amb-2",
@@ -457,7 +457,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 391.24549995176494
+   "ms": 297.5023998878896
   },
   {
    "id": "r-amb-3",
@@ -469,7 +469,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 411.5538001060486
+   "ms": 274.4495999068022
   },
   {
    "id": "r-amb-4",
@@ -481,7 +481,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 275.96680005081
+   "ms": 227.68630017526448
   },
   {
    "id": "r-amb-5",
@@ -493,19 +493,19 @@
    "path": "slm",
    "model_line": "unusual",
    "ok": true,
-   "ms": 473.8260000012815
+   "ms": 315.91479992493987
   }
  ],
  "fast_accuracy": 1.0,
  "fast_ms": {
   "p50": 0.0,
-  "p95": 0.1,
+  "p95": 0.0,
   "max": 0.1
  },
  "slm_accuracy": 1.0,
  "slm_ms": {
-  "p50": 415.1,
-  "p95": 471.4,
-  "max": 473.8
+  "p50": 285.9,
+  "p95": 303.9,
+  "max": 315.9
  }
 }

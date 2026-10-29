@@ -30,7 +30,7 @@
    "path": "slm",
    "model_line": "why range",
    "ok": false,
-   "ms": 720.5191000830382
+   "ms": 471.4244999922812
   },
   {
    "id": "t-exp-2",
@@ -42,7 +42,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.3759001847356558
+   "ms": 0.2636001445353031
   },
   {
    "id": "t-exp-3",
@@ -55,7 +55,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.25100004859268665
+   "ms": 0.1602000556886196
   },
   {
    "id": "t-exp-4",
@@ -68,7 +68,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.36129984073340893
+   "ms": 0.197600107640028
   },
   {
    "id": "t-exp-5",
@@ -80,7 +80,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.28909998945891857
+   "ms": 0.1588999293744564
   },
   {
    "id": "t-exp-6",
@@ -92,7 +92,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.39149983786046505
+   "ms": 0.23150001652538776
   },
   {
    "id": "t-exp-7",
@@ -104,7 +104,7 @@
    "path": "slm",
    "model_line": "why range",
    "ok": true,
-   "ms": 489.68730005435646
+   "ms": 346.51709999889135
   },
   {
    "id": "t-exp-8",
@@ -117,7 +117,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.5924999713897705
+   "ms": 0.22069993428885937
   },
   {
    "id": "t-ext-1",
@@ -129,7 +129,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.6315999198704958
+   "ms": 0.21980004385113716
   },
   {
    "id": "t-ext-2",
@@ -141,7 +141,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.5442998372018337
+   "ms": 0.1783999614417553
   },
   {
    "id": "t-ext-3",
@@ -153,7 +153,7 @@
    "path": "slm",
    "model_line": "when battery_temp max",
    "ok": true,
-   "ms": 638.3765998762101
+   "ms": 407.26799983531237
   },
   {
    "id": "t-ext-4",
@@ -165,7 +165,7 @@
    "path": "slm",
    "model_line": "when range drop",
    "ok": true,
-   "ms": 617.6260998472571
+   "ms": 365.3208001051098
   },
   {
    "id": "t-ext-5",
@@ -177,7 +177,7 @@
    "path": "slm",
    "model_line": "when trip_count max",
    "ok": false,
-   "ms": 739.6364999003708
+   "ms": 430.8748999610543
   },
   {
    "id": "t-ext-6",
@@ -189,7 +189,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.3353001084178686
+   "ms": 0.19560009241104126
   },
   {
    "id": "t-ext-7",
@@ -201,7 +201,7 @@
    "path": "slm",
    "model_line": "when ambient_temp max",
    "ok": true,
-   "ms": 721.8281999230385
+   "ms": 425.4211001098156
   },
   {
    "id": "t-ext-8",
@@ -213,7 +213,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.44150021858513355
+   "ms": 0.246700132265687
   },
   {
    "id": "t-cmp-1",
@@ -225,7 +225,7 @@
    "path": "slm",
    "model_line": "compare energy_efficiency road_type",
    "ok": true,
-   "ms": 832.1712999604642
+   "ms": 551.3895999174565
   },
   {
    "id": "t-cmp-2",
@@ -237,7 +237,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.3915000706911087
+   "ms": 0.2460000105202198
   },
   {
    "id": "t-cmp-3",
@@ -249,7 +249,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.49640005454421043
+   "ms": 0.2919000107795
   },
   {
    "id": "t-cmp-4",
@@ -261,7 +261,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.24720001965761185
+   "ms": 0.1292999368160963
   },
   {
    "id": "t-cmp-5",
@@ -273,7 +273,7 @@
    "path": "slm",
    "model_line": "compare energy_efficiency previous_period",
    "ok": true,
-   "ms": 868.5395000502467
+   "ms": 554.1230998933315
   },
   {
    "id": "t-cmp-6",
@@ -285,7 +285,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.4251000937074423
+   "ms": 0.2637000288814306
   },
   {
    "id": "t-cmp-7",
@@ -297,7 +297,7 @@
    "path": "slm",
    "model_line": "compare energy_consumption temperature",
    "ok": true,
-   "ms": 791.3295000325888
+   "ms": 459.69030004926026
   },
   {
    "id": "t-cmp-8",
@@ -309,7 +309,7 @@
    "path": "fast",
    "model_line": null,
    "ok": false,
-   "ms": 0.5918999668210745
+   "ms": 0.33279997296631336
   },
   {
    "id": "t-evt-1",
@@ -321,7 +321,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.46280003152787685
+   "ms": 0.19230018369853497
   },
   {
    "id": "t-evt-2",
@@ -333,7 +333,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.34600007347762585
+   "ms": 0.1906000543385744
   },
   {
    "id": "t-evt-3",
@@ -345,7 +345,7 @@
    "path": "slm",
    "model_line": "show adas_takeover_request",
    "ok": true,
-   "ms": 875.521999783814
+   "ms": 491.9263001065701
   },
   {
    "id": "t-evt-4",
@@ -357,7 +357,7 @@
    "path": "slm",
    "model_line": "show charging",
    "ok": true,
-   "ms": 594.1210000310093
+   "ms": 331.3194001093507
   },
   {
    "id": "t-evt-5",
@@ -369,7 +369,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.7303999047726393
+   "ms": 0.2823001705110073
   },
   {
    "id": "t-evt-6",
@@ -381,7 +381,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.5862002037465572
+   "ms": 0.2313000150024891
   },
   {
    "id": "t-evt-7",
@@ -393,7 +393,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.211400143802166
+   "ms": 0.19129994325339794
   },
   {
    "id": "t-evt-8",
@@ -405,7 +405,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.3490000274032354
+   "ms": 0.2197998110204935
   },
   {
    "id": "t-evt-9",
@@ -417,7 +417,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.213200157508254
+   "ms": 0.19119982607662678
   },
   {
    "id": "t-evt-10",
@@ -430,7 +430,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.4411001466214657
+   "ms": 0.26950007304549217
   },
   {
    "id": "t-evt-11",
@@ -442,7 +442,7 @@
    "path": "slm",
    "model_line": "show system",
    "ok": true,
-   "ms": 640.7200000248849
+   "ms": 334.84010002575815
   },
   {
    "id": "t-evt-12",
@@ -454,7 +454,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.2316000647842884
+   "ms": 0.27350010350346565
   },
   {
    "id": "t-bef-1",
@@ -466,7 +466,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.1823000386357307
+   "ms": 0.20490004681050777
   },
   {
    "id": "t-bef-2",
@@ -478,7 +478,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.9029998909682035
+   "ms": 0.16189995221793652
   },
   {
    "id": "t-bef-3",
@@ -490,7 +490,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.3894999865442514
+   "ms": 0.20849984139204025
   },
   {
    "id": "t-bef-4",
@@ -502,7 +502,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.7899000085890293
+   "ms": 0.16409996896982193
   },
   {
    "id": "t-bef-5",
@@ -514,7 +514,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.240900019183755
+   "ms": 0.18239999189972878
   },
   {
    "id": "t-bef-6",
@@ -526,7 +526,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.7420999463647604
+   "ms": 0.13520009815692902
   },
   {
    "id": "t-bef-7",
@@ -539,7 +539,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.8398999236524105
+   "ms": 0.23990008048713207
   },
   {
    "id": "t-ano-1",
@@ -551,7 +551,7 @@
    "path": "slm",
    "model_line": "unusual",
    "ok": true,
-   "ms": 580.2111998200417
+   "ms": 346.88030020333827
   },
   {
    "id": "t-ano-2",
@@ -563,7 +563,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.9011002257466316
+   "ms": 0.30940002761781216
   },
   {
    "id": "t-ano-3",
@@ -575,7 +575,7 @@
    "path": "slm",
    "model_line": "unusual",
    "ok": true,
-   "ms": 606.8402999080718
+   "ms": 332.6254999265075
   },
   {
    "id": "t-ano-4",
@@ -587,7 +587,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.9558000601828098
+   "ms": 0.269800191745162
   },
   {
    "id": "t-ano-5",
@@ -599,7 +599,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.8972000796347857
+   "ms": 0.26590004563331604
   },
   {
    "id": "t-trd-1",
@@ -611,7 +611,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.6551998667418957
+   "ms": 0.16930000856518745
   },
   {
    "id": "t-trd-2",
@@ -623,7 +623,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.5365000106394291
+   "ms": 0.17989985644817352
   },
   {
    "id": "t-trd-3",
@@ -635,7 +635,7 @@
    "path": "slm",
    "model_line": "trend energy_efficiency",
    "ok": true,
-   "ms": 981.9499000441283
+   "ms": 453.1894000247121
   },
   {
    "id": "t-trd-4",
@@ -647,7 +647,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.5272000562399626
+   "ms": 0.18780003301799297
   },
   {
    "id": "t-trd-5",
@@ -659,7 +659,7 @@
    "path": "slm",
    "model_line": "trend energy_consumption",
    "ok": true,
-   "ms": 958.2139998674393
+   "ms": 589.2570000141859
   },
   {
    "id": "t-trd-6",
@@ -671,7 +671,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.2336999643594027
+   "ms": 0.28639985248446465
   },
   {
    "id": "t-trd-7",
@@ -683,7 +683,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.118500018492341
+   "ms": 0.27680001221597195
   },
   {
    "id": "t-sum-1",
@@ -695,7 +695,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.0010001715272665
+   "ms": 0.246299896389246
   },
   {
    "id": "t-sum-2",
@@ -707,7 +707,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.6610001437366009
+   "ms": 0.1642000861465931
   },
   {
    "id": "t-sum-3",
@@ -719,7 +719,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.9707999415695667
+   "ms": 0.1909998245537281
   },
   {
    "id": "t-sum-4",
@@ -731,7 +731,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.8550998754799366
+   "ms": 0.2063000574707985
   },
   {
    "id": "t-sum-5",
@@ -743,7 +743,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.7860001642256975
+   "ms": 0.18990016542375088
   },
   {
    "id": "t-sum-6",
@@ -755,7 +755,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.6244000978767872
+   "ms": 0.14899997040629387
   },
   {
    "id": "t-sum-7",
@@ -767,7 +767,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 1.0297000408172607
+   "ms": 0.22860011085867882
   },
   {
    "id": "t-sum-8",
@@ -779,7 +779,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.7990999147295952
+   "ms": 0.19529997371137142
   },
   {
    "id": "t-sum-9",
@@ -791,7 +791,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.5095000378787518
+   "ms": 0.13040006160736084
   },
   {
    "id": "t-sts-1",
@@ -803,7 +803,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.8090999908745289
+   "ms": 0.21079997532069683
   },
   {
    "id": "t-sts-2",
@@ -815,7 +815,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.528399832546711
+   "ms": 0.15059998258948326
   },
   {
    "id": "t-sts-3",
@@ -827,7 +827,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.8945998270064592
+   "ms": 0.22919988259673119
   },
   {
    "id": "t-oos-1",
@@ -839,7 +839,7 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 479.37020007520914
+   "ms": 298.46550012007356
   },
   {
    "id": "t-oos-2",
@@ -851,7 +851,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.06960006430745125
+   "ms": 0.05250005051493645
   },
   {
    "id": "t-oos-3",
@@ -863,19 +863,19 @@
    "path": "slm",
    "model_line": "unsupported",
    "ok": true,
-   "ms": 476.10640013590455
+   "ms": 295.3335999045521
   }
  ],
  "fast_accuracy": 0.9807692307692307,
  "fast_ms": {
-  "p50": 0.8,
-  "p95": 1.7,
-  "max": 1.8
+  "p50": 0.2,
+  "p95": 0.3,
+  "max": 0.3
  },
  "slm_accuracy": 0.8888888888888888,
  "slm_ms": {
-  "p50": 680.6,
-  "p95": 961.8,
-  "max": 981.9
+  "p50": 416.3,
+  "p95": 559.4,
+  "max": 589.3
  }
 }
