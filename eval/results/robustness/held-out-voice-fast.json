@@ -1,23 +1,23 @@
 {
  "mode": "fast",
  "n": 70,
- "accuracy": 0.6428571428571429,
+ "accuracy": 0.7142857142857143,
  "by_category": {
-  "t-ano": 0.6,
+  "t-ano": 0.4,
   "t-bef": 1.0,
-  "t-cmp": 0.375,
-  "t-evt": 0.5,
-  "t-exp": 0.625,
+  "t-cmp": 0.5,
+  "t-evt": 0.75,
+  "t-exp": 0.75,
   "t-ext": 0.5,
   "t-oos": 1.0,
   "t-sts": 1.0,
-  "t-sum": 0.667,
-  "t-trd": 0.714
+  "t-sum": 0.889,
+  "t-trd": 0.571
  },
  "paths": {
-  "fast": 45,
+  "fast": 49,
   "slm": 0,
-  "none": 25
+  "none": 21
  },
  "rows": [
   {
@@ -30,11 +30,11 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.17030001617968082
+   "ms": 0.8574998937547207
   },
   {
    "id": "t-exp-2",
-   "q": "Why is my kilowatt hours per 100 kilowatts so high over the past 10 days?",
+   "q": "Why is my killer what hours per one hundred kilometres so high over the past ten days?",
    "gold": [
     "explain_change metric=energy_consumption window=last_10d"
    ],
@@ -42,7 +42,7 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.2709000837057829
+   "ms": 2.1796999499201775
   },
   {
    "id": "t-exp-3",
@@ -55,7 +55,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.12420001439750195
+   "ms": 0.6069999653846025
   },
   {
    "id": "t-exp-4",
@@ -68,7 +68,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.1525001134723425
+   "ms": 0.7311999797821045
   },
   {
    "id": "t-exp-5",
@@ -80,19 +80,19 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.13100006617605686
+   "ms": 0.6484999321401119
   },
   {
    "id": "t-exp-6",
-   "q": "Service engineer here wireded this vehicle's consumption increase over the last three weeks.",
+   "q": "Service engineer here why did this vehicle's consumption increase over the last three weeks?",
    "gold": [
     "explain_change metric=energy_consumption window=last_21d"
    ],
-   "pred": "unsupported",
-   "path": "none",
+   "pred": "explain_change metric=energy_consumption window=last_21d",
+   "path": "fast",
    "model_line": null,
-   "ok": false,
-   "ms": 0.19589997828006744
+   "ok": true,
+   "ms": 0.9045999031513929
   },
   {
    "id": "t-exp-7",
@@ -104,7 +104,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.10770000517368317
+   "ms": 0.761799979954958
   },
   {
    "id": "t-exp-8",
@@ -117,11 +117,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.1371998805552721
+   "ms": 0.7284998428076506
   },
   {
    "id": "t-ext-1",
-   "q": "On what day was consumption the highest in the last two months.",
+   "q": "On what day was consumption, the highest in the last two months.",
    "gold": [
     "extreme metric=energy_consumption window=last_60d dir=max"
    ],
@@ -129,7 +129,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.16520009376108646
+   "ms": 0.8517000824213028
   },
   {
    "id": "t-ext-2",
@@ -141,11 +141,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.14150002971291542
+   "ms": 0.6518999580293894
   },
   {
    "id": "t-ext-3",
-   "q": "Which day was the battery the hardest this month?",
+   "q": "Which day was the battery the hardest this mum?",
    "gold": [
     "extreme metric=battery_temp window=this_month dir=max"
    ],
@@ -153,11 +153,11 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.23019989021122456
+   "ms": 1.25370011664927
   },
   {
    "id": "t-ext-4",
-   "q": "One degrange take the biggest hit.",
+   "q": "Wanted range take the biggest hit",
    "gold": [
     "extreme metric=range window=all dir=drop"
    ],
@@ -165,7 +165,7 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.19589997828006744
+   "ms": 0.7891999557614326
   },
   {
    "id": "t-ext-5",
@@ -177,7 +177,7 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.21399999968707561
+   "ms": 0.9534999262541533
   },
   {
    "id": "t-ext-6",
@@ -189,11 +189,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.11330004781484604
+   "ms": 0.5778998602181673
   },
   {
    "id": "t-ext-7",
-   "q": "Which they had the warmest weather on my trips.",
+   "q": "Which day had the warmest weather on my trips?",
    "gold": [
     "extreme metric=ambient_temp window=all dir=max"
    ],
@@ -201,7 +201,7 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.21780002862215042
+   "ms": 0.951599795371294
   },
   {
    "id": "t-ext-8",
@@ -213,11 +213,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.15400000847876072
+   "ms": 0.7865000516176224
   },
   {
    "id": "t-cmp-1",
-   "q": "Is how a driving more efficient than city driving for me.",
+   "q": "Is highway driving more efficient than city driving for me?",
    "gold": [
     "compare metric=energy_efficiency window=all by=road_type"
    ],
@@ -225,7 +225,7 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.1604000572115183
+   "ms": 0.7323999889194965
   },
   {
    "id": "t-cmp-2",
@@ -237,7 +237,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.1992001198232174
+   "ms": 0.7587999571114779
   },
   {
    "id": "t-cmp-3",
@@ -249,7 +249,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.2562999725341797
+   "ms": 1.1813000310212374
   },
   {
    "id": "t-cmp-4",
@@ -261,11 +261,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.10479986667633057
+   "ms": 0.5367998965084553
   },
   {
    "id": "t-cmp-5",
-   "q": "Is this man's efficiency better than last month's?",
+   "q": "Is this monsofician, see better than last months?",
    "gold": [
     "compare metric=energy_efficiency window=this_month by=previous_period"
    ],
@@ -273,19 +273,19 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.14490005560219288
+   "ms": 1.7782999202609062
   },
   {
    "id": "t-cmp-6",
-   "q": "Fleet manager comparatively, energy use over the past 30 days.",
+   "q": "Fleet manager compare city vs motorway energy use over the past 30 days",
    "gold": [
     "compare metric=energy_consumption window=last_30d by=road_type"
    ],
-   "pred": "unsupported",
-   "path": "none",
+   "pred": "compare metric=energy_consumption window=last_30d by=road_type",
+   "path": "fast",
    "model_line": null,
-   "ok": false,
-   "ms": 0.1604999415576458
+   "ok": true,
+   "ms": 0.8296000305563211
   },
   {
    "id": "t-cmp-7",
@@ -297,19 +297,19 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.18159998580813408
+   "ms": 0.8262000046670437
   },
   {
    "id": "t-cmp-8",
-   "q": "Am I using less fuel this we compared to the previous week?",
+   "q": "Am I using last fuel this week compared to the previous week?",
    "gold": [
     "compare metric=fuel_consumption window=this_week by=previous_period"
    ],
-   "pred": "compare metric=energy_consumption window=last_week by=previous_period",
+   "pred": "compare metric=energy_consumption window=this_week by=previous_period",
    "path": "fast",
    "model_line": null,
    "ok": false,
-   "ms": 0.25649997405707836
+   "ms": 1.1563000734895468
   },
   {
    "id": "t-evt-1",
@@ -317,15 +317,15 @@
    "gold": [
     "list_events window=today event=adas_disengagement"
    ],
-   "pred": "list_events window=today event=adas_any",
+   "pred": "list_events window=today event=adas_disengagement",
    "path": "fast",
    "model_line": null,
-   "ok": false,
-   "ms": 0.21460000425577164
+   "ok": true,
+   "ms": 0.8205000776797533
   },
   {
    "id": "t-evt-2",
-   "q": "Were there any trouble codes yesterday?",
+   "q": "Whether any trouble codes yesterday,",
    "gold": [
     "list_events window=yesterday event=dtc"
    ],
@@ -333,7 +333,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.1735000405460596
+   "ms": 1.102200010791421
   },
   {
    "id": "t-evt-3",
@@ -345,7 +345,7 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.2419000957161188
+   "ms": 1.0587000288069248
   },
   {
    "id": "t-evt-4",
@@ -357,11 +357,11 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.2142998855561018
+   "ms": 0.977999996393919
   },
   {
    "id": "t-evt-5",
-   "q": "To the deck of crews cut out at any time yesterday.",
+   "q": "Did adapt of crews cut out at any time yesterday.",
    "gold": [
     "list_events window=yesterday event=adas_disengagement"
    ],
@@ -369,19 +369,19 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.19620009697973728
+   "ms": 1.3273002114146948
   },
   {
    "id": "t-evt-6",
-   "q": "Give me all the ditty seas from the past mum.",
+   "q": "Give me all the dtc's from the past month.",
    "gold": [
     "list_events window=last_30d event=dtc"
    ],
-   "pred": "unsupported",
-   "path": "none",
+   "pred": "list_events window=last_30d event=dtc",
+   "path": "fast",
    "model_line": null,
-   "ok": false,
-   "ms": 0.22689998149871826
+   "ok": true,
+   "ms": 0.9786998853087425
   },
   {
    "id": "t-evt-7",
@@ -393,11 +393,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.14910008758306503
+   "ms": 1.0315000545233488
   },
   {
    "id": "t-evt-8",
-   "q": "What driver assistance events happen this week?",
+   "q": "What driver assistance events happened this week?",
    "gold": [
     "list_events window=this_week event=adas_any"
    ],
@@ -405,7 +405,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.19990000873804092
+   "ms": 1.0353999678045511
   },
   {
    "id": "t-evt-9",
@@ -413,11 +413,11 @@
    "gold": [
     "list_events window=last_week event=hard_brake"
    ],
-   "pred": "unsupported",
-   "path": "none",
+   "pred": "list_events window=last_week event=hard_brake",
+   "path": "fast",
    "model_line": null,
-   "ok": false,
-   "ms": 0.22009992972016335
+   "ok": true,
+   "ms": 0.8296000305563211
   },
   {
    "id": "t-evt-10",
@@ -430,11 +430,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.1426998060196638
+   "ms": 0.9220000356435776
   },
   {
    "id": "t-evt-11",
-   "q": "List system errors from today.",
+   "q": "This system errs from today.",
    "gold": [
     "list_events window=today event=system"
    ],
@@ -442,11 +442,11 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.19540009088814259
+   "ms": 1.1901999823749065
   },
   {
    "id": "t-evt-12",
-   "q": "Show Lane keeping disengagement over the past five days.",
+   "q": "Show link keeping disengagement over the past five days.",
    "gold": [
     "list_events window=last_5d event=adas_disengagement"
    ],
@@ -454,11 +454,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.17690006643533707
+   "ms": 1.1555999517440796
   },
   {
    "id": "t-bef-1",
-   "q": "What happened just before the overheat one in came on?",
+   "q": "What happened just before the overheat one and came on?",
    "gold": [
     "events_before window=all event=battery_overheat_warning"
    ],
@@ -466,11 +466,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.16549997963011265
+   "ms": 0.8648000657558441
   },
   {
    "id": "t-bef-2",
-   "q": "Show the 15 minutes leading up to the battery overheating alert.",
+   "q": "15 minutes leading up to the battery overheating alert.",
    "gold": [
     "events_before window=all event=battery_overheat_warning lookback=15m"
    ],
@@ -478,7 +478,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.11890009045600891
+   "ms": 0.6628998089581728
   },
   {
    "id": "t-bef-3",
@@ -490,11 +490,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.1729000359773636
+   "ms": 0.8717000018805265
   },
   {
    "id": "t-bef-4",
-   "q": "What led to the takeover request.",
+   "q": "What led to the takeover request?",
    "gold": [
     "events_before window=all event=adas_takeover_request"
    ],
@@ -502,7 +502,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.14350004494190216
+   "ms": 0.7378000300377607
   },
   {
    "id": "t-bef-5",
@@ -514,11 +514,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.16580009832978249
+   "ms": 0.7864998187869787
   },
   {
    "id": "t-bef-6",
-   "q": "Reconstruct the sequence before the battery overheat warning.",
+   "q": "We can struck the sequence before the battery overheat warning.",
    "gold": [
     "events_before window=all event=battery_overheat_warning"
    ],
@@ -526,11 +526,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.10409997776150703
+   "ms": 0.8867001160979271
   },
   {
    "id": "t-bef-7",
-   "q": "What happened 30 minutes before the thermal alert?",
+   "q": "What happened thirty minutes before the thermal alert?",
    "gold": [
     "events_before window=all event=thermal_any lookback=30m",
     "events_before window=all event=battery_overheat_warning lookback=30m"
@@ -539,11 +539,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.21359999664127827
+   "ms": 1.0512000881135464
   },
   {
    "id": "t-ano-1",
-   "q": "Has the car been behaving idly this week?",
+   "q": "1.",
    "gold": [
     "anomalies window=this_week"
    ],
@@ -551,19 +551,19 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.2210000529885292
+   "ms": 0.6305999122560024
   },
   {
    "id": "t-ano-2",
-   "q": "Spot any abnormal trips in the last two months.",
+   "q": "Spot any of the normal trips in the last two months.",
    "gold": [
     "anomalies window=last_60d"
    ],
-   "pred": "anomalies window=last_60d",
-   "path": "fast",
+   "pred": "unsupported",
+   "path": "none",
    "model_line": null,
-   "ok": true,
-   "ms": 0.21199998445808887
+   "ok": false,
+   "ms": 1.1094000656157732
   },
   {
    "id": "t-ano-3",
@@ -575,7 +575,7 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.19759987480938435
+   "ms": 0.9679000359028578
   },
   {
    "id": "t-ano-4",
@@ -587,7 +587,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.18190010450780392
+   "ms": 0.8469000458717346
   },
   {
    "id": "t-ano-5",
@@ -599,7 +599,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.22039981558918953
+   "ms": 1.3620001263916492
   },
   {
    "id": "t-trd-1",
@@ -611,7 +611,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.13299984857439995
+   "ms": 0.6486000493168831
   },
   {
    "id": "t-trd-2",
@@ -623,7 +623,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.1433000434190035
+   "ms": 0.704699894413352
   },
   {
    "id": "t-trd-3",
@@ -635,7 +635,7 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.14020013622939587
+   "ms": 0.6766999140381813
   },
   {
    "id": "t-trd-4",
@@ -647,7 +647,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.10879989713430405
+   "ms": 0.5552999209612608
   },
   {
    "id": "t-trd-5",
@@ -659,7 +659,7 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.14789984561502934
+   "ms": 0.7422000635415316
   },
   {
    "id": "t-trd-6",
@@ -671,23 +671,23 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.18979981541633606
+   "ms": 0.8562998846173286
   },
   {
    "id": "t-trd-7",
-   "q": "Trend of my daily distance over the last thirty days.",
+   "q": "Friend of my daily distance over the last thirty days.",
    "gold": [
     "trend metric=distance window=last_30d"
    ],
-   "pred": "trend metric=distance window=last_30d",
-   "path": "fast",
+   "pred": "unsupported",
+   "path": "none",
    "model_line": null,
-   "ok": true,
-   "ms": 0.22910023108124733
+   "ok": false,
+   "ms": 1.0142000392079353
   },
   {
    "id": "t-sum-1",
-   "q": "How many kilometers did I drive this week?",
+   "q": "How many kilometres did I drive this week?",
    "gold": [
     "summary metric=distance window=this_week"
    ],
@@ -695,7 +695,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.2101999707520008
+   "ms": 0.9428998455405235
   },
   {
    "id": "t-sum-2",
@@ -707,7 +707,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.14299992471933365
+   "ms": 0.6395000964403152
   },
   {
    "id": "t-sum-3",
@@ -719,11 +719,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.1593001652508974
+   "ms": 0.7561000529676676
   },
   {
    "id": "t-sum-4",
-   "q": "Total killer with hours used over the last 14 days.",
+   "q": "Total killer would hours you stove for the last 14 days.",
    "gold": [
     "summary metric=energy_used window=last_14d"
    ],
@@ -731,19 +731,19 @@
    "path": "none",
    "model_line": null,
    "ok": false,
-   "ms": 0.22240006364881992
+   "ms": 1.2358000967651606
   },
   {
    "id": "t-sum-5",
-   "q": "How many troops did I make yesterday?",
+   "q": "How many trips did I make yesterday?",
    "gold": [
     "summary metric=trip_count window=yesterday"
    ],
-   "pred": "unsupported",
-   "path": "none",
+   "pred": "summary metric=trip_count window=yesterday",
+   "path": "fast",
    "model_line": null,
-   "ok": false,
-   "ms": 0.1984001137316227
+   "ok": true,
+   "ms": 1.3633999042212963
   },
   {
    "id": "t-sum-6",
@@ -755,7 +755,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.12280000373721123
+   "ms": 0.7003000937402248
   },
   {
    "id": "t-sum-7",
@@ -767,7 +767,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.201700022444129
+   "ms": 1.0361000895500183
   },
   {
    "id": "t-sum-8",
@@ -775,11 +775,11 @@
    "gold": [
     "summary metric=regen_energy window=today"
    ],
-   "pred": "unsupported",
-   "path": "none",
+   "pred": "summary metric=regen_energy window=today",
+   "path": "fast",
    "model_line": null,
-   "ok": false,
-   "ms": 0.2101000864058733
+   "ok": true,
+   "ms": 0.8060000836849213
   },
   {
    "id": "t-sum-9",
@@ -791,7 +791,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.09979982860386372
+   "ms": 0.5479000974446535
   },
   {
    "id": "t-sts-1",
@@ -803,7 +803,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.17939996905624866
+   "ms": 0.9866999462246895
   },
   {
    "id": "t-sts-2",
@@ -815,7 +815,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.112100038677454
+   "ms": 0.5681000184267759
   },
   {
    "id": "t-sts-3",
@@ -827,11 +827,11 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.19789999350905418
+   "ms": 0.8967998437583447
   },
   {
    "id": "t-oos-1",
-   "q": "Find me a coffee shop nearby.",
+   "q": "I find my coffee shop nearby.",
    "gold": [
     "unsupported"
    ],
@@ -839,11 +839,11 @@
    "path": "none",
    "model_line": null,
    "ok": true,
-   "ms": 0.18669990822672844
+   "ms": 0.9135999716818333
   },
   {
    "id": "t-oos-2",
-   "q": "Send a message to John Sane. I'm late.",
+   "q": "Send a message to John saying, I'm late.",
    "gold": [
     "unsupported"
    ],
@@ -851,7 +851,7 @@
    "path": "fast",
    "model_line": null,
    "ok": true,
-   "ms": 0.0076999422162771225
+   "ms": 0.08770008571445942
   },
   {
    "id": "t-oos-3",
@@ -863,13 +863,13 @@
    "path": "none",
    "model_line": null,
    "ok": true,
-   "ms": 0.19689998589456081
+   "ms": 0.8902999106794596
   }
  ],
- "fast_accuracy": 0.9555555555555556,
+ "fast_accuracy": 0.9795918367346939,
  "fast_ms": {
-  "p50": 0.2,
-  "p95": 0.2,
-  "max": 0.3
+  "p50": 0.8,
+  "p95": 1.3,
+  "max": 1.4
  }
 }
