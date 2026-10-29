@@ -16,6 +16,7 @@ sudo apt-get -o DPkg::Lock::Timeout=900 update -qq  # first boot: unattended-upg
 sudo DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=900 install -y -qq python3-venv libgomp1 > /dev/null  # llama.cpp needs OpenMP
 git clone -q https://github.com/meet-png/edgecar-ai.git "$HOME/edgecar-ai"
 cd "$HOME/edgecar-ai"
+git checkout -q "${REF:-main}"  # REF=<commit> pins what is measured
 git log --oneline -1
 python3 -m venv .venv
 . .venv/bin/activate

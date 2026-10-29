@@ -12,6 +12,7 @@ data/*.duckdb.wal
 models/*.gguf
 models/*.bin
 models/*.json
+!models/edgecar-*.json
 models/hf/
 models/tuned/
 models/voice/

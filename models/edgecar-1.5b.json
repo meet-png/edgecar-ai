@@ -1,0 +1,16 @@
+{
+  "name": "edgecar-1.5b",
+  "llama_cpp": "b11577",
+  "files": {
+    "Q4_K_M": {
+      "file": "edgecar-1.5b-q4_k_m.gguf",
+      "bytes": 986048064,
+      "sha256": "d8cfdf453a7d3b4c76ebbd0ff7c9a93ad7b31ccf6f25bae4f32214a3d2e7897f"
+    },
+    "Q8_0": {
+      "file": "edgecar-1.5b-q8_0.gguf",
+      "bytes": 1646572608,
+      "sha256": "3e0dbfd865d96d9d6eaed81b11fef158fae12a4b42f851755e58dfd2eed344e7"
+    }
+  }
+}

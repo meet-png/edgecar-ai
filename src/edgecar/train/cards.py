@@ -73,7 +73,7 @@ MODELS = {
         "Qwen/Qwen2.5-1.5B-Instruct",
         "1.5B",
         "edgecar-0.5b",
-        "higher accuracy for about 0.6 GB more memory",
+        "slightly higher measured accuracy (not a significant difference) for about 0.6 GB more memory",
     ),
 }
 
@@ -348,7 +348,7 @@ def gguf_card(m: Model, owner: str) -> str:
 | File | Size | Held-out accuracy (rules + model) | |
 |---|---|---|---|
 | `{q4["file"]}` | {mb(q4["bytes"] / 1e6)} | {score(held4)} | what EdgeCar runs |
-| `{q8["file"]}` | {mb(q8["bytes"] / 1e6)} | {score(held8)} | more memory, a little slower |
+| `{q8["file"]}` | {mb(q8["bytes"] / 1e6)} | {score(held8)} | 8-bit: a larger file; latency not measured |
 | `commands.gbnf` | | | the grammar: every output is a valid command |
 
 ## Use

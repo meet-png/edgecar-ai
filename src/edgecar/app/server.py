@@ -304,8 +304,13 @@ def main(argv: list[str] | None = None) -> None:
         slm = SlmParser(srv.url, style=prompt_style(a.model)) if srv else None
         if slm:
             print(f"model: {a.model.name} — prompt prefix {slm.ready(a.model)}")
-        else:
-            print("model: none — rules only")
+        elif a.no_model:
+            print("model: off (--no-model) — rules only")
+        else:  # say why, so a missing download is not mistaken for a working setup
+            why = (
+                f"{a.model} not found" if not a.model.exists() else "llama-server not found (tools/llama.cpp/ or PATH)"
+            )
+            print(f"model: none — {why}; answering with the rules only")
         zone = Zone(store, slm, a.model.name if slm else None, voice, max_role=a.role)
         app = create_app(zone, hosts=tuple(dict.fromkeys((*LOCAL_HOSTS, a.host))))
         print(f"EdgeCar AI on http://{a.host}:{a.port}")

@@ -209,7 +209,7 @@ def main() -> None:
     a = ap.parse_args()
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(errors="replace")  # a Windows pipe cannot print "✓"; the download must not fail on it
-    want = {"ved", "dbc", "baton", "td2d", "model"} if "all" in a.what else set(a.what)
+    want = ({"ved", "dbc", "baton", "td2d", "model"} if "all" in a.what else set()) | (set(a.what) - {"all"})
     raw = a.data / "raw"
     with httpx.Client(follow_redirects=True, timeout=httpx.Timeout(60.0, connect=20.0)) as client:
         if "ved" in want:

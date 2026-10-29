@@ -17,10 +17,16 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import time
 from pathlib import Path
 
 from huggingface_hub import CommitOperationAdd, HfApi
 from huggingface_hub.hf_api import RepoFile
+
+try:  # huggingface_hub 2.x talks through httpx2; a dropped connection raises its TransportError, not OSError
+    from httpx2 import TransportError
+except ImportError:
+    from httpx import TransportError
 
 from edgecar.nlu import command
 from edgecar.prep.fetch import _sha256
@@ -92,10 +98,11 @@ def publish(api: HfApi, repo_id: str, files: dict[str, Path | bytes], *, keep_pr
         try:
             api.create_commit(repo_id, ops, commit_message=f"{repo_id.split('/')[1]}: weights and model card")
             break
-        except OSError as e:  # a connection dropped mid-upload: what already arrived is kept, so retrying resumes
+        except (OSError, TransportError) as e:  # a dropped connection: what already arrived is kept, so a retry resumes
             if attempt == 3:
                 raise
-            print(f"{repo_id}: upload interrupted ({e}); retrying", flush=True)
+            print(f"{repo_id}: upload interrupted ({type(e).__name__}: {e}); retrying", flush=True)
+            time.sleep(30 * attempt)
     if bad := verify(api, repo_id, files):
         raise SystemExit(f"{repo_id}: published content differs for {', '.join(bad)} — left as it is, not made public")
     print(f"{repo_id}: all {len(files)} files verified", flush=True)
