@@ -6,7 +6,9 @@ and the code's real words, never into a control verb, and never when the word is
 (`src/edgecar/nlu/words.txt`, from the Qwen2.5 tokenizer, Apache-2.0) or an inflection of a known stem. A question
 with nothing to repair passes through exactly as asked. 0.18 ms per question on x86.
 
-x86 laptop, 2 threads, rules + edgecar-1.5b Q4_K_M unless marked. Every comparison is paired — the same questions
+x86 laptop, 2 threads, rules + edgecar-1.5b Q4_K_M unless marked. "Voice" is synthetic speech: each question
+read by the on-device Piper voice and transcribed by Moonshine — no accents, cabin noise or hesitations, so an
+optimistic bound for real drivers. Every comparison is paired — the same questions
 with the repair off and on — with a two-sided exact McNemar test.
 
 ## Protocol, and the one deviation from it
