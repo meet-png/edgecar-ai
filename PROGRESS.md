@@ -93,6 +93,11 @@ separate venv `.venv-train` (torch 2.13.0+cu126, transformers 5.21, peft 0.21; `
 The 1.5B needs `--grad-ckpt` to stay inside 6 GB (otherwise Windows spills to shared memory, ~5× slower). Speech:
 `pip install sherpa-onnx==1.13.8` (2.0 dropped the espeak-ng phonemiser Piper needs) and `prep.fetch voice`. App
 screenshots: `scripts/screenshots.py` drives the installed Edge through Playwright (`pip install playwright`).
+Hugging Face: account **`meettttttttttt`** (Meet Kabra), signed in by Meet with `hf auth login` (OAuth, browser) in
+`.venv-train` — never handle the token. **IPv6 is black-holed on this network**: curl falls back to IPv4, but Python
+HTTP clients hang on huggingface.co's IPv6 addresses. Run Python Hub calls with name resolution limited to IPv4 (a
+small wrapper that filters `socket.getaddrinfo` to `AF_INET`); hf_xet's own transfers are fine. Never kill
+`llama-server` by image name: the other Claude session may be running one (use `SlmServer` or the PID).
 
 ## 8. Open items / blockers
 
@@ -136,7 +141,7 @@ the known false refusal "Has the battery been running hotter lately?".
 ```bash
 python -m edgecar.prep.fetch all                    # public datasets + model, SHA-256 pinned (TUM i3: manual)
 python -m edgecar.prep.build                        # data/edgecar.duckdb
-python -m pytest -q                                 # 97 tests
+python -m pytest -q                                 # 108 tests
 python -m edgecar.bench.nlu_eval --questions eval/test.jsonl --mode hybrid \
        --model models/qwen2.5-1.5b-instruct-q4_k_m.gguf          # held-out accuracy (also refusal_test.jsonl)
 python -m edgecar.bench.e2e --threads 2                           # latency + memory, all 192 questions

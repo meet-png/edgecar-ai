@@ -10,6 +10,8 @@ baton       BATON ADAS handover tables — github.com/OpenLKA/BATON via Git LFS 
 td2d        TD2D takeover tables — only the 501 small CSVs, read out of the 16.7 GB Zenodo zip with HTTP range
             requests (CC BY 4.0)
 model       Qwen2.5-1.5B-Instruct Q4_K_M GGUF — huggingface.co/Qwen (Apache-2.0)
+tuned       our fine-tuned command models, edgecar-0.5b and edgecar-1.5b, Q4_K_M GGUF —
+            huggingface.co/meettttttttttt (Apache-2.0, ADR-0009) — optional, not part of "all"
 voice       on-device speech for the app: Moonshine Tiny recogniser (MIT) and a Piper voice trained on public-domain
             LibriVox recordings, both from github.com/k2-fsa/sherpa-onnx releases — optional, not part of "all"
 ==========  ==============================================================================================
@@ -25,6 +27,7 @@ import hashlib
 import io
 import shutil
 import subprocess
+import sys
 import tarfile
 import time
 import zipfile
@@ -53,6 +56,11 @@ MODEL = (
     "https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/resolve/main/qwen2.5-1.5b-instruct-q4_k_m.gguf",
     "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
 )
+TUNED = {
+    "edgecar-0.5b-q4_k_m.gguf": "749a466fca5bdd14adacf0d4750cb2d1deb5e6c12fba315851122d6161e2ef07",
+    "edgecar-1.5b-q4_k_m.gguf": "d8cfdf453a7d3b4c76ebbd0ff7c9a93ad7b31ccf6f25bae4f32214a3d2e7897f",
+}
+TUNED_URL = "https://huggingface.co/meettttttttttt/{repo}-GGUF/resolve/main/{file}"
 VOICE = {
     "asr-models/sherpa-onnx-moonshine-tiny-en-quantized-2026-02-27.tar.bz2": (
         "9ec31b342d8fa3240c3b81b8f82e1cf7e3ac467c93ca5a999b741d5887164f8d"
@@ -195,10 +203,12 @@ def fetch_td2d(client: httpx.Client, out: Path) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("what", nargs="+", choices=["all", "ved", "dbc", "baton", "td2d", "model", "voice"])
+    ap.add_argument("what", nargs="+", choices=["all", "ved", "dbc", "baton", "td2d", "model", "tuned", "voice"])
     ap.add_argument("--data", type=Path, default=Path("data"))
     ap.add_argument("--models", type=Path, default=Path("models"))
     a = ap.parse_args()
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(errors="replace")  # a Windows pipe cannot print "✓"; the download must not fail on it
     want = {"ved", "dbc", "baton", "td2d", "model"} if "all" in a.what else set(a.what)
     raw = a.data / "raw"
     with httpx.Client(follow_redirects=True, timeout=httpx.Timeout(60.0, connect=20.0)) as client:
@@ -218,6 +228,11 @@ def main() -> None:
             print("model")
             url, digest = MODEL
             download(client, url, a.models / url.rsplit("/", 1)[1], digest)
+        if "tuned" in want:
+            print("tuned models")
+            for name, digest in TUNED.items():  # edgecar-0.5b-q4_k_m.gguf lives in edgecar-0.5b-GGUF
+                url = TUNED_URL.format(repo=name.rsplit("-", 1)[0], file=name)
+                download(client, url, a.models / name, digest)
         if "voice" in want:
             print("voice")
             fetch_voice(client, a.models / "voice")

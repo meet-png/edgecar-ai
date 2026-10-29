@@ -85,10 +85,20 @@ three epochs of the 0.5B (the first epoch scored best on dev and is the one kept
 | llama-server memory · file | 1,157 · 1,117 MB | **499 · 398 MB** | 1,123 · 986 MB |
 | Start-up (prompt warm-up) | 13.9 s | **1.0 s** | 1.6 s |
 
-The 0.5B answers 2.2× faster in 2.3× less memory than the model it replaces, within one held-out question of it; the
-1.5B is the most accurate model we have measured. In Q8_0 (531 MB) the 0.5B gets one more held-out question right. Both test sets share an author with the training data, so the real test
-is [a set written by people outside the project](eval/outside/README.md). ARM numbers for the fine-tuned models are
-next; the measurements below are for the few-shot model.
+The 0.5B answers 2.2× faster in 2.3× less memory than the model it replaces, within one held-out question of it; in
+Q8_0 (531 MB) it gets that question too. The 1.5B scores highest, but on the 110 blind questions its 107 against the
+stock model's 105 is not a significant difference (3 better, 1 worse; exact McNemar p = 0.62 —
+[confidence intervals and error analysis](eval/results/significance.md)): what fine-tuning bought beyond doubt is speed,
+memory and start-up. Both test sets share an author with the training data, so the real test is
+[a set written by people outside the project](eval/outside/README.md). ARM numbers for the fine-tuned models are next;
+the measurements below are for the few-shot model.
+
+**Published on Hugging Face** (Apache-2.0), with cards generated from these results:
+[edgecar-0.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-0.5b-GGUF) ·
+[edgecar-1.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-1.5b-GGUF) for llama.cpp, and the merged weights
+[edgecar-0.5b](https://huggingface.co/meettttttttttt/edgecar-0.5b) ·
+[edgecar-1.5b](https://huggingface.co/meettttttttttt/edgecar-1.5b). `python -m edgecar.prep.fetch tuned` downloads
+the GGUFs, SHA-256 checked.
 
 ## Measured, not claimed
 
@@ -203,7 +213,7 @@ The TU Munich i3 data needs a free IEEE DataPort login ([DATASETS.md](docs/DATAS
 the i3 and the overheat scenario. llama.cpp's `llama-server` goes in `tools/llama.cpp/` (or on `PATH`); without it,
 only the rules path answers.
 
-Reproduce: `pytest` (97 tests) · `python -m edgecar.bench.nlu_eval` · `bench.e2e` · `bench.coldstart` ·
+Reproduce: `pytest` (108 tests) · `python -m edgecar.bench.nlu_eval` · `bench.e2e` · `bench.coldstart` ·
 `bench.rootcause` · `bench.storage` · `bench.models`.
 
 ## Repository layout

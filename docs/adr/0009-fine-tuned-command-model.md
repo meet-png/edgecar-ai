@@ -60,6 +60,12 @@ could put a small sample's p95 above its maximum); the first run measured 470 / 
 - Tiers: **edgecar-0.5b** for the 2 GB tier, where it also leaves room for on-device speech (ADR-0010);
   **edgecar-1.5b** where accuracy matters most and there is ~1 GB more. The prompt-prefix cache (ADR-0005) is no
   longer needed for start-up with either.
-- The weights derive from Apache-2.0 models and can be published under Apache-2.0; until they are, the repository
-  defaults stay on the stock model so every number can be reproduced from public downloads, and
-  `python -m edgecar.train.finetune` rebuilds ours.
+- The weights derive from Apache-2.0 models and are published under Apache-2.0 (2026-10-29) on Hugging Face —
+  [edgecar-0.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-0.5b-GGUF),
+  [edgecar-1.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-1.5b-GGUF) and the merged weights — each
+  repository checked file by file against the local SHA-256 before it was made public
+  (`python -m edgecar.train.publish`, cards from `python -m edgecar.train.cards`). `prep.fetch tuned` downloads them;
+  `python -m edgecar.train.finetune` rebuilds them. The repository's default model stays the stock one until the
+  fine-tuned ones are measured on ARM.
+- On the blind sets the fine-tuned models are at least as accurate as the stock one, not significantly better
+  (1.5B: 107 vs 105 of 110, exact McNemar p = 0.62; [`eval/results/significance.md`](../../eval/results/significance.md)).
