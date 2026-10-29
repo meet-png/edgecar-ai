@@ -4,7 +4,8 @@
 set -euo pipefail
 LIMIT_MB=${LIMIT_MB:-1792}  # a 2 GB budget minus 256 MB left for the guest OS
 CPUS=${CPUS:-0,1}
-OUT=${OUT:-eval/results/arm}
+MODEL=${MODEL:-models/qwen2.5-1.5b-instruct-q4_k_m.gguf}
+OUT=${OUT:-eval/results/arm/$(basename "$MODEL" .gguf)}
 mkdir -p "$OUT"
 lscpu > "$OUT/cpu.txt"
 uname -srm >> "$OUT/cpu.txt"
@@ -13,7 +14,7 @@ uname -srm >> "$OUT/cpu.txt"
 # keeps a private copy of the weights, so the edge profile turns it off). Outside the cgroup: repack would not fit.
 for repack in 0 1; do
     LD_LIBRARY_PATH="$PWD/tools/llama.cpp" taskset -c "$CPUS" tools/llama.cpp/llama-bench \
-        -m models/qwen2.5-1.5b-instruct-q4_k_m.gguf -t 2 -p 32,128 -n 8 -r 3 --repack "$repack" -o json \
+        -m "$MODEL" -t 2 -p 32,128 -n 8 -r 3 --repack "$repack" -o json \
         > "$OUT/llama-bench-repack$repack.json" || echo "llama-bench (repack $repack) failed"
 done
 
@@ -25,5 +26,5 @@ sync && echo 3 | sudo tee /proc/sys/vm/drop_caches > /dev/null  # start cold: th
 sudo systemd-run --scope --quiet --unit="edgecar-ai-zone-$$" "${LIMITS[@]}" \
     --uid="$(id -u)" --gid="$(id -g)" \
     -- /usr/bin/env PATH="$PATH" HOME="$HOME" OUT="$OUT" LIMIT_MB="$LIMIT_MB" \
-    RUN_BRIEF="${RUN_BRIEF:-0}" RUN_REFUSAL="${RUN_REFUSAL:-0}" MODEL="${MODEL:-models/qwen2.5-1.5b-instruct-q4_k_m.gguf}" \
+    RUN_BRIEF="${RUN_BRIEF:-0}" RUN_REFUSAL="${RUN_REFUSAL:-0}" MODEL="$MODEL" \
     taskset -c "$CPUS" bash scripts/ci/ai_zone.sh

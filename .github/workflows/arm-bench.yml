@@ -1,10 +1,20 @@
 name: ARM64 edge benchmark
 
 # Rebuilds the store from public data and measures the whole AI zone on an Arm64 runner, pinned to two cores and a
-# hard memory limit. Results are uploaded as the "arm-bench" artifact and shown on the run's summary page.
+# hard memory limit. Results are uploaded as an artifact and shown on the run's summary page. A push measures the
+# default model; run the workflow by hand to measure another.
 
 on:
   workflow_dispatch:
+    inputs:
+      model:
+        description: Model to measure (our fine-tuned models are downloaded from Hugging Face, SHA-256 checked)
+        type: choice
+        default: qwen2.5-1.5b-instruct-q4_k_m.gguf
+        options:
+          - qwen2.5-1.5b-instruct-q4_k_m.gguf
+          - edgecar-0.5b-q4_k_m.gguf
+          - edgecar-1.5b-q4_k_m.gguf
   push:
     branches: [main]
     paths:
@@ -17,14 +27,16 @@ permissions:
   contents: read
 
 concurrency:
-  group: arm-bench
+  group: arm-bench-${{ inputs.model || 'default' }}
   cancel-in-progress: true
 
 jobs:
   bench:
-    name: Arm64 · 2 cores · 1.75 GB
+    name: Arm64 · 2 cores · 1,792 MiB · ${{ inputs.model || 'qwen2.5-1.5b-instruct-q4_k_m.gguf' }}
     runs-on: ubuntu-24.04-arm
     timeout-minutes: 90
+    env:
+      MODEL: models/${{ inputs.model || 'qwen2.5-1.5b-instruct-q4_k_m.gguf' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -57,20 +69,22 @@ jobs:
       - name: Fetch public datasets and the model (SHA-256 pinned)
         run: |
           sudo apt-get install -y -q p7zip-full > /dev/null
-          python -m edgecar.prep.fetch ved dbc baton model
+          python -m edgecar.prep.fetch ved dbc baton model $(case "$MODEL" in models/edgecar-*) echo tuned;; esac)
 
       - name: Build the store (VED Leafs as real Leaf CAN, PHEV, ADAS as SOME/IP)
         run: python -m edgecar.prep.build
 
-      - name: Run the AI zone in a 2-core, 1.75 GB cgroup
-        run: bash scripts/ci/arm_bench.sh
+      - name: Run the AI zone in a 2-core, 1,792 MiB cgroup
+        run: |
+          echo "OUT=eval/results/arm/$(basename "$MODEL" .gguf)" >> "$GITHUB_ENV"
+          bash scripts/ci/arm_bench.sh
 
       - name: Summary
         if: always()
-        run: python scripts/ci/summary.py eval/results/arm | tee -a "$GITHUB_STEP_SUMMARY"
+        run: python scripts/ci/summary.py "$OUT" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: arm-bench
+          name: arm-bench-${{ inputs.model || 'qwen2.5-1.5b-instruct-q4_k_m.gguf' }}
           path: eval/results/arm/

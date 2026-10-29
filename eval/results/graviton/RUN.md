@@ -1,4 +1,8 @@
-# AWS Graviton2 edge benchmark — published run
+# AWS Graviton2 edge benchmark
+
+## R1 run — [`r1-2026-10-28/`](r1-2026-10-28), the numbers on the R1 slide
+
+Measured before the decline-check fix of ADR-0008 (it changes accuracy, not latency or memory).
 
 - **Machine:** AWS EC2 `t4g.small` (ap-southeast-2b), 2 vCPUs **Arm Neoverse-N1 (Graviton2, the Cortex-A76
   generation)**, 2 GiB RAM (1,835 MiB usable), **no swap**, stock Ubuntu 24.04 arm64 (kernel 7.0.0-1014-aws),

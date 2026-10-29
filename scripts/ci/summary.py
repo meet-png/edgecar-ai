@@ -1,6 +1,6 @@
 """Turn the ARM benchmark outputs into one summary (Markdown on stdout, JSON next to the inputs).
 
-python scripts/ci/summary.py eval/results/arm >> "$GITHUB_STEP_SUMMARY"
+python scripts/ci/summary.py eval/results/arm/<model> >> "$GITHUB_STEP_SUMMARY"
 """
 
 import json
@@ -33,6 +33,7 @@ for repack in (0, 1):
         bench[f"repack{repack}_{kind}_tok_s"] = round(row["avg_ts"], 1)
 
 summary = {
+    "model": e2e.get("model") or held.get("model"),
     "cpu": cpu.group(1).strip() if cpu else None,
     "cores": cg.get("cpus"),
     "memory_limit_mb": cg.get("memory_max_mb"),
@@ -65,16 +66,16 @@ def lat(k: str) -> str:
 
 rows = [
     ("CPU", f"{summary['cpu']} — cores {summary['cores']}"),
-    ("Memory limit (whole AI zone, no swap)", f"{summary['memory_limit_mb']} MB"),
-    ("Peak memory: kernel high-water mark", f"{summary['memory_peak_mb']} MB"),
+    ("Memory limit (whole AI zone, no swap)", f"{summary['memory_limit_mb']} MiB"),
+    ("Peak memory: kernel high-water mark", f"{summary['memory_peak_mb']} MiB"),
     ("Peak memory: anonymous / page cache (sampled)", json.dumps(summary["sampled_peak_mb"])),
     (
         "Whole machine incl. OS: peak used / total",
-        f"{summary['system_used_peak_mb']} MB / {summary['system_mem_total_mb']} MB",
+        f"{summary['system_used_peak_mb']} MiB / {summary['system_mem_total_mb']} MiB",
     ),
     ("OOM kills · times the limit was hit", f"{summary['oom_kills']} · {summary['limit_hits']}"),
     ("Rules path (deterministic)", lat("fast")),
-    ("Model path (Qwen2.5-1.5B, grammar-constrained)", lat("slm")),
+    (f"Model path ({summary['model']}, grammar-constrained)", lat("slm")),
     ("All questions", lat("all") + f" · {(summary['latency_ms'].get('all') or {}).get('under_2s_pct', '–')} % < 2 s"),
     ("Held-out accuracy", f"{summary['heldout_accuracy']:.1%} of {summary['heldout_n']}" if held else "–"),
     ("Cold start: first answer (rules)", f"{summary['rules_first_answer_s']} s"),
@@ -85,7 +86,7 @@ rows = [
     ("Live ingest commit latency per 1 s batch", json.dumps(summary["live_commit_ms"])),
     ("llama-bench, 2 threads (tokens/s)", json.dumps(bench)),
 ]
-print("## EdgeCar AI — ARM64 edge benchmark\n")
+print(f"## EdgeCar AI — ARM64 edge benchmark · {summary['model']}\n")
 print("| | |\n|---|---|")
 for k, v in rows:
     print(f"| {k} | {v} |")

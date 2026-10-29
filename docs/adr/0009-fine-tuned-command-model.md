@@ -21,8 +21,9 @@ The Mercedes-Benz R&D paper on in-vehicle function calling (arXiv:2501.02342) po
    generic template phrasings). The held-out and refusal sets were never read while writing the data.
 3. **LoRA** (rank 16 on all attention and MLP projections, 3 epochs) on Qwen2.5-0.5B- and 1.5B-Instruct, trained on
    the answer tokens only — projecting only those positions onto the 152k-token vocabulary is what fits the 1.5B,
-   with gradient checkpointing, on a 6 GB laptop GPU (RTX 3050: 5 min for the 0.5B, 14 min for the 1.5B). The epoch
-   is chosen on the dev sets.
+   with gradient checkpointing, on a 6 GB laptop GPU (RTX 3050: 5.2 min for the 0.5B at batch 32 and learning rate
+   2e-4; 13.9 min for the 1.5B at batch 16 and 1e-4). The epoch with the best dev accuracy is kept: epoch 1 for the
+   0.5B (epoch 3 only tied it), epoch 3 for the 1.5B. Logs: [`eval/results/train/`](../../eval/results/train).
 4. **The same runtime.** The merged model is converted with llama.cpp's own converter (release b11577) and quantised
    to Q4_K_M; it runs in the same llama-server, under the same grammar and decline checks. Its prompt is one
    instruction (36 tokens in total), selected by the `edgecar-` file-name prefix.
@@ -35,9 +36,13 @@ The Mercedes-Benz R&D paper on in-vehicle function calling (arXiv:2501.02342) po
 | Held-out, model alone | 90.0 % | 94.3 % | **97.1 %** |
 | Dev (122), rules + model / model alone | 100 % / 82.8 % | 100 % / 99.2 % | 100 % / 99.2 % |
 | Refusal test (40) · dev (20) | 39 · 19 | 39 · 19 | **40 · 20** |
-| Model path p50 / p95 (192 questions) | 470 / 669 ms | **205 / 295 ms** | 393 / 562 ms |
-| llama-server memory (private) | 1,157 MB (228) | **499 MB (162)** | 1,122 MB (221) |
-| File (Q4_K_M) · start-up | 1,117 MB · 12.4 s | **398 MB · 1.0 s** | 986 MB · 1.6 s |
+| Model path p50 / p95 (192 questions) | 480 / 670 ms | **221 / 299 ms** | 384 / 557 ms |
+| llama-server memory (private) | 1,157 MB (227) | **499 MB (163)** | 1,123 MB (222) |
+| File (Q4_K_M) · start-up | 1,117 MB · 13.9 s | **398 MB · 1.0 s** | 986 MB · 1.6 s |
+| Q8_0: held-out rules + model · model alone · refusal test | – | 94.3 % · 95.7 % · 39 | 95.7 % · 97.1 % · 40 |
+
+Latency and memory are from a re-run with corrected percentiles (2026-10-29: the exclusive definition used before
+could put a small sample's p95 above its maximum); the first run measured 470 / 669, 205 / 295 and 393 / 562 ms.
 
 ## What the numbers do and don't say
 

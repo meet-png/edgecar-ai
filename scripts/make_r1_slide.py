@@ -128,10 +128,10 @@ def t(text, **opts):
 def load(results: Path) -> dict:
     j = lambda name: json.loads((results / name).read_text(encoding="utf-8"))  # noqa: E731
     # latency and memory from the real 2 GiB ARM machine (AWS t4g.small, Graviton2), the brief's questions too
-    edge, held = j("graviton/summary.json"), j("test-hybrid-qwen2.5-1.5b-instruct-q4_k_m.json")
+    edge, held = j("graviton/r1-2026-10-28/summary.json"), j("test-hybrid-qwen2.5-1.5b-instruct-q4_k_m.json")
     rc, store = j("rootcause.json")["summary"], j("storage.json")
     refusal, refusal_before = j("refusal-test-hybrid.json"), j("refusal-test-baseline-no-guard.json")
-    brief = {r["question"]: r for r in j("graviton/brief.json")}
+    brief = {r["question"]: r for r in j("graviton/r1-2026-10-28/brief.json")}
     return {
         "edge": edge,
         "heldout": held["accuracy"],

@@ -53,7 +53,7 @@ scalability), privacy & security, innovation & practicality.
 | ADR-0006 | **Every source through its wire protocol**; read-only by construction; UDS decoded passively from the gateway's own polls. | Data integration is real, not CSV rows. |
 | ADR-0007 | **Root cause = fault-propagation map + causal order**, measured on 200 random scenarios with decoys. | 197/200 vs 34/200 for "earliest fault". |
 | ADR-0008 | **Decline instead of guessing**: action guard, not-recorded catalogue, grounding check. | Refusal 29/40 → 39/40 (40/40 before a cue-matching bug was fixed, see the ADR). |
-| ADR-0009 | **Our own command model**: LoRA on Qwen2.5-0.5B/1.5B, synthetic data checked for overlap with every eval set, GGUF. | 0.5B: 2.3× faster, 2.3× smaller, within one held-out question; 1.5B: most accurate (95.7 %, refusals 60/60). |
+| ADR-0009 | **Our own command model**: LoRA on Qwen2.5-0.5B/1.5B, synthetic data checked for overlap with every eval set, GGUF. | 0.5B: 2.2× faster in 2.3× less memory, within one held-out question; 1.5B: most accurate (95.7 %, refusals 60/60). |
 | ADR-0010 | **In-car app + on-device speech**: one CSP-locked page, evidence cards, driver/service/fleet views, Moonshine + Piper. | A demo people can see and use; nothing leaves the machine. |
 
 ## 5. Datasets (full registry in `docs/DATASETS.md`; `python -m edgecar.prep.fetch all`)
@@ -100,6 +100,13 @@ screenshots: `scripts/screenshots.py` drives the installed Edge through Playwrig
       — rewrite only if Meet asks (force-push).
 - [x] R1 slide uploaded by Meet (2026-10-29). Shortlist expected before R2 opens on 14 Nov.
 - [ ] Teammate/outsiders: write a fresh paraphrase + refusal question set (the current sets are author-written).
+- [ ] **Two Claude sessions work on this repo (since 2026-10-29).** Session A (this log's main author): Hugging Face
+      publishing (`train/cards.py`, `train/publish.py`), AWS Graviton runs, `prep/fetch.py`, CI and Graviton scripts,
+      README / PROGRESS / ADR numbers, `nlu/slm.py`, `train/`. Session B (reviewer): app and privacy hardening
+      (`app/server.py`, `privacy.py`, `voice.py`, `analytics/engine.py` for redaction marks) and evaluation rigour
+      (bootstrap CIs, McNemar, a robustness suite in `eval/robustness/`) on branch `review/hardening` in the worktree
+      `C:\Users\ACER\edgecar-ai-review`. B never pushes to main; A reviews and merges. Before editing, check
+      `git log` and this file, and record decisions here.
 
 ## 9. Roadmap after R1
 
@@ -109,7 +116,7 @@ or an artefact.
 
 | # | Track | Deliverable | Proof | Needs Meet |
 |---|---|---|---|---|
-| 1 | Model | ✅ x86, ARM next — **Our own fine-tuned model**: LoRA on Qwen2.5-0.5B and 1.5B, synthetic training set checked for overlap with every eval set, GGUF Q4 | accuracy on dev, held-out and the outside set · Graviton2 model-path p95 (1.89 s today) · memory | approve publishing the weights |
+| 1 | Model | ✅ x86 · ⏳ Hugging Face (Meet approved 2026-10-29), then ARM CI + Graviton — **Our own fine-tuned model**: LoRA on Qwen2.5-0.5B and 1.5B, synthetic training set checked for overlap with every eval set, GGUF Q4 | accuracy on dev, held-out and the outside set · Graviton2 model-path p95 (1.89 s today) · memory | approve publishing the weights |
 | 2 | Credibility | ⏳ form ready — **Outside question set**: teammate + classmates write questions and trick requests in a form, frozen before any run | blind accuracy, reported whatever it is | share the form |
 | 3 | Product | ✅ built, live panel next — **In-car app** (`edgecar serve`): push-to-talk with on-device speech in and out, answers with evidence (charts, root-cause timeline, event tables), driver / service / fleet views, live bus panel; no CDN, no cloud speech | voice round trip + memory on ARM | — |
 | 4 | Visibility | 2-minute demo video + README GIF; one-command Docker image (amd64 + arm64) | — | voice-over; approve publishing |
@@ -129,7 +136,7 @@ the known false refusal "Has the battery been running hotter lately?".
 ```bash
 python -m edgecar.prep.fetch all                    # public datasets + model, SHA-256 pinned (TUM i3: manual)
 python -m edgecar.prep.build                        # data/edgecar.duckdb
-python -m pytest -q                                 # 82 tests
+python -m pytest -q                                 # 97 tests
 python -m edgecar.bench.nlu_eval --questions eval/test.jsonl --mode hybrid \
        --model models/qwen2.5-1.5b-instruct-q4_k_m.gguf          # held-out accuracy (also refusal_test.jsonl)
 python -m edgecar.bench.e2e --threads 2                           # latency + memory, all 192 questions
@@ -148,28 +155,35 @@ edgecar brief                                                     # the five bri
 | Held-out (70): rules + model · model alone | 94.3 % · 90.0 % | 92.9 % · 94.3 % | 95.7 % · 97.1 % |
 | Dev (122): rules + model · model alone | 100 % · 82.8 % | 100 % · 99.2 % | 100 % · 99.2 % |
 | Refusal test (40) · dev (20) | 39 · 19 | 39 · 19 | 40 · 20 |
-| Model path p50 / p95 (e2e, 192 q) | 470 / 669 ms | 205 / 295 ms | 393 / 562 ms |
-| llama-server RSS (private) · file · start-up | 1,157 (228) · 1,117 MB · 12.4 s | 499 (162) · 398 MB · 1.0 s | 1,122 (221) · 986 MB · 1.6 s |
+| Model path p50 / p95 (e2e, 192 q) | 480 / 670 ms | 221 / 299 ms | 384 / 557 ms |
+| llama-server RSS (private) · file · start-up | 1,157 (227) · 1,117 MB · 13.9 s | 499 (163) · 398 MB · 1.0 s | 1,123 (222) · 986 MB · 1.6 s |
+| Q8_0: held-out rules + model · model alone · refusal test | – | 94.3 % · 95.7 % · 39 | 95.7 % · 97.1 % · 40 |
+
+Latency and memory: re-run 2026-10-29 with corrected percentiles (inclusive definition; the first run's exclusive
+percentiles read 470 / 669, 205 / 295, 393 / 562 ms).
 
 Training: 3,795 questions (417 hand-written seeds + templates; 576 dropped for overlapping an eval set), LoRA r=16,
-3 epochs, RTX 3050 6 GB: 0.5B 5.2 min, 1.5B 13.9 min (gradient checkpointing). Epoch chosen on dev. Speech (laptop):
+3 epochs, RTX 3050 6 GB: 0.5B 5.2 min (batch 32, lr 2e-4; **epoch 1 kept**, epoch 3 only tied it on dev), 1.5B
+13.9 min (batch 16, lr 1e-4, gradient checkpointing; epoch 3 kept). Logs: `eval/results/train/`. Speech (laptop):
 recognition 37–49 ms per spoken question, synthesis 0.4–0.6 s per sentence. **Not yet on ARM.**
 
 **R1 numbers (as submitted on the slide):**
 
 **AWS t4g.small** (2 Graviton2 cores = Neoverse-N1, 2 GiB total incl. OS, no swap, stock Ubuntu; files in
-`eval/results/graviton/`): 100 % of 192 < 2 s; rules p50 10 ms / p95 24 ms; model p50 1.46 s / p95 1.89 s / max
+`eval/results/graviton/r1-2026-10-28/`): 100 % of 192 < 2 s; rules p50 10 ms / p95 24 ms; model p50 1.46 s / p95 1.89 s / max
 1.90 s; brief questions 11–34 ms; whole machine peak 670 MiB in use of 1,835 MiB, 0 OOM (AI zone 1,520 MiB incl.
 1,230 MiB model page cache); ignition: rules 1.07 s, model 1.53 s restored vs 81.4 s; held-out 94.3 %, refusals 40/40;
 llama-bench pp 17.7 tok/s (30 repacked), tg 10.9. **The slide uses these numbers.**
 
-**ARM CI** (Neoverse-N2, 2 cores, whole AI zone in a 1,792 MB cgroup, live ingestion running; CI run 40682528585,
-files in `eval/results/arm/`): rules p50 5.7 ms / p95 16 ms; model p50 0.92 s / p95 1.35 s / max 1.35 s; 100 % of
-192 < 2 s; peak 1,577 MiB = 1.54 GB (anon 330 MiB) · 0 OOM; cold start: rules 0.65 s, model ready 0.77 s restored vs 56.7 s
-computed; held-out 94.3 %; live commit p50 40 ms; llama-bench 2 threads: pp 34 tok/s (repack 55–61), tg 15 (18).
+**ARM CI** (Neoverse-N2, 2 cores, whole AI zone in a 1,792 MiB cgroup, live ingestion running; CI run 40764935436
+after the decline-check fix, files in `eval/results/arm/qwen2.5-1.5b-instruct-q4_k_m/`): rules p50 5.8 ms / p95
+15.6 ms; model p50 0.94 s / p95 1.36 s / max 1.36 s; 100 % of 192 < 2 s; peak 1,578 MiB = 1.54 GiB (anon 330 MiB)
+· 0 OOM; cold start: rules 0.57 s, model ready 0.77 s restored vs 56.8 s computed; held-out 94.3 %; live commit p50
+41 ms; llama-bench 2 threads: pp 34 tok/s (repack 55–61), tg 15 (18).
 
-**Accuracy:** held-out 95.7 % (x86; 92.9 % on the first run with the decline checks, see ADR-0008); dev 93.4 %;
-refusal test 40/40 (baseline 29/40); refusal dev 19/20.
+**Accuracy (R1 slide, before the decline-check fix):** held-out 95.7 % (x86; 92.9 % on the first run with the decline
+checks, see ADR-0008); dev 93.4 %; refusal test 40/40 (baseline 29/40); refusal dev 19/20. Graviton2 scored 94.3 %
+on the same build: the model's output differs on one question (t-cmp-7) between x86 and ARM.
 
 **Root cause:** 197/200 random scenarios (earliest-fault rule 34/200, map only 161/200); events recovered 2,409/2,409.
 
@@ -220,6 +234,26 @@ plus slide-design notes. What was done:
 ---
 
 ## Session log
+
+### 2026-10-29 — Session 5: publishing the models; a code review from a second session
+- Meet approved publishing the fine-tuned weights on Hugging Face (under Meet's account; Meet signs in with
+  `hf auth login` in a separate terminal, so the token never passes through the chat) and a Graviton re-run.
+  Plan: per model, `<user>/edgecar-<size>` (merged safetensors) and `<user>/edgecar-<size>-GGUF` (Q4_K_M, Q8_0,
+  `commands.gbnf`), created private, SHA-256-checked, then public; cards rendered from `eval/results` by
+  `python -m edgecar.train.cards` (`docs/models/`). Then ARM CI (now takes a model choice) and one t4g.small run
+  measuring the stock, 0.5B and 1.5B models in turn.
+- **Bug: p95 above the maximum.** `statistics.quantiles` defaults to the exclusive definition, which extrapolates for
+  small samples (4 out-of-scope questions: p95 125.9 ms, max 119.4 ms). All reports now use `edgecar.stats.percentile`
+  (inclusive). x86 e2e re-run: 0.5B 221 / 299 ms, 1.5B 384 / 557 ms, few-shot 480 / 670 ms.
+- Q8_0 scored: 0.5B one held-out question better than Q4_K_M, 1.5B identical. `nlu_eval --no-guard` added (ablation:
+  how well the model refuses on its own).
+- A second Claude session reviewed the code (11 findings). Verified each against code and files before acting:
+  privacy gaps in the app (chart / facts / window not redacted; client-chosen role; no Host check), unbounded
+  `/api/listen`, voice loading → session B on `review/hardening`. CI mislabelling non-default models, stale ARM CI
+  numbers in this file, GB vs GiB, undocumented 0.5B epoch and 1.5B hyperparameters, x86-vs-ARM output difference,
+  lost Q8_0 runs (cp1252 crash before saving) → fixed here.
+- Results folders now hold one subfolder per run: `eval/results/arm/<model>/`, `eval/results/graviton/<model>/`;
+  the R1 Graviton run is `eval/results/graviton/r1-2026-10-28/`. Training logs: `eval/results/train/`.
 
 ### 2026-10-29 — Session 4: after R1 — our own model, the in-car app, two real bugs
 - Meet submitted the R1 slide. New goal: make the project matter beyond the competition — roadmap in §9.

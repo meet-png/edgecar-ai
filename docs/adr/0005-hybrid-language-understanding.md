@@ -83,7 +83,7 @@ Qwen2.5-1.5B leads model-only accuracy by 35 points at latency close to the 1B m
   path p50 5.7 ms, 100 % of 192 questions under 2 s; held-out accuracy 94.3 % (one borderline answer flips between
   CPU architectures). Prompt processing is the bottleneck: 34 tokens/s without weight repacking, 55–61 with it.
 - **AWS t4g.small, measured 2026-10-28** (2 Graviton2 cores = Neoverse-N1, 2 GiB in total, OS included, no swap;
-  `eval/results/graviton`): model path p50 1.46 s / p95 1.89 s / max 1.90 s, rules p50 10 ms, 100 % of 192 questions
+  `eval/results/graviton/r1-2026-10-28`): model path p50 1.46 s / p95 1.89 s / max 1.90 s, rules p50 10 ms, 100 % of 192 questions
   under 2 s; whole machine peak 670 MiB in use, 0 OOM; held-out 94.3 %, refusals 40/40.
 - Since 2026-10-28 the pipeline also declines requests to act, questions about data the car lacks, and model commands
   the question does not support (ADR-0008); held-out accuracy is unchanged at 95.7 % on x86.

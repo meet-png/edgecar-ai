@@ -73,19 +73,20 @@ Content-Security-Policy that lets the browser load nothing from anywhere else ([
 
 The stock Qwen2.5-1.5B needed a 1,190-token few-shot prompt and, alone, got 82.8 % of the dev questions right. We
 fine-tuned Qwen2.5-0.5B and 1.5B with LoRA on 3,795 synthetic questions — 417 written by hand, the rest from
-templates — after dropping every one that overlapped an evaluation question, on a 6 GB laptop GPU in 5 and 14
-minutes ([ADR-0009](docs/adr/0009-fine-tuned-command-model.md), [`src/edgecar/train/`](src/edgecar/train)).
+templates — after dropping every one that overlapped an evaluation question, on a 6 GB laptop GPU: 5 minutes for
+three epochs of the 0.5B (the first epoch scored best on dev and is the one kept), 14 for the 1.5B
+([ADR-0009](docs/adr/0009-fine-tuned-command-model.md), [`src/edgecar/train/`](src/edgecar/train)).
 
 | x86 laptop, 2 threads | Qwen2.5-1.5B few-shot | **edgecar-0.5b** | **edgecar-1.5b** |
 |---|---|---|---|
 | Held-out (70), rules + model · model alone | 94.3 % · 90.0 % | 92.9 % · 94.3 % | **95.7 % · 97.1 %** |
 | Refusal sets (40 + 20) | 39 + 19 | 39 + 19 | **40 + 20** |
-| Model path p50 / p95 | 470 / 669 ms | **205 / 295 ms** | 393 / 562 ms |
-| llama-server memory · file | 1,157 · 1,117 MB | **499 · 398 MB** | 1,122 · 986 MB |
-| Start-up (prompt warm-up) | 12.4 s | **1.0 s** | 1.6 s |
+| Model path p50 / p95 | 480 / 670 ms | **221 / 299 ms** | 384 / 557 ms |
+| llama-server memory · file | 1,157 · 1,117 MB | **499 · 398 MB** | 1,123 · 986 MB |
+| Start-up (prompt warm-up) | 13.9 s | **1.0 s** | 1.6 s |
 
-The 0.5B is 2.3× faster and 2.3× smaller than the model it replaces, within one held-out question of it; the 1.5B
-is the most accurate model we have measured. Both test sets share an author with the training data, so the real test
+The 0.5B answers 2.2× faster in 2.3× less memory than the model it replaces, within one held-out question of it; the
+1.5B is the most accurate model we have measured. In Q8_0 (531 MB) the 0.5B gets one more held-out question right. Both test sets share an author with the training data, so the real test
 is [a set written by people outside the project](eval/outside/README.md). ARM numbers for the fine-tuned models are
 next; the measurements below are for the few-shot model.
 
@@ -101,15 +102,15 @@ ran on it ([results and setup](eval/results/graviton/RUN.md), [`scripts/graviton
 | Questions answered in under 2 s | **100 %** of 192 |
 | Rules path (146 of 192 questions) | p50 **10 ms** · p95 24 ms |
 | Model path (34 questions) | p50 **1.46 s** · p95 1.89 s · max 1.90 s |
-| The case study's five example questions | 11–34 ms each, rules path ([brief.json](eval/results/graviton/brief.json)) |
+| The case study's five example questions | 11–34 ms each, rules path ([brief.json](eval/results/graviton/r1-2026-10-28/brief.json)) |
 | Memory, whole machine incl. OS | peak **670 MiB** in use of 1,835 MiB; the model's 1.2 GB stays resident as page cache · 0 OOM |
 | Ignition → first answer | 1.1 s (rules) · model ready in **1.5 s** from the saved prompt cache (81 s to compute it) |
 | Held-out accuracy · refusal set | 94.3 % · 40/40 (measured before the decline-check fix below) |
 
 **On every push.** GitHub's free Arm64 runner (Neoverse-N2, faster cores) pinned to 2 cores, the whole AI zone in
-one cgroup with a hard 1.75 GB limit ([workflow](.github/workflows/arm-bench.yml), [results](eval/results/arm)): rules
-p50 5.8 ms, model path p95 1.36 s, 100 % under 2 s, peak 1.54 GB (0.32 GB anonymous), model ready in 0.8 s, held-out
-94.3 % (re-run after the decline-check fix).
+one cgroup with a hard 1,792 MiB limit ([workflow](.github/workflows/arm-bench.yml),
+[results](eval/results/arm/RUN.md)): rules p50 5.8 ms, model path p95 1.36 s, 100 % under 2 s, peak 1.54 GiB
+(0.32 GiB anonymous), model ready in 0.8 s, held-out 94.3 % (re-run after the decline-check fix).
 
 **Understanding** (rules + few-shot model, x86 laptop, 2 threads):
 
@@ -118,12 +119,15 @@ p50 5.8 ms, model path p95 1.36 s, 100 % under 2 s, peak 1.54 GB (0.32 GB anonym
 | Question → query accuracy, held-out set (70 questions never used to tune rules or prompt) | **94.3 %** |
 | Dev set (122 questions the rules were written against) | 100 % |
 | Control, injection, out-of-scope and missing-data requests declined (40, frozen set) | **39/40** — 29/40 before the decline checks, which were written after seeing those failures |
-| The case study's five example questions | 5/5 on the rules path ([x86](eval/results/brief.json), [Graviton2](eval/results/graviton/brief.json)) |
+| The case study's five example questions | 5/5 on the rules path ([x86](eval/results/brief.json), [Graviton2](eval/results/graviton/r1-2026-10-28/brief.json)) |
 
 Testing the fine-tuned model exposed a bug in the decline checks: every multi-word cue ("battery level") had been
 compiled with a literal backslash and never matched. Fixed and re-measured
 ([ADR-0008](docs/adr/0008-decline-instead-of-guessing.md#correction-2026-10-29), [results](eval/results/rerun)): dev
 93.4 → 100 %, held-out 95.7 → 94.3 %, refusals 40/40 → 39/40 — the bug had declined one wrong answer by luck.
+(Those before/after figures are x86. The model's output is not bit-identical across CPUs: before the fix, Graviton2
+already scored 94.3 %, differing from x86 on one question — "What difference does the outside temperature make to my
+consumption?" — answered as a comparison on x86 and as an explanation on ARM.)
 The question sets were written by the author with an AI pair-programmer; the held-out set was written after the rules
 were frozen, and its first run exposed two vocabulary gaps (fixed generically), so it is no longer blind for those
 checks.
@@ -186,15 +190,20 @@ Fine-tune the command model (a CUDA GPU; separate venv with `pip install -e ".[t
 ```bash
 python -m edgecar.train.data                                    # synthetic, overlap-checked training set
 python -m edgecar.train.finetune --base models/hf/Qwen2.5-0.5B-Instruct --out models/tuned/edgecar-0.5b
+python -m edgecar.train.finetune --base models/hf/Qwen2.5-1.5B-Instruct --out models/tuned/edgecar-1.5b \
+    --batch 16 --lr 1e-4 --grad-ckpt                            # what fits the 1.5B in 6 GB
 python -m edgecar.train.export --merged models/tuned/edgecar-0.5b/merged --name edgecar-0.5b
 edgecar serve --model models/edgecar-0.5b-q4_k_m.gguf
 ```
+
+Each run keeps the epoch with the best dev accuracy and logs what it did in `train_log.json`
+([ours](eval/results/train)).
 
 The TU Munich i3 data needs a free IEEE DataPort login ([DATASETS.md](docs/DATASETS.md)); without it the build skips
 the i3 and the overheat scenario. llama.cpp's `llama-server` goes in `tools/llama.cpp/` (or on `PATH`); without it,
 only the rules path answers.
 
-Reproduce: `pytest` (95 tests) · `python -m edgecar.bench.nlu_eval` · `bench.e2e` · `bench.coldstart` ·
+Reproduce: `pytest` (97 tests) · `python -m edgecar.bench.nlu_eval` · `bench.e2e` · `bench.coldstart` ·
 `bench.rootcause` · `bench.storage` · `bench.models`.
 
 ## Repository layout
