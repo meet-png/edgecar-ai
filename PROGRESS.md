@@ -259,6 +259,16 @@ plus slide-design notes. What was done:
   lost Q8_0 runs (cp1252 crash before saving) → fixed here.
 - Results folders now hold one subfolder per run: `eval/results/arm/<model>/`, `eval/results/graviton/<model>/`;
   the R1 Graviton run is `eval/results/graviton/r1-2026-10-28/`. Training logs: `eval/results/train/`.
+- Merged from session B after review: app privacy (charts, facts and window follow the role; the server sets the
+  widest view; trusted hosts + same-origin; bounded `/api/listen`), then three follow-ups found while merging (a raw
+  0x01 byte instead of `\1` in the hour rounding, window ends rounded down to an empty window, wildcard hosts);
+  `eval/results/significance.md` (Wilson intervals, exact McNemar: on the 110 blind questions no model is
+  significantly better than the stock one — the fine-tuned gains are speed, memory and start-up);
+  `robustness.md` (typos −14 questions, numbers spoken as words −8, real Piper → Moonshine voice loop −12, refusals
+  40/40 throughout) and `calibration.md` (min-token confidence AUROC 0.79, too blunt to gate on).
+- Published: `meettttttttttt/edgecar-0.5b`, `-0.5b-GGUF`, `-1.5b` (+ collection "EdgeCar AI"), each verified file by
+  file before going public; HF shows the model tree Qwen2.5 → edgecar (fine-tune) → GGUF (quantised). The 1.5B GGUF
+  upload stalled twice on hf_xet (network errors to the Xet CAS server); retried over classic LFS.
 
 ### 2026-10-29 — Session 4: after R1 — our own model, the in-car app, two real bugs
 - Meet submitted the R1 slide. New goal: make the project matter beyond the competition — roadmap in §9.
