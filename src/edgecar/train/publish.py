@@ -88,7 +88,14 @@ def publish(api: HfApi, repo_id: str, files: dict[str, Path | bytes], *, keep_pr
     ]
     size = sum(len(v) if isinstance(v, bytes) else v.stat().st_size for v in files.values())
     print(f"{repo_id}: uploading {len(files)} files, {size / 1e6:,.0f} MB", flush=True)
-    api.create_commit(repo_id, ops, commit_message=f"{repo_id.split('/')[1]}: weights and model card")
+    for attempt in range(1, 4):
+        try:
+            api.create_commit(repo_id, ops, commit_message=f"{repo_id.split('/')[1]}: weights and model card")
+            break
+        except OSError as e:  # a connection dropped mid-upload: what already arrived is kept, so retrying resumes
+            if attempt == 3:
+                raise
+            print(f"{repo_id}: upload interrupted ({e}); retrying", flush=True)
     if bad := verify(api, repo_id, files):
         raise SystemExit(f"{repo_id}: published content differs for {', '.join(bad)} — left as it is, not made public")
     print(f"{repo_id}: all {len(files)} files verified", flush=True)

@@ -180,11 +180,11 @@ recognition 37–49 ms per spoken question, synthesis 0.4–0.6 s per sentence. 
 1,230 MiB model page cache); ignition: rules 1.07 s, model 1.53 s restored vs 81.4 s; held-out 94.3 %, refusals 40/40;
 llama-bench pp 17.7 tok/s (30 repacked), tg 10.9. **The slide uses these numbers.**
 
-**ARM CI** (Neoverse-N2, 2 cores, whole AI zone in a 1,792 MiB cgroup, live ingestion running; CI run 40764935436
-after the decline-check fix, files in `eval/results/arm/qwen2.5-1.5b-instruct-q4_k_m/`): rules p50 5.8 ms / p95
-15.6 ms; model p50 0.94 s / p95 1.36 s / max 1.36 s; 100 % of 192 < 2 s; peak 1,578 MiB = 1.54 GiB (anon 330 MiB)
-· 0 OOM; cold start: rules 0.57 s, model ready 0.77 s restored vs 56.8 s computed; held-out 94.3 %; live commit p50
-41 ms; llama-bench 2 threads: pp 34 tok/s (repack 55–61), tg 15 (18).
+**ARM CI** (Neoverse-N2, 2 cores, whole AI zone in a 1,792 MiB cgroup, live ingestion running; CI run 40848224856
+after the decline-check fix, files in `eval/results/arm/qwen2.5-1.5b-instruct-q4_k_m/`): rules p50 5.6 ms / p95
+15.7 ms; model p50 0.93 s / p95 1.34 s / max 1.36 s; 100 % of 192 < 2 s; peak 1,578 MiB = 1.54 GiB (anon 330 MiB)
+· 0 OOM; cold start: rules 0.71 s, model ready 0.77 s restored vs 56.7 s computed; held-out 94.3 %; live commit p50
+42 ms; llama-bench 2 threads: pp 34 tok/s (repack 55–61), tg 15 (18).
 
 **Accuracy (R1 slide, before the decline-check fix):** held-out 95.7 % (x86; 92.9 % on the first run with the decline
 checks, see ADR-0008); dev 93.4 %; refusal test 40/40 (baseline 29/40); refusal dev 19/20. Graviton2 scored 94.3 %

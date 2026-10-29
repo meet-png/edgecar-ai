@@ -119,7 +119,7 @@ ran on it ([results and setup](eval/results/graviton/RUN.md), [`scripts/graviton
 
 **On every push.** GitHub's free Arm64 runner (Neoverse-N2, faster cores) pinned to 2 cores, the whole AI zone in
 one cgroup with a hard 1,792 MiB limit ([workflow](.github/workflows/arm-bench.yml),
-[results](eval/results/arm/RUN.md)): rules p50 5.8 ms, model path p95 1.36 s, 100 % under 2 s, peak 1.54 GiB
+[results](eval/results/arm/RUN.md)): rules p50 5.6 ms, model path p95 1.34 s, 100 % under 2 s, peak 1.54 GiB
 (0.32 GiB anonymous), model ready in 0.8 s, held-out 94.3 % (re-run after the decline-check fix).
 
 **Understanding** (rules + few-shot model, x86 laptop, 2 threads):

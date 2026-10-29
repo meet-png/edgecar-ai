@@ -11,7 +11,7 @@
 
 | Folder | Model | Run |
 |---|---|---|
-| [`qwen2.5-1.5b-instruct-q4_k_m/`](qwen2.5-1.5b-instruct-q4_k_m) | Qwen2.5-1.5B-Instruct, few-shot | [40764935436](https://github.com/meet-png/edgecar-ai/actions/runs/40764935436), 2026-10-29, after the decline-check fix of ADR-0008 (the earlier run 40682528585 measured the same latency and memory within 1 %) |
+| [`qwen2.5-1.5b-instruct-q4_k_m/`](qwen2.5-1.5b-instruct-q4_k_m) | Qwen2.5-1.5B-Instruct, few-shot | [40848224856](https://github.com/meet-png/edgecar-ai/actions/runs/40848224856), 2026-10-29, inclusive percentiles (runs 40764935436 and 40682528585 measured the same latency and memory within 2 %) |
 
 Files in each folder: `summary.json` (headline numbers), `e2e.json` (every question), `heldout.json`, `coldstart.json`,
 `cgroup.json` (memory peaks in MiB and limit events), `live.txt` (ingestion running alongside),
