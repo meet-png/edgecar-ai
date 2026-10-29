@@ -1,0 +1,110 @@
+{
+  "model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+  "cpu": "Neoverse-N1",
+  "cores": "0-1",
+  "memory_limit_mb": null,
+  "memory_peak_mb": 1510,
+  "sampled_peak_mb": {
+    "current": 1501,
+    "anon": 332,
+    "file": 1247
+  },
+  "system_mem_total_mb": 1835,
+  "system_used_peak_mb": 654,
+  "oom_kills": 0,
+  "limit_hits": 0,
+  "questions": 192,
+  "latency_ms": {
+    "fast": {
+      "n": 146,
+      "p50": 9.6,
+      "p95": 26.9,
+      "max": 38.5
+    },
+    "slm": {
+      "n": 34,
+      "p50": 1445.0,
+      "p95": 1846.7,
+      "max": 1875.7
+    },
+    "unsupported": {
+      "n": 8,
+      "p50": 968.9,
+      "p95": 1664.9,
+      "max": 1716.2
+    },
+    "all": {
+      "p50": 12.6,
+      "p95": 1693.4,
+      "max": 1875.7,
+      "under_2s_pct": 100.0
+    }
+  },
+  "engine_ms": {
+    "p50": 9.1,
+    "p95": 26.3,
+    "max": 36.6
+  },
+  "heldout_accuracy": 0.9428571428571428,
+  "heldout_n": 70,
+  "rules_first_answer_s": 1.08,
+  "model_first_boot_s": 81.72,
+  "model_next_boot_s": 1.53,
+  "live_commit_ms": {
+    "p50": 76.8,
+    "p95": 92.8
+  },
+  "llama_bench_2_threads": {
+    "repack0_pp32_tok_s": 17.4,
+    "repack0_pp128_tok_s": 17.8,
+    "repack0_tg8_tok_s": 12.1,
+    "repack1_pp32_tok_s": 28.8,
+    "repack1_pp128_tok_s": 30.4,
+    "repack1_tg8_tok_s": 15.2
+  },
+  "refusal_declined": "40/40",
+  "brief": [
+    {
+      "vehicle": "leaf-455",
+      "question": "Why has my driving range dropped over the last two weeks?",
+      "route": "rules",
+      "ms": 20.9
+    },
+    {
+      "vehicle": "leaf-455",
+      "question": "When did fuel efficiency show the largest drop?",
+      "route": "rules",
+      "ms": 29.1
+    },
+    {
+      "vehicle": "phev-457",
+      "question": "Show all ADAS disengagement events from yesterday.",
+      "route": "rules",
+      "ms": 12.0
+    },
+    {
+      "vehicle": "i3-tum",
+      "question": "What happened before the battery overheating warning?",
+      "route": "rules",
+      "ms": 34.4
+    },
+    {
+      "vehicle": "i3-tum",
+      "question": "Compare energy consumption between city and highway driving.",
+      "route": "rules",
+      "ms": 33.1
+    },
+    {
+      "vehicle": "leaf-455",
+      "question": "Is the car using more power than it used to?",
+      "route": "model",
+      "ms": 1587.8
+    },
+    {
+      "vehicle": "i3-tum",
+      "question": "Turn off lane keeping assist",
+      "route": "declined",
+      "ms": 0.0
+    }
+  ]
+}

@@ -1,5 +1,19 @@
 # AWS Graviton2 edge benchmark
 
+## 2026-10-29 — the stock and fine-tuned models, one machine, one commit
+
+AWS EC2 t4g.small (ap-southeast-2b, Graviton2 / Neoverse-N1, 2 vCPUs, 2 GiB, no swap, Ubuntu 24.04 arm64 image
+ubuntu-noble-24.04-arm64-server-20261023), repository commit **49483b1** (before the input repair), llama.cpp b11577,
+models fetched from Hugging Face with SHA-256 checks; `scripts/graviton/run.sh`, `LIMIT_MB=0`: the whole machine,
+OS included, is the limit; live CAN + SOME/IP ingestion running; 192 questions; brief + refusal sets included.
+Instance, volume, key pair and security group deleted after the run.
+
+| Model | Model path p50 / p95 / max | Whole machine in use at peak | Model ready, cold | Held-out | Refusal test | < 2 s |
+|---|---|---|---|---|---|---|
+| [Qwen2.5-1.5B few-shot](qwen2.5-1.5b-instruct-q4_k_m) | 1.45 / 1.85 / 1.88 s | 654 MiB | 81.7 s (1.53 s restored) | 94.3 % | 40/40 | 100 % |
+| [edgecar-0.5b](edgecar-0.5b-q4_k_m) | 0.52 / 0.67 / 1.42 s | 640 MiB | 4.4 s (1.26 s restored) | 92.9 % | 39/40 | 100 % |
+| [edgecar-1.5b](edgecar-1.5b-q4_k_m) | 1.21 / 1.57 / 1.87 s | 633 MiB | 10.4 s (1.51 s restored) | 95.7 % | 40/40 | 100 % |
+
 ## R1 run — [`r1-2026-10-28/`](r1-2026-10-28), the numbers on the R1 slide
 
 Measured before the decline-check fix of ADR-0008 (it changes accuracy, not latency or memory).

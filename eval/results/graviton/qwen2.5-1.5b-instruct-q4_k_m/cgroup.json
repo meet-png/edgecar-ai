@@ -1,0 +1,21 @@
+{
+  "memory_max_mb": null,
+  "memory_peak_mb": 1510,
+  "sampled_peak_mb": {
+    "current": 1501,
+    "anon": 332,
+    "file": 1247
+  },
+  "memory_events": {
+    "low": 0,
+    "high": 0,
+    "max": 0,
+    "oom": 0,
+    "oom_kill": 0,
+    "oom_group_kill": 0,
+    "sock_throttled": 0
+  },
+  "cpus": "0-1",
+  "system_mem_total_mb": 1835,
+  "system_used_peak_mb": 654
+}

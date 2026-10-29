@@ -1,0 +1,4 @@
+replayed 0.1 h of leaf-455 driving: 2,286 messages (457 1 Hz rows, 5 ADAS events, 2 trips) in 486.3 s on 2 threads
+throughput: 5 messages/s · real-time factor ×1.0 (driving time ingested per wall-clock second)
+commit latency per 1 s batch: p50 76.8 ms · p95 92.8 ms · max 150.5 ms
+query while live → Your distance driven today was 1 km.  [17 ms]
