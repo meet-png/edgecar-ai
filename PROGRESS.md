@@ -268,7 +268,26 @@ plus slide-design notes. What was done:
   40/40 throughout) and `calibration.md` (min-token confidence AUROC 0.79, too blunt to gate on).
 - Published: `meettttttttttt/edgecar-0.5b`, `-0.5b-GGUF`, `-1.5b` (+ collection "EdgeCar AI"), each verified file by
   file before going public; HF shows the model tree Qwen2.5 → edgecar (fine-tune) → GGUF (quantised). The 1.5B GGUF
-  upload stalled twice on hf_xet (network errors to the Xet CAS server); retried over classic LFS.
+  upload stalled twice on hf_xet (network errors to the Xet CAS server); retried over classic LFS
+  (`HF_HUB_DISABLE_XET=1`) and went through. All four public, collection complete.
+- **ARM CI, our models** (commit 49483b1, Neoverse-N2, 2 cores, 1,792 MiB cgroup; `eval/results/arm/`): edgecar-0.5b
+  model path p50 / p95 0.34 / 0.43 s, peak 827 MiB, ready 2.3 s cold, held-out 92.9 %; edgecar-1.5b 0.79 / 1.15 s,
+  1,416 MiB, 4.2 s, 95.7 %; stock few-shot 0.93 / 1.34 s, 1,578 MiB, 56.7 s, 94.3 %. ARM accuracy equals x86 for
+  all three this time.
+- Merged session B's input repair (`nlu/normalise.py`) after reading it and a clean-set check on all three models
+  (unchanged); blind: typos 75.7 → 94.3 %, spoken numbers 84.3 → 95.7 %, voice 78.6 → 84.3 % (n.s.). ARM runs above
+  predate it (49483b1); stock ARM CI with it (65e5940): unchanged within noise (held-out 94.3 %, p95 1.34 s).
+- **Graviton2 t4g.small, all three models, commit 49483b1** (`eval/results/graviton/`): model path p50 / p95 —
+  0.5B 0.52 / 0.67 s, 1.5B 1.21 / 1.57 s, stock 1.45 / 1.85 s; whole machine in use at peak 640 / 633 / 654 MiB of
+  1,835; ready cold 4.4 / 10.4 / 81.7 s; held-out 92.9 / 95.7 / 94.3 %; 100 % under 2 s. AWS resources deleted.
+- Session B reviewed the publishing side (11 findings, all verified): fixed `fetch all tuned` (silently skipped the
+  tuned models — the command printed on the cards), httpx2 errors not retried, unpinned Graviton commit, untracked
+  manifests, two over-claims on the cards.
+- **Next (session A):** docs pass — README "Our own model" + "Measured" with the ARM/Graviton tables, ADR-0009 (stale
+  "not measured on ARM", "rules are the weaker part" → within one question, ~0.6 GB not ~1 GB, prompt-cache
+  borderline items), then re-render the cards and `publish --card-only` all four repos. Then decide with Meet: make
+  edgecar-0.5b the default model (ADR-0009's condition — measured on ARM — is now met); fix the two shared held-out
+  errors (t-cmp-8, t-exp-1) and mark them seen, or leave them.
 
 ### 2026-10-29 — Session 4: after R1 — our own model, the in-car app, two real bugs
 - Meet submitted the R1 slide. New goal: make the project matter beyond the competition — roadmap in §9.
