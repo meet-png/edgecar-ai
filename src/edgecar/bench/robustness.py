@@ -190,7 +190,8 @@ def main() -> None:
     raw = a.out / stem
     raw.mkdir(parents=True, exist_ok=True)
     for (name, v, mode), res in results.items():
-        (raw / f"{name}-{v}-{mode}.json").write_text(json.dumps(res, indent=1, default=str), encoding="utf-8")
+        out = raw / f"{name}-{v}-{mode}.json"
+        out.write_text(json.dumps(res, indent=1, default=str), encoding="utf-8", newline="\n")
 
     labels = {"fast": "rules only", "hybrid": f"rules + {a.model.stem if a.model else 'model'}"}
     lines = [
