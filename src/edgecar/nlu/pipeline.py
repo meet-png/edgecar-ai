@@ -10,6 +10,7 @@ import time
 from dataclasses import dataclass, field
 
 from edgecar.nlu import command, fastpath, guard
+from edgecar.nlu.normalise import normalise
 from edgecar.nlu.slm import SlmParser
 from edgecar.query import Query
 
@@ -38,12 +39,17 @@ def complete(fields: dict, question: str) -> Query:
     return Query(**fields, **extra)
 
 
-def understand(question: str, slm: SlmParser | None, *, use_fast: bool = True, use_guard: bool = True) -> Understanding:
-    """``use_guard=False`` switches the decline checks off, before and after the model — for ablations only."""
+def understand(
+    question: str, slm: SlmParser | None, *, use_fast: bool = True, use_guard: bool = True, repair: bool = True
+) -> Understanding:
+    """``use_guard=False`` switches the decline checks off, before and after the model — for ablations only.
+    ``repair=False`` skips the typo / transcript repair (``edgecar.nlu.normalise``) — also for ablations."""
     t0 = time.perf_counter()
-    if use_guard and guard.action_request(question):
+    original, question = question, normalise(question) if repair else question
+    # the decline checks read both wordings: a repair may make a request clearer, never hide one
+    if use_guard and (guard.action_request(original) or guard.action_request(question)):
         return Understanding(None, "refused", timings_ms={"fastpath": (time.perf_counter() - t0) * 1000})
-    if use_guard and (missing := guard.not_recorded(question)) is not None:
+    if use_guard and (missing := guard.not_recorded(original) or guard.not_recorded(question)) is not None:
         return Understanding(
             None, "unavailable", timings_ms={"fastpath": (time.perf_counter() - t0) * 1000}, note=missing
         )
