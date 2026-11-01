@@ -133,6 +133,10 @@ was chosen on them, and the rules were written against them.
 
 On the 110 blind questions (held-out and refusal test, rules + model), edgecar-0.5b gets 104 right and the few-shot Qwen2.5-1.5B it replaces 105: 0 better, 1 worse — not a statistically significant difference (exact McNemar p = 1.00). What fine-tuning clearly bought is speed, memory and start-up time.
 
+## On ARM
+
+**GitHub Arm64 runner: Neoverse-N2, 2 cores, the whole AI zone in a 1,792 MiB cgroup** ([results](https://github.com/meet-png/edgecar-ai/tree/main/eval/results/arm/edgecar-0.5b-q4_k_m)): model path p50 0.34 s · p95 0.43 s; 100 % of 192 questions under 2 s; AI zone peak 827 MiB (limit 1,792); 0 OOM kills; held-out 92.9 %; model ready 2.33 s after start.
+
 ## How it was made
 
 - **Data** — 3,795 synthetic questions, each labelled with its command: 417 written by hand
