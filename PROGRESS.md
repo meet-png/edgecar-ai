@@ -104,7 +104,14 @@ small wrapper that filters `socket.getaddrinfo` to `AF_INET`); hf_xet's own tran
 - [x] Repo public (2026-10-28), topics set. Old history still contains removed competitor notes and a 6 MB VED extract
       — rewrite only if Meet asks (force-push).
 - [x] R1 slide uploaded by Meet (2026-10-29). Shortlist expected before R2 opens on 14 Nov.
-- [ ] Teammate/outsiders: write a fresh paraphrase + refusal question set (the current sets are author-written).
+- [ ] **Outside question set** (the current sets are author-written): teammate + classmates type questions and trick
+      requests in the form (`eval/outside/README.md`) **and record the same questions on their phones inside a running
+      car** (Indian accents, cabin noise; Hinglish as a separate split). Target 500+, frozen before any run; consent
+      line on the form; audio stays off GitHub unless people opt in. Needs Meet to share the form.
+- [ ] **Decisions waiting for Meet (2026-11-01):** make edgecar-0.5b the app's default; fix the two shared held-out
+      errors t-cmp-8 ("less fuel" read as energy) and t-exp-1 ("since the start of the month" read as last_14d) and
+      mark them seen; clean the git history before promoting the repo (force-push); rename the Hugging Face account
+      (then update `TUNED_URL` in `prep/fetch.py`, the cards and the README links).
 - [ ] **Two Claude sessions work on this repo (since 2026-10-29).** Session A (this log's main author): Hugging Face
       publishing (`train/cards.py`, `train/publish.py`), AWS Graviton runs, `prep/fetch.py`, CI and Graviton scripts,
       README / PROGRESS / ADR numbers, `nlu/slm.py`, `train/`. Session B (reviewer): app and privacy hardening
@@ -121,7 +128,7 @@ or an artefact.
 
 | # | Track | Deliverable | Proof | Needs Meet |
 |---|---|---|---|---|
-| 1 | Model | ✅ x86 · ⏳ Hugging Face (Meet approved 2026-10-29), then ARM CI + Graviton — **Our own fine-tuned model**: LoRA on Qwen2.5-0.5B and 1.5B, synthetic training set checked for overlap with every eval set, GGUF Q4 | accuracy on dev, held-out and the outside set · Graviton2 model-path p95 (1.89 s today) · memory | approve publishing the weights |
+| 1 | Model | ✅ x86 · ✅ Hugging Face · ✅ ARM CI + Graviton (2026-10-29) — **Our own fine-tuned model**: LoRA on Qwen2.5-0.5B and 1.5B, synthetic training set checked for overlap with every eval set, GGUF Q4 | accuracy on dev, held-out and the outside set · Graviton2 model-path p95 (1.89 s few-shot → 0.67 s edgecar-0.5b) · memory | ✅ approved |
 | 2 | Credibility | ⏳ form ready — **Outside question set**: teammate + classmates write questions and trick requests in a form, frozen before any run | blind accuracy, reported whatever it is | share the form |
 | 3 | Product | ✅ built, live panel next — **In-car app** (`edgecar serve`): push-to-talk with on-device speech in and out, answers with evidence (charts, root-cause timeline, event tables), driver / service / fleet views, live bus panel; no CDN, no cloud speech | voice round trip + memory on ARM | — |
 | 4 | Visibility | 2-minute demo video + README GIF; one-command Docker image (amd64 + arm64) | — | voice-over; approve publishing |
@@ -136,12 +143,59 @@ Carried over: weight repacking (1.7× prompt speed on N1, +~0.6 GB) as another l
 text; camera perception metadata + clip references; weighted fault links (FMEA likelihoods) and more fault families;
 the known false refusal "Has the battery been running hotter lately?".
 
+### Proposed next phase: "10×" (2026-11-01 — waiting for Meet's go)
+
+Not a bigger model; two multipliers.
+
+**1. Ten times fewer wrong answers on real people's questions.** Where the errors are today (best model, our own
+questions): typed held-out 95.7 % — on n = 70 the Wilson interval is 88–99 %, too wide to show any gain; spoken
+(synthetic Piper → Moonshine) 87.1 %, ~13 % wrong in the easiest conditions (`eval/results/robustness.md`);
+questions outside the 9 command types unknown (author-written sets); min-token confidence too blunt to gate on —
+most noisy-input errors are confident misreadings of a misheard word (`eval/results/calibration.md`). Target: wrong
+answers given without a warning ≤ 1 % (from ~4 % typed / ~13 % spoken), measured on the outside set.
+
+**2. The feature: a Battery Health Passport.** The car measures its own battery health from months of charging and
+driving (capacity per % SoC gained by coulomb counting, temperature-corrected, a trend with an uncertainty band),
+explains the wear factors (hours at high SoC, heat exposure, fast-charge share) and issues a signed report — a QR
+code a buyer verifies offline (health, trend, warranty status, the pack's BPAN; no trips, no locations). Possible
+only because code, not the model, computes every number (ADR-0001), so the numbers can be signed and re-checked.
+The same signing later gives an insurance driving score without GPS trails, a service report, an incident timeline.
+
+Steps (≈ 4 weeks, overlapping R2; the passport becomes the R2 headline; the demo video moves after step 3):
+
+0. Pending "go" items (§8): docs pass, 0.5B as default, t-cmp-8 / t-exp-1 — ½ day.
+1. Outside test set (§8): form + phone recordings in a running car, 500+, frozen, Hinglish split — ~1 week to collect.
+2. Voice before the model: sound-alike repair toward the domain vocabulary ("killer with hours" → kilowatt-hours) on
+   top of `nlu/normalise.py`; ask about the one unclear word using the recogniser's word confidence; bias the
+   recogniser toward car terms. The app restates its full reading ("Range · last 14 days · vs the 14 before"; today
+   it shows only the intent label) with one-tap alternatives from the model's next-best readings — 3–4 days.
+3. Battery Health Passport: estimator on the VED Leafs (HV current / SoC / voltage at ~1 s for a year) and the TUM
+   i3; validation against public SoH ground truth — TUM "Electric Vehicle Usage and State of Health Data" (mediaTUM
+   node 1845276, CC BY-SA 4.0, VW / Cupra / Tesla Model 3, 2021–2025) and EVBattery (arXiv 2201.12358; licence to
+   check) — error in SoH points with CIs; Ed25519 signature over a canonical JSON report (+ software version and a
+   digest of the data window), QR, offline verify page; app card + voice ("Is my battery healthy?", "Make a report
+   for a buyer"). Prototype key in software; production key in the HSM behind secure boot (ARCHITECTURE) —
+   1–1.5 weeks.
+4. Coverage the outside set asks for (likely: cost in ₹, battery health, single trips, charging sessions, two-step
+   questions as short grammar-checked command plans); answer-level ground truth (R1 review #6); a consent-based
+   learning loop (declined / corrected questions, text only, no location) with a no-regression gate (exact McNemar
+   on the frozen sets) before a signed OTA — ~1 week.
+5. Stretch: Hindi / Hinglish — synthetic Hinglish training data + a Hindi-capable on-device recogniser — ~1 week.
+
+Why it matters now (sources in Session 6): India's used-EV market has no trusted battery-health standard and resale
+values are unpredictable mostly because of it (Autocar India × Spinny 2026, 11,000+ transactions); battery health
+varies up to 13.5 % within a model and in-car displays are often unreliable (Aviloo, 500,000 tests); MoRTH's draft
+Battery Pack Aadhaar (Dec 2025) gives each pack an ID + QR; the EU battery passport is mandatory from Feb 2027; the
+FTC's January 2026 order bars GM from sharing driver data with insurers' data brokers. Existing products need the
+cloud (Recurrent, via connected-car APIs) or a test device (Aviloo, via OBD) — none works offline from the car's
+own history.
+
 ## How to reproduce the numbers
 
 ```bash
 python -m edgecar.prep.fetch all                    # public datasets + model, SHA-256 pinned (TUM i3: manual)
 python -m edgecar.prep.build                        # data/edgecar.duckdb
-python -m pytest -q                                 # 108 tests
+python -m pytest -q                                 # 123 tests
 python -m edgecar.bench.nlu_eval --questions eval/test.jsonl --mode hybrid \
        --model models/qwen2.5-1.5b-instruct-q4_k_m.gguf          # held-out accuracy (also refusal_test.jsonl)
 python -m edgecar.bench.e2e --threads 2                           # latency + memory, all 192 questions
@@ -239,6 +293,27 @@ plus slide-design notes. What was done:
 ---
 
 ## Session log
+
+### 2026-11-01 — Session 6: status report, market check, the "10×" proposal (no code changes)
+- Meet asked for a full report: progress, work left, what the project does, market attention, internships, and which
+  non-automotive companies it would impress. Answered in chat; the full text is kept privately outside the repo.
+- Attention so far (nothing promoted yet): GitHub 0 stars, 3 views from 1 visitor in 14 days (the 289 clones are CI
+  and bots); Hugging Face ~340 downloads in 3 days, 0 likes (our CI / Graviton fetches plus crawlers).
+- Market check: on-device in-car SLMs already come from suppliers — Cerence CaLLM Edge (Phi-3, since Nov 2024; on Arm,
+  MediaTek, NVIDIA) and FEV + Microsoft (offline Phi-4-mini, demo cars, 2026); OBD-II apps with cloud AI chat exist.
+  Verdict: a strong career asset and competition entry, not an OEM product as it stands.
+- Proposed the "10×" phase (§9): accuracy measured on real people's typed and spoken questions, and the Battery
+  Health Passport.
+- **Resume here:** Meet's answers — "go" for step 0, and whether classmates can record questions on their phones
+  (step 1); the other decisions are in §8. `docs/models/*-GGUF.md` carry an ARM CI section only (rendered before the
+  Graviton run); the docs pass re-renders all four cards and uploads them (`publish --card-only`).
+- Sources: [Autocar India × Spinny 2026](https://www.autocarindia.com/industry/autocar-india-and-spinny-reveal-used-car-study-2026-440057) ·
+  [Aviloo, 500k tests](https://www.evinfrastructurenews.com/ev-technology/battery-health-differs-by-13-5-in-same-ev-models-500-000-test-aviloo-study-reveals) ·
+  [Battery Pack Aadhaar draft](https://www.pv-magazine-india.com/2026/01/05/india-introduces-battery-aadhaar-system-to-track-ev-batteries-across-lifecycle) ·
+  [FTC and GM](https://www.theregister.com/2026/01/15/ftc_gm_tracking_ban/) ·
+  [Cerence and Arm](https://www.edgeir.com/cerence-ai-and-arm-push-llm-boundaries-with-on-device-ai-for-smarter-cars-20250606) ·
+  [FEV and Microsoft](https://www.automotiveworld.com/news/fev-and-microsoft-bring-offline-ai-to-vehicle-cabins/) ·
+  [TUM EV SoH data](https://mediatum.ub.tum.de/node?id=1845276) · [EVBattery](https://arxiv.org/abs/2201.12358v3)
 
 ### 2026-10-29 — Session 5: publishing the models; a code review from a second session
 - Meet approved publishing the fine-tuned weights on Hugging Face (under Meet's account; Meet signs in with
