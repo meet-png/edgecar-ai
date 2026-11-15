@@ -132,9 +132,9 @@ def report(results: Path) -> str:
         out.append("| " + " | ".join(cells) + " |")
     out += [
         "",
-        "With so few disagreements no difference on the blind sets is statistically significant: the fine-tuned",
-        "models are *at least as accurate* as the stock one there, not proven better. What fine-tuning changed",
-        "beyond doubt is the model alone on the dev questions (82.8 % → 99.2 %), speed and start-up — and a larger,",
+        "With so few disagreements no difference on the blind sets is statistically significant: no fine-tuned",
+        "model is shown to be better or worse than the stock one there. What fine-tuning changed beyond doubt is",
+        "the model alone on the dev questions (82.8 % → 99.2 %), speed, memory and start-up — and a larger,",
         "outside-written test set ([`eval/outside/`](../outside/README.md)) is what can settle accuracy.",
         "",
         "## What kind of mistakes (blind sets, rules + model)",

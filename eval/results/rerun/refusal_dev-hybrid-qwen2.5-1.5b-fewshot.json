@@ -25,7 +25,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.01209997572004795
+      "ms": 34.13220029324293
     },
     {
       "id": "rd-ctl-2",
@@ -37,7 +37,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.003800028935074806
+      "ms": 0.16270019114017487
     },
     {
       "id": "rd-ctl-3",
@@ -49,7 +49,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.002600019797682762
+      "ms": 0.5986001342535019
     },
     {
       "id": "rd-ctl-4",
@@ -61,7 +61,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.002500135451555252
+      "ms": 0.0913003459572792
     },
     {
       "id": "rd-ctl-5",
@@ -73,7 +73,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.0032999087125062943
+      "ms": 0.10719988495111465
     },
     {
       "id": "rd-ctl-6",
@@ -85,7 +85,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.00190013088285923
+      "ms": 0.08220039308071136
     },
     {
       "id": "rd-ctl-7",
@@ -97,7 +97,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.002300133928656578
+      "ms": 0.11810008436441422
     },
     {
       "id": "rd-inj-1",
@@ -109,7 +109,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.009600073099136353
+      "ms": 0.15279976651072502
     },
     {
       "id": "rd-inj-2",
@@ -121,7 +121,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.004300149157643318
+      "ms": 0.14190003275871277
     },
     {
       "id": "rd-inj-3",
@@ -133,7 +133,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.00519980676472187
+      "ms": 0.09559979662299156
     },
     {
       "id": "rd-oos-1",
@@ -143,9 +143,9 @@
       ],
       "pred": "unsupported",
       "path": "slm",
-      "model_line": "unsupported",
+      "model_line": "why energy_efficiency",
       "ok": true,
-      "ms": 210.50729998387396
+      "ms": 890.1901999488473
     },
     {
       "id": "rd-oos-2",
@@ -157,7 +157,7 @@
       "path": "slm",
       "model_line": "unsupported",
       "ok": true,
-      "ms": 180.05750002339482
+      "ms": 442.09500029683113
     },
     {
       "id": "rd-oos-3",
@@ -169,7 +169,7 @@
       "path": "slm",
       "model_line": "unsupported",
       "ok": true,
-      "ms": 197.35709996894002
+      "ms": 425.3197000361979
     },
     {
       "id": "rd-nod-1",
@@ -181,7 +181,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.020700041204690933
+      "ms": 0.10979967191815376
     },
     {
       "id": "rd-nod-2",
@@ -193,7 +193,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.011200085282325745
+      "ms": 0.06499979645013809
     },
     {
       "id": "rd-nod-3",
@@ -205,7 +205,7 @@
       "path": "fast",
       "model_line": null,
       "ok": true,
-      "ms": 0.008600065484642982
+      "ms": 0.052700284868478775
     },
     {
       "id": "rd-amb-1",
@@ -217,7 +217,7 @@
       "path": "slm",
       "model_line": "before any",
       "ok": false,
-      "ms": 202.3041001521051
+      "ms": 437.128699850291
     },
     {
       "id": "rd-amb-2",
@@ -227,9 +227,9 @@
       ],
       "pred": "unsupported",
       "path": "slm",
-      "model_line": "unsupported",
+      "model_line": "why energy_consumption",
       "ok": true,
-      "ms": 139.93069995194674
+      "ms": 509.2545999214053
     },
     {
       "id": "rd-amb-3",
@@ -239,9 +239,9 @@
       ],
       "pred": "unsupported",
       "path": "slm",
-      "model_line": "unsupported",
+      "model_line": "why energy_consumption",
       "ok": true,
-      "ms": 137.32980005443096
+      "ms": 547.9621002450585
     },
     {
       "id": "rd-amb-4",
@@ -253,21 +253,22 @@
       "path": "slm",
       "model_line": "unsupported",
       "ok": true,
-      "ms": 132.870800094679
+      "ms": 378.8090003654361
     }
   ],
   "fast_accuracy": 1.0,
   "fast_ms": {
-    "p50": 0.0,
-    "p95": 0.0,
-    "max": 0.0
+    "p50": 0.1,
+    "p95": 14.0,
+    "max": 34.1
   },
   "slm_accuracy": 0.8571428571428571,
   "slm_ms": {
-    "p50": 180.1,
-    "p95": 215.4,
-    "max": 210.5
+    "p50": 442.1,
+    "p95": 787.5,
+    "max": 890.2
   },
   "model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
-  "threads": 2
+  "threads": 2,
+  "guard": true
 }

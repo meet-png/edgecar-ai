@@ -8,10 +8,10 @@ against the stock model (Qwen2.5-1.5B, few-shot (stock)).
 
 | Set | Qwen2.5-1.5B, few-shot (stock) | edgecar-0.5b Q4_K_M | edgecar-0.5b Q8_0 | edgecar-1.5b Q4_K_M | edgecar-1.5b Q8_0 |
 |---|---|---|---|---|---|
-| Held-out 70, rules + model | 66/70 = **94.3%** (86.2%–97.8%) | 65/70 = **92.9%** (84.3%–96.9%) | 66/70 = **94.3%** (86.2%–97.8%) | 67/70 = **95.7%** (88.1%–98.5%) | 67/70 = **95.7%** (88.1%–98.5%) |
-| Refusal test 40, rules + model | 39/40 = **97.5%** (87.1%–99.6%) | 39/40 = **97.5%** (87.1%–99.6%) | 39/40 = **97.5%** (87.1%–99.6%) | 40/40 = **100.0%** (91.2%–100.0%) | 40/40 = **100.0%** (91.2%–100.0%) |
+| Held-out 70, rules + model | 67/70 = **95.7%** (88.1%–98.5%) | 65/70 = **92.9%** (84.3%–96.9%) | 66/70 = **94.3%** (86.2%–97.8%) | 67/70 = **95.7%** (88.1%–98.5%) | 67/70 = **95.7%** (88.1%–98.5%) |
+| Refusal test 40, rules + model | 40/40 = **100.0%** (91.2%–100.0%) | 39/40 = **97.5%** (87.1%–99.6%) | 39/40 = **97.5%** (87.1%–99.6%) | 40/40 = **100.0%** (91.2%–100.0%) | 40/40 = **100.0%** (91.2%–100.0%) |
 | Held-out 70, model alone | 63/70 = **90.0%** (80.8%–95.1%) | 66/70 = **94.3%** (86.2%–97.8%) | 67/70 = **95.7%** (88.1%–98.5%) | 68/70 = **97.1%** (90.2%–99.2%) | 68/70 = **97.1%** (90.2%–99.2%) |
-| Dev 122, rules + model *(dev: tuned on)* | 122/122 = **100.0%** (96.9%–100.0%) | 122/122 = **100.0%** (96.9%–100.0%) | – | 122/122 = **100.0%** (96.9%–100.0%) | – |
+| Dev 122, rules + model *(dev: tuned on)* | 114/122 = **93.4%** (87.6%–96.6%) | 122/122 = **100.0%** (96.9%–100.0%) | – | 122/122 = **100.0%** (96.9%–100.0%) | – |
 | Dev 122, model alone *(dev: tuned on)* | 101/122 = **82.8%** (75.1%–88.5%) | 121/122 = **99.2%** (95.5%–99.9%) | – | 121/122 = **99.2%** (95.5%–99.9%) | – |
 | Refusal dev 20, rules + model *(dev: tuned on)* | 19/20 = **95.0%** (76.4%–99.1%) | 19/20 = **95.0%** (76.4%–99.1%) | – | 20/20 = **100.0%** (83.9%–100.0%) | – |
 
@@ -22,26 +22,24 @@ them (rules first, then the model); and the held-out set with the model answerin
 
 | Model | Pooled blind (110) | wins · losses vs stock | p | Model alone (70) | wins · losses | p |
 |---|---|---|---|---|---|---|
-| Qwen2.5-1.5B, few-shot (stock) | 105/110 = **95.5%** (89.8%–98.0%) | baseline | | 63/70 = **90.0%** (80.8%–95.1%) | baseline | |
-| edgecar-0.5b Q4_K_M | 104/110 = **94.5%** (88.6%–97.5%) | 0 · 1 | 1.00 | 66/70 = **94.3%** (86.2%–97.8%) | 6 · 3 | 0.51 |
-| edgecar-0.5b Q8_0 | 105/110 = **95.5%** (89.8%–98.0%) | 0 · 0 | 1.00 | 67/70 = **95.7%** (88.1%–98.5%) | 6 · 2 | 0.29 |
-| edgecar-1.5b Q4_K_M | 107/110 = **97.3%** (92.3%–99.1%) | 3 · 1 | 0.62 | 68/70 = **97.1%** (90.2%–99.2%) | 6 · 1 | 0.12 |
-| edgecar-1.5b Q8_0 | 107/110 = **97.3%** (92.3%–99.1%) | 3 · 1 | 0.62 | 68/70 = **97.1%** (90.2%–99.2%) | 6 · 1 | 0.12 |
+| Qwen2.5-1.5B, few-shot (stock) | 107/110 = **97.3%** (92.3%–99.1%) | baseline | | 63/70 = **90.0%** (80.8%–95.1%) | baseline | |
+| edgecar-0.5b Q4_K_M | 104/110 = **94.5%** (88.6%–97.5%) | 1 · 4 | 0.38 | 66/70 = **94.3%** (86.2%–97.8%) | 6 · 3 | 0.51 |
+| edgecar-0.5b Q8_0 | 105/110 = **95.5%** (89.8%–98.0%) | 1 · 3 | 0.62 | 67/70 = **95.7%** (88.1%–98.5%) | 6 · 2 | 0.29 |
+| edgecar-1.5b Q4_K_M | 107/110 = **97.3%** (92.3%–99.1%) | 1 · 1 | 1.00 | 68/70 = **97.1%** (90.2%–99.2%) | 6 · 1 | 0.12 |
+| edgecar-1.5b Q8_0 | 107/110 = **97.3%** (92.3%–99.1%) | 1 · 1 | 1.00 | 68/70 = **97.1%** (90.2%–99.2%) | 6 · 1 | 0.12 |
 
-With so few disagreements no difference on the blind sets is statistically significant: the fine-tuned
-models are *at least as accurate* as the stock one there, not proven better. What fine-tuning changed
-beyond doubt is the model alone on the dev questions (82.8 % → 99.2 %), speed and start-up — and a larger,
+With so few disagreements no difference on the blind sets is statistically significant: no fine-tuned
+model is shown to be better or worse than the stock one there. What fine-tuning changed beyond doubt is
+the model alone on the dev questions (82.8 % → 99.2 %), speed, memory and start-up — and a larger,
 outside-written test set ([`eval/outside/`](../outside/README.md)) is what can settle accuracy.
 
 ## What kind of mistakes (blind sets, rules + model)
 
-**Qwen2.5-1.5B, few-shot (stock)** — 5 errors: wrong time window (read by code, not the model) 1, wrong question type 1, wrong metric 1, wrong event 1, answered what it should decline 1
+**Qwen2.5-1.5B, few-shot (stock)** — 3 errors: wrong time window (read by code, not the model) 1, wrong direction 1, wrong metric 1
 
 - `slm` wrong time window (read by code, not the model): “My range has gotten worse since the start of the month - what's behind it?” → `explain_change metric=range window=last_14d` (expected `explain_change metric=range window=this_month`)
-- `slm` wrong question type: “y is my range dropping lately” → `trend metric=range window=last_30d` (expected `explain_change metric=range window=last_14d`)
+- `slm` wrong direction: “When did range take the biggest hit?” → `extreme metric=range window=all dir=max` (expected `extreme metric=range window=all dir=drop`)
 - `fast` wrong metric: “Am I using less fuel this week compared to the previous week?” → `compare metric=energy_consumption window=this_week by=previous_period` (expected `compare metric=fuel_consumption window=this_week by=previous_period`)
-- `slm` wrong event: “list system errors from today” → `list_events window=today event=dtc` (expected `list_events window=today event=system`)
-- `slm` answered what it should decline: “Is that normal?” → `anomalies window=last_30d` (expected `unsupported`)
 
 **edgecar-0.5b Q4_K_M** — 6 errors: wrong metric 2, wrong time window (read by code, not the model) 1, wrong question type 1, wrong event 1, answered what it should decline 1
 

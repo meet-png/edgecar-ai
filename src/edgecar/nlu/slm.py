@@ -13,6 +13,7 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
+import socket
 import subprocess
 import time
 import urllib.error
@@ -254,10 +255,18 @@ class SlmServer:
             "--log-disable",
             *extra_args,
         ]
+        self.port = port
         self.url = f"http://127.0.0.1:{port}"
         self.proc: subprocess.Popen | None = None
 
     def start(self, wait_s: float = 180.0) -> None:
+        # A server left running on the port would answer every request instead of ours: on 2026-10-29 one run
+        # labelled "few-shot Qwen2.5-1.5B" was in fact served by a leftover edgecar-0.5b. Refuse rather than guess.
+        try:
+            with socket.create_connection(("127.0.0.1", self.port), timeout=0.5):
+                raise RuntimeError(f"port {self.port} is already in use — stop the other llama-server first")
+        except OSError:
+            pass  # nothing listening: the port is ours
         self.proc = subprocess.Popen(self.args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         deadline = time.time() + wait_s
         while time.time() < deadline:

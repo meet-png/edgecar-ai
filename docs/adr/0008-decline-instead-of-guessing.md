@@ -57,3 +57,21 @@ re-measured with the same model (Qwen2.5-1.5B few-shot, x86, 2 threads):
 
 The bug declined eight correct dev answers, and by luck one wrong answer in the refusal test, which is now let
 through. The R1 slide had already been submitted with the earlier numbers; the repository carries the corrected ones.
+
+## Second correction (2026-11-15): the re-measurement above was not the stock model
+
+The "Re-measured" column was served by the wrong model. A llama-server with edgecar-0.5b was still running on the
+evaluation port, so the run labelled "Qwen2.5-1.5B few-shot" sent its questions to the 0.5B: its 24 dev answers on
+the model path are identical to the 0.5B's, and its model path took ~275 ms against ~490 ms for the real stock
+model. Measured again with nothing else running, same code (commit b17d08a) and model file (SHA-256 checked):
+
+| Set | Published (with the bug) | First re-measurement (wrong model) | Re-measured, stock model |
+|---|---|---|---|
+| Dev (122) | 93.4 % | 100 % | 93.4 % |
+| Held-out (70) | 95.7 % | 94.3 % | 95.7 % |
+| Refusal test (40) | 40/40 | 39/40 | 40/40 |
+| Refusal dev (20) | 19/20 | 19/20 | 19/20 |
+
+So the cue bug did not change the stock model's x86 scores, and the R1 slide's x86 figures stand. `SlmServer` now
+refuses to start when its port is already in use (`tests/test_slm_server.py`). Files:
+[`eval/results/rerun/`](../../eval/results/rerun), [`significance.md`](../../eval/results/significance.md).
