@@ -69,6 +69,22 @@ Content-Security-Policy that lets the browser load nothing from anywhere else ([
 |---|---|
 | ![Range waterfall](docs/img/app-range.png) | ![Driver view](docs/img/app-driver.png) |
 
+## Battery Health Passport
+
+Battery health decides what a used EV is worth, and buyers can't see it. Ask *"Is my battery healthy?"* and the car
+measures its own pack from its recorded drives (charge used ÷ state of charge used, on every drive using ≥ 15 %),
+then — on request — signs a report a buyer can check on their phone: health, interval, trend and wear exposure,
+but no trip, time of day or place. The QR code carries the whole signed report; the
+[checker page](docs/verify/index.html) verifies the Ed25519 signature in the browser, offline
+([ADR-0011](docs/adr/0011-battery-health-passport.md)).
+
+![Battery health and the signed passport QR](docs/img/app-battery.png)
+
+On the real BMW i3 data: 61.7 Ah of a rated 60 Ah, **103 %** (interval 102.8–103.1 %) from 23 drives, no measurable
+trend over 7 months. On the Leaf, 10 drives disagree (35–45 Ah), so it says *inconclusive* instead of guessing. Not
+yet validated against a laboratory capacity test: the one public dataset with measured capacities, EVBattery,
+anonymised its current and timestamps, so it [cannot settle it either way](eval/results/battery-validation.md).
+
 ## Our own model
 
 The stock Qwen2.5-1.5B needed a 1,190-token few-shot prompt and, alone, got 82.8 % of the dev questions right. We

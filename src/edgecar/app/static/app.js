@@ -342,7 +342,7 @@ function qrSvg(rows) {
 }
 
 function passportButton(card) {
-  const b = h("button", "more", "Battery passport for a buyer");
+  const b = h("button", "pass-btn", "Battery passport for a buyer");
   b.type = "button";
   card.querySelector("footer").prepend(b);
   b.onclick = async () => {

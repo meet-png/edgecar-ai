@@ -1,0 +1,95 @@
+{
+  "source": "EVBattery (Tsinghua, CC BY 4.0), figshare 23301881, part(s) 3",
+  "snippets": 176327,
+  "labelled_sessions": 1170,
+  "vehicles": 49,
+  "ratio_estimate_to_label": {
+    "median": 3.766,
+    "p10": 3.36,
+    "p90": 4.497
+  },
+  "median_within_vehicle_rank_correlation": 0.07,
+  "verdict": "cannot validate",
+  "per_vehicle": [
+    {
+      "car": 503,
+      "sessions": 117,
+      "label_min": 36.53,
+      "label_max": 41.22,
+      "label_vs_mileage": 0.05,
+      "estimate_vs_label": 0.4,
+      "ratio_median": 3.782,
+      "ratio_cv": 0.094
+    },
+    {
+      "car": 512,
+      "sessions": 201,
+      "label_min": 24.28,
+      "label_max": 40.91,
+      "label_vs_mileage": -0.42,
+      "estimate_vs_label": 0.32,
+      "ratio_median": 3.839,
+      "ratio_cv": 0.231
+    },
+    {
+      "car": 516,
+      "sessions": 200,
+      "label_min": 38.09,
+      "label_max": 41.67,
+      "label_vs_mileage": -0.87,
+      "estimate_vs_label": -0.14,
+      "ratio_median": 3.605,
+      "ratio_cv": 0.047
+    },
+    {
+      "car": 521,
+      "sessions": 300,
+      "label_min": 36.45,
+      "label_max": 40.47,
+      "label_vs_mileage": -0.75,
+      "estimate_vs_label": 0.43,
+      "ratio_median": 4.202,
+      "ratio_cv": 0.127
+    },
+    {
+      "car": 527,
+      "sessions": 232,
+      "label_min": 37.98,
+      "label_max": 41.24,
+      "label_vs_mileage": -0.91,
+      "estimate_vs_label": -0.14,
+      "ratio_median": 3.607,
+      "ratio_cv": 0.081
+    },
+    {
+      "car": 529,
+      "sessions": 42,
+      "label_min": 39.54,
+      "label_max": 41.56,
+      "label_vs_mileage": -0.65,
+      "estimate_vs_label": -0.03,
+      "ratio_median": 3.591,
+      "ratio_cv": 0.109
+    },
+    {
+      "car": 534,
+      "sessions": 19,
+      "label_min": 41.37,
+      "label_max": 43.11,
+      "label_vs_mileage": -0.93,
+      "estimate_vs_label": -0.76,
+      "ratio_median": 3.862,
+      "ratio_cv": 0.103
+    },
+    {
+      "car": 541,
+      "sessions": 59,
+      "label_min": 39.13,
+      "label_max": 43.4,
+      "label_vs_mileage": -0.91,
+      "estimate_vs_label": 0.17,
+      "ratio_median": 3.96,
+      "ratio_cv": 0.096
+    }
+  ]
+}

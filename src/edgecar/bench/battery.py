@@ -71,6 +71,8 @@ def main() -> None:
     s = sessions(snippets)
     t = tracking(s)
     rho = float(t["estimate_vs_label"].median()) if len(t) else float("nan")
+    falling = int((t["label_vs_mileage"] < -0.3).sum()) if len(t) else 0
+    move = float((100 * (t["label_max"] - t["label_min"]) / t["label_max"]).median()) if len(t) else float("nan")
     res = {
         "source": "EVBattery (Tsinghua, CC BY 4.0), figshare 23301881, part(s) " + ", ".join(map(str, a.parts)),
         "snippets": int(len(snippets)),
@@ -115,10 +117,10 @@ def main() -> None:
         )
     lines += [
         "",
-        f"Median correlation **{rho:+.2f}**. The labels age as expected (they fall with mileage), but the estimate "
-        "does not follow them: the labels move 3–8 % within a vehicle, while the session-to-session spread of the "
-        "estimate on this anonymised data is about as large or larger. **This dataset cannot validate the estimate, "
-        "for or against.**"
+        f"Median correlation **{rho:+.2f}**. The labels age as expected (they fall with mileage in "
+        f"{falling} of {len(t)} vehicles), but the estimate does not follow them: the labels move a median "
+        f"{move:.0f} % within a vehicle, while the session-to-session spread of the estimate on this anonymised data "
+        "is about as large or larger. **This dataset cannot validate the estimate, for or against.**"
         if res["verdict"] == "cannot validate"
         else f"Median correlation **{rho:+.2f}**: the estimate tracks the measured capacity as the vehicles age.",
         "",

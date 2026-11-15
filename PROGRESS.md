@@ -306,7 +306,16 @@ plus slide-design notes. What was done:
 - edgecar-0.5b is the default model (serve / ask / benchmarks; `fetch all` includes `tuned`).
 - App: "Understood: …" line on every answer (`command.describe`) — step 2's restatement; one-tap alternatives not yet.
 - README / ADR-0009 docs pass done (ARM CI + Graviton tables for all three models); cards re-rendered and uploaded.
-- Next: Battery Health Passport (step 3); voice sound-alike repair (step 2); outside set waits for Meet.
+- **Battery Health Passport (step 3, ADR-0011) built:** `analytics/battery.py` (coulomb counting per drive, median +
+  bootstrap, Theil–Sen trend, wear), `passport.py` (conclusions only, Ed25519 over exact bytes, QR with the report
+  after `#` of `docs/verify/`), "Is my battery healthy?" on the rules path, app button draws the signed QR,
+  `edgecar passport`. i3: 103 % (102.8–103.1), 23 drives; Leaf: inconclusive. Checked in Edge (genuine ✓, tampered ✗)
+  and the app's QR decodes and verifies. Validation: EVBattery (CC BY 4.0, part 3, 1,170 labelled sessions) cannot
+  validate — its current/timestamps are anonymised (estimate 3.77× label, within-vehicle ρ +0.07); verdict renamed
+  "measured", report carries a `limits` field. TUM SoH data (mediaTUM 1845276) was rate-limited — retry.
+- Open for Meet: enable GitHub Pages (Settings → Pages → main /docs) so the QR link resolves; classmates' recordings
+  (step 1); git-history clean-up; HF rename.
+- Next: voice sound-alike repair (step 2), one-tap alternatives, TUM SoH validation.
 
 ### 2026-11-01 — Session 6: status report, market check, the "10×" proposal (no code changes)
 - Meet asked for a full report: progress, work left, what the project does, market attention, internships, and which

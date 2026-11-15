@@ -11,7 +11,7 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
-# name: (vehicle, view, questions, viewport height)
+# name: (vehicle, view, questions, viewport height[, button to press after the last answer])
 SHOTS = {
     "app-root-cause": ("i3-tum", "service", ["What happened before the battery overheating warning?"], 1310),
     "app-range": ("leaf-455", "service", ["Why has my driving range dropped over the last two weeks?"], 900),
@@ -21,6 +21,7 @@ SHOTS = {
         ["Show all ADAS disengagement events from yesterday.", "Turn off lane keeping assist"],
         760,
     ),
+    "app-battery": ("i3-tum", "driver", ["Is my battery healthy?"], 900, "text=Battery passport for a buyer"),
 }
 
 
@@ -29,11 +30,14 @@ def main() -> None:
     ap.add_argument("--url", default="http://127.0.0.1:8080/")
     ap.add_argument("--out", type=Path, default=Path("docs/img"))
     ap.add_argument("--browser", default="msedge", help="installed browser channel: msedge or chrome")
+    ap.add_argument("--only", nargs="*", default=None, help="shot names to take (default: all)")
     a = ap.parse_args()
     a.out.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as p:
         browser = p.chromium.launch(channel=a.browser, headless=True)
-        for name, (vehicle, role, questions, height) in SHOTS.items():
+        for name, (vehicle, role, questions, height, *press) in SHOTS.items():
+            if a.only and name not in a.only:
+                continue
             # bypass_csp lets the test harness evaluate its wait conditions; the page itself is unchanged
             page = browser.new_context(viewport={"width": 1440, "height": height}, bypass_csp=True).new_page()
             page.goto(a.url)
@@ -44,6 +48,9 @@ def main() -> None:
                 page.fill("#q", q)
                 page.press("#q", "Enter")
                 page.wait_for_function("!document.querySelector('.card.pending')", timeout=60_000)
+            for button in press:
+                page.click(button)
+                page.wait_for_selector(".passport svg", timeout=30_000)
             page.wait_for_timeout(600)
             page.evaluate("document.querySelector('.q').scrollIntoView({block: 'start'})")
             page.wait_for_timeout(300)

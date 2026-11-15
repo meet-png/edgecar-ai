@@ -196,8 +196,8 @@ def sentence(report: dict) -> str:
             )
         cap = f"{h['capacity_ah']:.1f} Ah of a rated {h['rated_ah']:.0f} Ah"
         return (
-            f"Battery health {h['soh_pct']:.0f} % ({cap}; 95 % interval {h['soh_pct_ci95'][0]:.0f}–"
-            f"{h['soh_pct_ci95'][1]:.0f} %), measured on {h['measurements']} drives.{trend}"
+            f"Battery health {h['soh_pct']:.0f} % ({cap}; 95 % interval {h['soh_pct_ci95'][0]:.1f}–"
+            f"{h['soh_pct_ci95'][1]:.1f} %), measured on {h['measurements']} drives.{trend}"
         )
     if v == "inconclusive":
         ci = h["capacity_ah_ci95"]
