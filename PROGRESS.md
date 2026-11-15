@@ -52,8 +52,8 @@ scalability), privacy & security, innovation & practicality.
 | ADR-0005 | **Hybrid NLU:** rules → Qwen2.5-1.5B writes a 2–6-token verb command under a GBNF grammar → windows by code; `edge` llama-server profile. | 95.7 % held-out (x86), 94.3 % on ARM; best of 6 models. |
 | ADR-0006 | **Every source through its wire protocol**; read-only by construction; UDS decoded passively from the gateway's own polls. | Data integration is real, not CSV rows. |
 | ADR-0007 | **Root cause = fault-propagation map + causal order**, measured on 200 random scenarios with decoys. | 197/200 vs 34/200 for "earliest fault". |
-| ADR-0008 | **Decline instead of guessing**: action guard, not-recorded catalogue, grounding check. | Refusal 29/40 → 39/40 (40/40 before a cue-matching bug was fixed, see the ADR). |
-| ADR-0009 | **Our own command model**: LoRA on Qwen2.5-0.5B/1.5B, synthetic data checked for overlap with every eval set, GGUF. | 0.5B: 2.2× faster in 2.3× less memory, within one held-out question; 1.5B: most accurate (95.7 %, refusals 60/60). |
+| ADR-0008 | **Decline instead of guessing**: action guard, not-recorded catalogue, grounding check. | Refusal 29/40 → 40/40 (x86, stock model; see the ADR's two corrections). |
+| ADR-0009 | **Our own command model**: LoRA on Qwen2.5-0.5B/1.5B, synthetic data checked for overlap with every eval set, GGUF. | 0.5B (default since 2026-11-15): 2.8× faster on Graviton2, ready in 4.4 s; blind accuracy not significantly different from stock (104 vs 107 of 110). |
 | ADR-0010 | **In-car app + on-device speech**: one CSP-locked page, evidence cards, driver/service/fleet views, Moonshine + Piper. | A demo people can see and use; nothing leaves the machine. |
 
 ## 5. Datasets (full registry in `docs/DATASETS.md`; `python -m edgecar.prep.fetch all`)
@@ -195,7 +195,7 @@ own history.
 ```bash
 python -m edgecar.prep.fetch all                    # public datasets + model, SHA-256 pinned (TUM i3: manual)
 python -m edgecar.prep.build                        # data/edgecar.duckdb
-python -m pytest -q                                 # 123 tests
+python -m pytest -q                                 # 132 tests
 python -m edgecar.bench.nlu_eval --questions eval/test.jsonl --mode hybrid \
        --model models/qwen2.5-1.5b-instruct-q4_k_m.gguf          # held-out accuracy (also refusal_test.jsonl)
 python -m edgecar.bench.e2e --threads 2                           # latency + memory, all 192 questions
@@ -211,9 +211,9 @@ edgecar brief                                                     # the five bri
 
 | | Qwen2.5-1.5B few-shot | edgecar-0.5b | edgecar-1.5b |
 |---|---|---|---|
-| Held-out (70): rules + model · model alone | 94.3 % · 90.0 % | 92.9 % · 94.3 % | 95.7 % · 97.1 % |
-| Dev (122): rules + model · model alone | 100 % · 82.8 % | 100 % · 99.2 % | 100 % · 99.2 % |
-| Refusal test (40) · dev (20) | 39 · 19 | 39 · 19 | 40 · 20 |
+| Held-out (70): rules + model · model alone | 95.7 % · 90.0 % | 92.9 % · 94.3 % | 95.7 % · 97.1 % |
+| Dev (122): rules + model · model alone | 93.4 % · 82.8 % | 100 % · 99.2 % | 100 % · 99.2 % |
+| Refusal test (40) · dev (20) | 40 · 19 | 39 · 19 | 40 · 20 |
 | Model path p50 / p95 (e2e, 192 q) | 480 / 670 ms | 221 / 299 ms | 384 / 557 ms |
 | llama-server RSS (private) · file · start-up | 1,157 (227) · 1,117 MB · 13.9 s | 499 (163) · 398 MB · 1.0 s | 1,123 (222) · 986 MB · 1.6 s |
 | Q8_0: held-out rules + model · model alone · refusal test | – | 94.3 % · 95.7 % · 39 | 95.7 % · 97.1 % · 40 |
@@ -293,6 +293,20 @@ plus slide-design notes. What was done:
 ---
 
 ## Session log
+
+### 2026-11-15 — Session 7: step 0 done; a mislabelled baseline found and corrected
+- Meet: "lets continue and finish the most work" (taken as the go for step 0; the classmates question is still open).
+- **Mislabelled baseline:** the x86 re-runs labelled "Qwen2.5-1.5B few-shot" after the decline-check fix (2026-10-29)
+  were served by a leftover edgecar-0.5b llama-server on the same port (identical model lines, ~275 vs ~490 ms).
+  Re-measured clean at b17d08a: dev 93.4 %, held-out 95.7 %, refusals 40/40 — the cue bug never changed the stock
+  x86 scores. Blind: stock 107/110 = edgecar-1.5b 107, edgecar-0.5b 104 (p = 0.38). README, ADR-0008 (second
+  correction), ADR-0009, significance.md and the four HF cards corrected. `SlmServer` now refuses a busy port.
+- Fixed t-exp-1 ("since the start of the month") and t-cmp-8 ("using less fuel"): +2 held-out for every model, now
+  seen (`eval/results/2026-11-15/`: 0.5B 95.7 %, 1.5B 98.6 %, stock 98.6 %); blind numbers stay the headline.
+- edgecar-0.5b is the default model (serve / ask / benchmarks; `fetch all` includes `tuned`).
+- App: "Understood: …" line on every answer (`command.describe`) — step 2's restatement; one-tap alternatives not yet.
+- README / ADR-0009 docs pass done (ARM CI + Graviton tables for all three models); cards re-rendered and uploaded.
+- Next: Battery Health Passport (step 3); voice sound-alike repair (step 2); outside set waits for Meet.
 
 ### 2026-11-01 — Session 6: status report, market check, the "10×" proposal (no code changes)
 - Meet asked for a full report: progress, work left, what the project does, market attention, internships, and which
