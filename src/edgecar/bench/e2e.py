@@ -1,6 +1,6 @@
 """End-to-end benchmark: every question through understanding → analytics → answer, with the model loaded.
 
-    python -m edgecar.bench.e2e --model models/qwen2.5-1.5b-instruct-q4_k_m.gguf --threads 2
+    python -m edgecar.bench.e2e --model models/edgecar-0.5b-q4_k_m.gguf --threads 2
 
 Reports latency percentiles per path and the resident memory of both processes (assistant + llama-server).
 """
@@ -32,7 +32,7 @@ def main() -> None:
     ap.add_argument(
         "--questions", type=Path, nargs="+", default=[Path("eval/questions.jsonl"), Path("eval/test.jsonl")]
     )
-    ap.add_argument("--model", type=Path, default=Path("models/qwen2.5-1.5b-instruct-q4_k_m.gguf"))
+    ap.add_argument("--model", type=Path, default=Path("models/edgecar-0.5b-q4_k_m.gguf"))
     ap.add_argument("--server", type=Path, default=Path("tools/llama.cpp/llama-server.exe"))
     ap.add_argument("--threads", type=int, default=2)
     ap.add_argument("--profile", choices=sorted(PROFILES), default="edge")

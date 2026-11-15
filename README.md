@@ -79,19 +79,20 @@ three epochs of the 0.5B (the first epoch scored best on dev and is the one kept
 
 | x86 laptop, 2 threads | Qwen2.5-1.5B few-shot | **edgecar-0.5b** | **edgecar-1.5b** |
 |---|---|---|---|
-| Held-out (70), rules + model · model alone | 94.3 % · 90.0 % | 92.9 % · 94.3 % | **95.7 % · 97.1 %** |
-| Refusal sets (40 + 20) | 39 + 19 | 39 + 19 | **40 + 20** |
+| Held-out (70), rules + model · model alone | **95.7 %** · 90.0 % | 92.9 % · 94.3 % | **95.7 % · 97.1 %** |
+| Refusal sets (40 + 20) | 40 + 19 | 39 + 19 | **40 + 20** |
 | Model path p50 / p95 | 480 / 670 ms | **221 / 299 ms** | 384 / 557 ms |
 | llama-server memory · file | 1,157 · 1,117 MB | **499 · 398 MB** | 1,123 · 986 MB |
 | Start-up (prompt warm-up) | 13.9 s | **1.0 s** | 1.6 s |
 
-The 0.5B answers 2.2× faster in 2.3× less memory than the model it replaces, within one held-out question of it; in
-Q8_0 (531 MB) it gets that question too. The 1.5B scores highest, but on the 110 blind questions its 107 against the
-stock model's 105 is not a significant difference (3 better, 1 worse; exact McNemar p = 0.62 —
-[confidence intervals and error analysis](eval/results/significance.md)): what fine-tuning bought beyond doubt is speed,
-memory and start-up. Both test sets share an author with the training data, so the real test is
-[a set written by people outside the project](eval/outside/README.md). ARM numbers for the fine-tuned models are next;
-the measurements below are for the few-shot model.
+On the 110 blind questions the stock model and edgecar-1.5b both get 107 right (1 better, 1 worse) and edgecar-0.5b
+104 (1 better, 4 worse; exact McNemar p = 0.38 — [confidence intervals and error analysis](eval/results/significance.md)):
+no difference in accuracy is significant. What fine-tuning bought beyond doubt is speed, memory and start-up — the
+0.5B answers 2.2× faster in 2.3× less memory. (An earlier version of this table credited the stock model with 94.3 %
+and 39/40: that run had been served by a leftover edgecar-0.5b server — [ADR-0008](docs/adr/0008-decline-instead-of-guessing.md#second-correction-2026-11-15-the-re-measurement-above-was-not-the-stock-model).) Both test sets share an author with the training data, so the real test is
+[a set written by people outside the project](eval/outside/README.md). On ARM the gap widens: on a 2 GiB Graviton2
+the 0.5B's model path is 0.52 / 0.67 s (p50 / p95) against 1.45 / 1.85 s, and it is ready 4.4 s after a cold start
+against 82 s (below). It is the default model since 2026-11-15.
 
 **Published on Hugging Face** (Apache-2.0), with cards generated from these results:
 [edgecar-0.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-0.5b-GGUF) ·
@@ -104,8 +105,20 @@ the GGUFs, SHA-256 checked.
 
 **On a real 2 GB ARM machine.** AWS EC2 **t4g.small**: 2 Graviton2 cores (Arm Neoverse-N1, the Cortex-A76
 generation), **2 GiB of RAM in total, operating system included, no swap**, stock Ubuntu 24.04. The whole AI zone —
-live CAN/SOME/IP ingestion at real-time pace, DuckDB, the assistant and llama-server with the few-shot Qwen2.5-1.5B —
-ran on it ([results and setup](eval/results/graviton/RUN.md), [`scripts/graviton/run.sh`](scripts/graviton/run.sh)).
+live CAN/SOME/IP ingestion at real-time pace, DuckDB, the assistant and llama-server — ran on it, once per model, on
+one commit ([results and setup](eval/results/graviton/RUN.md), [`scripts/graviton/run.sh`](scripts/graviton/run.sh)):
+
+| t4g.small, 2026-10-29 | Qwen2.5-1.5B few-shot | **edgecar-0.5b** (default) | edgecar-1.5b |
+|---|---|---|---|
+| Questions answered in under 2 s (192) | 100 % | **100 %** | 100 % |
+| Model path p50 / p95 / max | 1.45 / 1.85 / 1.88 s | **0.52 / 0.67 / 1.42 s** | 1.21 / 1.57 / 1.87 s |
+| Whole machine in use at peak, of 1,835 MiB | 654 MiB | **640 MiB** | 633 MiB |
+| Model ready: cold · from the saved prompt cache | 81.7 s · 1.53 s | **4.4 s · 1.26 s** | 10.4 s · 1.51 s |
+| Held-out · refusal test | 94.3 % · 40/40 | 92.9 % · 39/40 | 95.7 % · 40/40 |
+
+"In use" leaves out the page cache, where each model file stays resident; the ARM CI cgroup below counts it too.
+
+The R1 slide's run (few-shot model, 2026-10-28, [`r1-2026-10-28/`](eval/results/graviton/r1-2026-10-28)):
 
 | | Result |
 |---|---|
@@ -119,28 +132,31 @@ ran on it ([results and setup](eval/results/graviton/RUN.md), [`scripts/graviton
 
 **On every push.** GitHub's free Arm64 runner (Neoverse-N2, faster cores) pinned to 2 cores, the whole AI zone in
 one cgroup with a hard 1,792 MiB limit ([workflow](.github/workflows/arm-bench.yml),
-[results](eval/results/arm/RUN.md)): rules p50 5.6 ms, model path p95 1.34 s, 100 % under 2 s, peak 1.54 GiB
-(0.32 GiB anonymous), model ready in 0.8 s, held-out 94.3 % (re-run after the decline-check fix).
+[results](eval/results/arm/RUN.md)): rules p50 5.6 ms, 100 % under 2 s for every model; model path p95 **0.43 s**
+(edgecar-0.5b) · 1.15 s (edgecar-1.5b) · 1.34 s (few-shot); AI zone peak **827** · 1,416 · 1,578 MiB; model ready
+from cold in 2.3 · 4.2 · 56.7 s.
 
 **Understanding** (rules + few-shot model, x86 laptop, 2 threads):
 
 | | Result |
 |---|---|
-| Question → query accuracy, held-out set (70 questions never used to tune rules or prompt) | **94.3 %** |
-| Dev set (122 questions the rules were written against) | 100 % |
-| Control, injection, out-of-scope and missing-data requests declined (40, frozen set) | **39/40** — 29/40 before the decline checks, which were written after seeing those failures |
+| Question → query accuracy, held-out set (70 questions never used to tune rules or prompt) | **95.7 %** |
+| Dev set (122 questions the rules were written against) | 93.4 % |
+| Control, injection, out-of-scope and missing-data requests declined (40, frozen set) | **40/40** — 29/40 before the decline checks, which were written after seeing those failures |
 | The case study's five example questions | 5/5 on the rules path ([x86](eval/results/brief.json), [Graviton2](eval/results/graviton/r1-2026-10-28/brief.json)) |
 
 Testing the fine-tuned model exposed a bug in the decline checks: every multi-word cue ("battery level") had been
-compiled with a literal backslash and never matched. Fixed and re-measured
-([ADR-0008](docs/adr/0008-decline-instead-of-guessing.md#correction-2026-10-29), [results](eval/results/rerun)): dev
-93.4 → 100 %, held-out 95.7 → 94.3 %, refusals 40/40 → 39/40 — the bug had declined one wrong answer by luck.
-(Those before/after figures are x86. The model's output is not bit-identical across CPUs: before the fix, Graviton2
-already scored 94.3 %, differing from x86 on one question — "What difference does the outside temperature make to my
+compiled with a literal backslash and never matched. Fixed with a regression test; re-measured on the stock model,
+the x86 scores are unchanged ([ADR-0008](docs/adr/0008-decline-instead-of-guessing.md), [results](eval/results/rerun)).
+(The model's output is not bit-identical across CPUs: Graviton2 scores 94.3 % on the held-out set, differing from x86
+on one question — "What difference does the outside temperature make to my
 consumption?" — answered as a comparison on x86 and as an explanation on ARM.)
 The question sets were written by the author with an AI pair-programmer; the held-out set was written after the rules
 were frozen, and its first run exposed two vocabulary gaps (fixed generically), so it is no longer blind for those
-checks.
+checks. On 2026-11-15 two more gaps it exposed were fixed — "since the start of the month" read as a 14-day window,
+and "using less fuel" read as energy — which lifts every model by two held-out questions (0.5B 95.7 %, 1.5B and
+stock 98.6 %, [results](eval/results/2026-11-15)); those two questions are no longer blind either, so the headline
+numbers above stay the blind ones.
 
 **As people type and say them** ([robustness](eval/results/robustness.md), [repair](eval/results/repair.md)): the
 held-out questions mistyped, with numbers written as words, and spoken through Piper → Moonshine on the device. A
@@ -195,12 +211,12 @@ car charged (now excluded from driving energy). See [docs/DATASETS.md](docs/DATA
 
 ```bash
 python -m venv .venv && .venv/Scripts/pip install -e ".[prep,dev]"   # Linux/macOS: .venv/bin/pip
-python -m edgecar.prep.fetch all          # VED, Leaf DBC, BATON, TD2D tables, the model (SHA-256 pinned)
+python -m edgecar.prep.fetch all          # VED, Leaf DBC, BATON, TD2D tables, the models (SHA-256 pinned)
 python -m edgecar.prep.build              # store: real Leaf CAN, PHEV, ADAS over SOME/IP (+ the i3 if downloaded)
 edgecar ask "Why has my range dropped over the last two weeks?" --vehicle leaf-455
 edgecar brief                             # the case study's example questions, with route and latency
 pip install -e ".[voice]" && python -m edgecar.prep.fetch voice      # optional: on-device speech
-edgecar serve                             # the in-car app on http://127.0.0.1:8080
+edgecar serve                             # the in-car app on http://127.0.0.1:8080 (edgecar-0.5b)
 ```
 
 Fine-tune the command model (a CUDA GPU; separate venv with `pip install -e ".[train]"` and PyTorch for your CUDA):
@@ -221,7 +237,7 @@ The TU Munich i3 data needs a free IEEE DataPort login ([DATASETS.md](docs/DATAS
 the i3 and the overheat scenario. llama.cpp's `llama-server` goes in `tools/llama.cpp/` (or on `PATH`); without it,
 only the rules path answers.
 
-Reproduce: `pytest` (108 tests) · `python -m edgecar.bench.nlu_eval` · `bench.e2e` · `bench.coldstart` ·
+Reproduce: `pytest` (126 tests) · `python -m edgecar.bench.nlu_eval` · `bench.e2e` · `bench.coldstart` ·
 `bench.rootcause` · `bench.storage` · `bench.models`.
 
 ## Repository layout

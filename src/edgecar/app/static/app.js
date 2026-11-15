@@ -289,6 +289,7 @@ function fillCard(card, ans) {
   route.textContent = routeLabel(ans);
   route.className = `route ${ans.route}`;
   card.querySelector(".intent").textContent = INTENT[ans.intent] || (ans.route === "declined" ? "Can't help with that" : "");
+  card.querySelector(".reading").textContent = ans.reading || "";
   card.querySelector(".headline").textContent = ans.headline;
   const ul = card.querySelector(".details");
   ul.replaceChildren();

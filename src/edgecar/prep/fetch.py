@@ -11,7 +11,7 @@ td2d        TD2D takeover tables — only the 501 small CSVs, read out of the 16
             requests (CC BY 4.0)
 model       Qwen2.5-1.5B-Instruct Q4_K_M GGUF — huggingface.co/Qwen (Apache-2.0)
 tuned       our fine-tuned command models, edgecar-0.5b and edgecar-1.5b, Q4_K_M GGUF —
-            huggingface.co/meettttttttttt (Apache-2.0, ADR-0009) — optional, not part of "all"
+            huggingface.co/meettttttttttt (Apache-2.0, ADR-0009); edgecar-0.5b is the default model
 voice       on-device speech for the app: Moonshine Tiny recogniser (MIT) and a Piper voice trained on public-domain
             LibriVox recordings, both from github.com/k2-fsa/sherpa-onnx releases — optional, not part of "all"
 ==========  ==============================================================================================
@@ -209,7 +209,7 @@ def main() -> None:
     a = ap.parse_args()
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(errors="replace")  # a Windows pipe cannot print "✓"; the download must not fail on it
-    want = ({"ved", "dbc", "baton", "td2d", "model"} if "all" in a.what else set()) | (set(a.what) - {"all"})
+    want = ({"ved", "dbc", "baton", "td2d", "model", "tuned"} if "all" in a.what else set()) | (set(a.what) - {"all"})
     raw = a.data / "raw"
     with httpx.Client(follow_redirects=True, timeout=httpx.Timeout(60.0, connect=20.0)) as client:
         if "ved" in want:

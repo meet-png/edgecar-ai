@@ -1,6 +1,6 @@
 """Cold start ("ignition"): how soon after power-up can the assistant answer?
 
-    python -m edgecar.bench.coldstart --model models/qwen2.5-1.5b-instruct-q4_k_m.gguf --threads 2
+    python -m edgecar.bench.coldstart --model models/edgecar-0.5b-q4_k_m.gguf --threads 2
 
 Measured from process start, in fresh processes:
 
@@ -68,7 +68,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--store", type=Path, default=Path("data/edgecar.duckdb"))
     ap.add_argument("--vehicle", default="leaf-455")
-    ap.add_argument("--model", type=Path, default=Path("models/qwen2.5-1.5b-instruct-q4_k_m.gguf"))
+    ap.add_argument("--model", type=Path, default=Path("models/edgecar-0.5b-q4_k_m.gguf"))
     ap.add_argument("--server", type=Path, default=Path("tools/llama.cpp/llama-server.exe"))
     ap.add_argument("--threads", type=int, default=2)
     ap.add_argument("--profile", choices=sorted(PROFILES), default="edge")

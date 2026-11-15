@@ -24,7 +24,7 @@ command that the car's own computer answers from its logs — offline, in about 
 Fine-tuned from [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct) for [EdgeCar AI](https://github.com/meet-png/edgecar-ai), an on-device
 vehicle-data assistant built for the Tata Elxsi TELIPORT Season 4 challenge (Case Study 5, *Natural Language Vehicle
 Information using On-Device SLM/LLM*). This repository: merged weights. Also:
-[meettttttttttt/edgecar-0.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-0.5b-GGUF) (what EdgeCar runs) · [meettttttttttt/edgecar-1.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-1.5b-GGUF) — higher accuracy for about 0.6 GB more memory.
+[meettttttttttt/edgecar-0.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-0.5b-GGUF) (what EdgeCar runs) · [meettttttttttt/edgecar-1.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-1.5b-GGUF) — slightly higher measured accuracy (not a significant difference) for about 0.6 GB more memory.
 
 ## What it does
 

@@ -128,6 +128,8 @@ def parse_window(text: str) -> TimeWindow | None:
         return TimeWindow(kind="last_days", days=_UNIT_DAYS[m.group(1)])
     if m := re.search(r"\b(?:past|last) (year|12 months)\b", text):
         return TimeWindow(kind="last_days", days=365)
+    if m := re.search(r"\bsince the (?:start|beginning) of the (week|month)\b|\b(week|month)[- ]to[- ]date\b", text):
+        return TimeWindow(kind=f"this_{m.group(1) or m.group(2)}")
     rules = [
         (r"\b(?:today|this morning|this afternoon|this evening|tonight)\b", "today"),
         (r"\byesterday\b", "yesterday"),
@@ -188,6 +190,8 @@ class FastResult:
 def parse(question: str) -> FastResult:
     t = " " + re.sub(r"\s+", " ", question.lower()).strip() + " "
     metric = _first(t, METRIC_PHRASES)
+    if metric is None and re.search(r"\b(?:fuel|petrol|diesel)\b", t):
+        metric = "fuel_consumption"  # "am I using less fuel": no phrase, but only one fuel metric is a quantity used
     if re.search(r"\bbattery\b", t) and re.search(r"\b(?:hot|hotter|hottest|warm|warmer|heat|temp)", t):
         metric = "battery_temp"  # "how hot did the battery get" — word order defeats the phrase table
     event = _first(t, EVENT_PHRASES)

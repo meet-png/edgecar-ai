@@ -23,7 +23,7 @@ command that the car's own computer answers from its logs — offline, in about 
 Fine-tuned from [Qwen2.5-0.5B-Instruct](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct) for [EdgeCar AI](https://github.com/meet-png/edgecar-ai), an on-device
 vehicle-data assistant built for the Tata Elxsi TELIPORT Season 4 challenge (Case Study 5, *Natural Language Vehicle
 Information using On-Device SLM/LLM*). This repository: GGUF for llama.cpp. Also:
-[meettttttttttt/edgecar-0.5b](https://huggingface.co/meettttttttttt/edgecar-0.5b) (merged weights) · [meettttttttttt/edgecar-1.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-1.5b-GGUF) — higher accuracy for about 0.6 GB more memory.
+[meettttttttttt/edgecar-0.5b](https://huggingface.co/meettttttttttt/edgecar-0.5b) (merged weights) · [meettttttttttt/edgecar-1.5b-GGUF](https://huggingface.co/meettttttttttt/edgecar-1.5b-GGUF) — slightly higher measured accuracy (not a significant difference) for about 0.6 GB more memory.
 
 ## What it does
 
@@ -75,7 +75,7 @@ With EdgeCar's decline checks switched off, the model on its own answers `unsupp
 | File | Size | Held-out accuracy (rules + model) | |
 |---|---|---|---|
 | `edgecar-0.5b-q4_k_m.gguf` | 398 MB | 92.9 % | what EdgeCar runs |
-| `edgecar-0.5b-q8_0.gguf` | 531 MB | 94.3 % | more memory, a little slower |
+| `edgecar-0.5b-q8_0.gguf` | 531 MB | 94.3 % | 8-bit: a larger file; latency not measured |
 | `commands.gbnf` | | | the grammar: every output is a valid command |
 
 ## Use
@@ -116,10 +116,10 @@ The system message must be exactly that sentence: it is the prompt the model was
 
 | x86 laptop (i7-13620H), 2 threads | **edgecar-0.5b** Q4_K_M | Q8_0 | edgecar-1.5b Q4_K_M | Qwen2.5-1.5B few-shot |
 |---|---|---|---|---|
-| Held-out (70): rules + model | 92.9 % | 94.3 % | 95.7 % | 94.3 % |
+| Held-out (70): rules + model | 92.9 % | 94.3 % | 95.7 % | 95.7 % |
 | Held-out (70): model alone | 94.3 % | 95.7 % | 97.1 % | 90.0 % |
-| Refusal test (40) · refusal dev (20) | 39/40 · 19/20 | 39/40 · – | 40/40 · 20/20 | 39/40 · 19/20 |
-| Dev (122): rules + model · model alone | 100.0 % · 99.2 % | – | 100.0 % · 99.2 % | 100.0 % · 82.8 % |
+| Refusal test (40) · refusal dev (20) | 39/40 · 19/20 | 39/40 · – | 40/40 · 20/20 | 40/40 · 19/20 |
+| Dev (122): rules + model · model alone | 100.0 % · 99.2 % | – | 100.0 % · 99.2 % | 93.4 % · 82.8 % |
 | Model path p50 / p95 | 221 / 299 ms | – | 384 / 557 ms | 480 / 670 ms |
 | llama-server peak RSS (private) | 499 MB (163) | – | 1,123 MB (222) | 1,157 MB (227) |
 | File · start-up to first model answer | 398 MB · 1.0 s | – | 986 MB · 1.6 s | 1,117 MB · 13.9 s |
@@ -131,11 +131,13 @@ Latency is for the questions that reach the model, through llama-server with the
 held-out questions ([results](https://github.com/meet-png/edgecar-ai/tree/main/eval/results/rerun)). The dev numbers are optimistic: the epoch
 was chosen on them, and the rules were written against them.
 
-On the 110 blind questions (held-out and refusal test, rules + model), edgecar-0.5b gets 104 right and the few-shot Qwen2.5-1.5B it replaces 105: 0 better, 1 worse — not a statistically significant difference (exact McNemar p = 1.00). What fine-tuning clearly bought is speed, memory and start-up time.
+On the 110 blind questions (held-out and refusal test, rules + model), edgecar-0.5b gets 104 right and the few-shot Qwen2.5-1.5B it replaces 107: 1 better, 4 worse — not a statistically significant difference (exact McNemar p = 0.38). What fine-tuning clearly bought is speed, memory and start-up time.
 
 ## On ARM
 
 **GitHub Arm64 runner: Neoverse-N2, 2 cores, the whole AI zone in a 1,792 MiB cgroup** ([results](https://github.com/meet-png/edgecar-ai/tree/main/eval/results/arm/edgecar-0.5b-q4_k_m)): model path p50 0.34 s · p95 0.43 s; 100 % of 192 questions under 2 s; AI zone peak 827 MiB (limit 1,792); 0 OOM kills; held-out 92.9 %; model ready 2.33 s after start.
+
+**AWS t4g.small: Graviton2 (Neoverse-N1), 2 cores, 2 GiB of RAM in total, OS included** ([results](https://github.com/meet-png/edgecar-ai/tree/main/eval/results/graviton/edgecar-0.5b-q4_k_m)): model path p50 0.52 s · p95 0.67 s; 100 % of 192 questions under 2 s; 640 MiB of 1,835 MiB in use at peak, OS included; 0 OOM kills; held-out 92.9 %; model ready 4.37 s after start.
 
 ## How it was made
 

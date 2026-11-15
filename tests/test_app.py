@@ -32,11 +32,12 @@ def test_ask_returns_the_answer_with_its_evidence(store):
     ans = r.json()
     assert ans["route"] == "rules" and ans["intent"] == "explain_change"
     assert ans["chart"]["type"] == "waterfall"
+    assert ans["reading"] == "Why range changed · last 14 days vs the 14 days before"  # what ran, in plain words
     last = store.sql("SELECT max(ts) AS t FROM frames")["t"][0]  # the app's "now" is the latest data
     assert ans["window"][1] == last.isoformat()
     # declined, not answered with a listing that shares a keyword
     r = c.post("/api/ask", json={"question": "Turn off lane keeping assist", "vehicle": "ev-1"}).json()
-    assert r["route"] == "declined" and r["chart"] is None
+    assert r["route"] == "declined" and r["chart"] is None and r["reading"] is None
 
 
 def test_page_is_served_offline_only(store):

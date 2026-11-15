@@ -33,6 +33,7 @@ from pydantic import BaseModel
 from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from edgecar.assistant import Answer, Assistant
+from edgecar.nlu import command
 from edgecar.nlu.slm import PROFILES, SlmParser, SlmServer, find_server, prompt_style
 from edgecar.privacy import Role, redact
 from edgecar.query import Query, TimeWindow
@@ -102,6 +103,7 @@ def answer_json(ans: Answer) -> dict:
             "command": ans.command,
             "model_line": ans.model_line,
             "intent": r.intent if r else None,
+            "reading": command.describe(ans.query) if ans.query else None,
             "headline": r.headline if r else ans.text,
             "details": r.details if r else [],
             "notes": r.notes if r else [],
@@ -264,7 +266,7 @@ def create_app(zone: Zone, hosts: tuple[str, ...] = LOCAL_HOSTS) -> FastAPI:
 def main(argv: list[str] | None = None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--store", type=Path, default=Path("data/edgecar.duckdb"))
-    ap.add_argument("--model", type=Path, default=Path("models/qwen2.5-1.5b-instruct-q4_k_m.gguf"))
+    ap.add_argument("--model", type=Path, default=Path("models/edgecar-0.5b-q4_k_m.gguf"))
     ap.add_argument("--server", type=Path, default=None)
     ap.add_argument("--threads", type=int, default=2)
     ap.add_argument("--no-model", action="store_true", help="rules only")

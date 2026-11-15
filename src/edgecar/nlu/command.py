@@ -213,3 +213,104 @@ def render(q: Query | None) -> str:
     if q.lookback_min and q.intent == "events_before":
         out.append(f"lookback={q.lookback_min}m")
     return " ".join(out)
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Plain-language reading: what the assistant understood, shown above every answer so a misreading is visible at a
+# glance instead of hidden behind a confident sentence.
+# ---------------------------------------------------------------------------------------------------------------
+
+METRIC_WORDS = {
+    "energy_consumption": "energy use",
+    "energy_efficiency": "efficiency",
+    "range": "range",
+    "fuel_consumption": "fuel use",
+    "fuel_efficiency": "fuel economy",
+    "distance": "distance driven",
+    "energy_used": "energy used",
+    "hvac_energy": "heating and A/C energy",
+    "regen_energy": "energy recovered by braking",
+    "speed": "speed",
+    "battery_temp": "battery temperature",
+    "soc": "battery charge",
+    "ambient_temp": "outside temperature",
+    "hard_brakes": "hard braking",
+    "trip_count": "number of trips",
+}
+EVENT_WORDS = {
+    "any": "all events",
+    "adas_disengagement": "ADAS disengagements",
+    "adas_takeover_request": "ADAS takeover requests",
+    "adas_any": "ADAS events",
+    "battery_overheat_warning": "battery overheating warnings",
+    "dtc": "fault codes",
+    "thermal_any": "thermal events",
+    "charging": "charging sessions",
+    "hard_brake": "hard braking events",
+    "system": "system log events",
+}
+_WINDOW_WORDS = {
+    "today": "today",
+    "yesterday": "yesterday",
+    "this_week": "this week",
+    "last_week": "last week",
+    "this_month": "this month",
+    "last_month": "last month",
+    "all": "all recorded data",
+}
+_BY_WORDS = {
+    "road_type": "city vs highway",
+    "temperature": "cold vs warm days",
+    "previous_period": "vs the period before",
+}
+_DIR_WORDS = {"drop": "biggest drop", "rise": "biggest rise", "max": "highest value", "min": "lowest value"}
+
+
+def window_words(w) -> str:
+    return f"last {w.days or 14} days" if w.kind == "last_days" else _WINDOW_WORDS[w.kind]
+
+
+_UNIT = {
+    "today": "day",
+    "yesterday": "day",
+    "this_week": "week",
+    "last_week": "week",
+    "this_month": "month",
+    "last_month": "month",
+}
+
+
+def _cap(s: str) -> str:
+    return s[:1].upper() + s[1:]
+
+
+def describe(q: Query | None) -> str:
+    """One line in plain words, e.g. "Why range changed · last 14 days vs the 14 before" — what ran, not what was
+    asked."""
+    if q is None:
+        return "Not a question about this vehicle's data"
+    m = METRIC_WORDS.get(q.metric or "", "")
+    w = window_words(q.window)
+    before = f"{q.window.days or 14} days" if q.window.kind == "last_days" else _UNIT.get(q.window.kind, "period")
+    match q.intent:
+        case "summary":
+            return f"{_cap(m)}, total or average · {w}"
+        case "trend":
+            return f"{_cap(m)} over time · {w}"
+        case "extreme":
+            return f"Day with the {_DIR_WORDS.get(q.direction or '', 'extreme')} in {m} · {w}"
+        case "compare" if q.compare_by == "previous_period":
+            return f"{_cap(m)} · {w} vs the {before} before"
+        case "compare":
+            return f"{_cap(m)}, {_BY_WORDS.get(q.compare_by or '', 'compared')} · {w}"
+        case "explain_change":
+            return f"Why {m} changed · {w} vs the {before} before"
+        case "list_events":
+            return f"{_cap(EVENT_WORDS[q.event or 'any'])} · {w}"
+        case "events_before":
+            return f"Lead-up to {EVENT_WORDS[q.event or 'any']} · {w}"
+        case "anomalies":
+            return f"Anything unusual · {w}"
+        case "status":
+            return "Current status"
+    return q.intent

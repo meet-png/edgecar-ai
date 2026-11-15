@@ -75,7 +75,7 @@ With EdgeCar's decline checks switched off, the model on its own answers `unsupp
 | File | Size | Held-out accuracy (rules + model) | |
 |---|---|---|---|
 | `edgecar-1.5b-q4_k_m.gguf` | 986 MB | 95.7 % | what EdgeCar runs |
-| `edgecar-1.5b-q8_0.gguf` | 1,647 MB | 95.7 % | more memory, a little slower |
+| `edgecar-1.5b-q8_0.gguf` | 1,647 MB | 95.7 % | 8-bit: a larger file; latency not measured |
 | `commands.gbnf` | | | the grammar: every output is a valid command |
 
 ## Use
@@ -116,10 +116,10 @@ The system message must be exactly that sentence: it is the prompt the model was
 
 | x86 laptop (i7-13620H), 2 threads | **edgecar-1.5b** Q4_K_M | Q8_0 | edgecar-0.5b Q4_K_M | Qwen2.5-1.5B few-shot |
 |---|---|---|---|---|
-| Held-out (70): rules + model | 95.7 % | 95.7 % | 92.9 % | 94.3 % |
+| Held-out (70): rules + model | 95.7 % | 95.7 % | 92.9 % | 95.7 % |
 | Held-out (70): model alone | 97.1 % | 97.1 % | 94.3 % | 90.0 % |
-| Refusal test (40) · refusal dev (20) | 40/40 · 20/20 | 40/40 · – | 39/40 · 19/20 | 39/40 · 19/20 |
-| Dev (122): rules + model · model alone | 100.0 % · 99.2 % | – | 100.0 % · 99.2 % | 100.0 % · 82.8 % |
+| Refusal test (40) · refusal dev (20) | 40/40 · 20/20 | 40/40 · – | 39/40 · 19/20 | 40/40 · 19/20 |
+| Dev (122): rules + model · model alone | 100.0 % · 99.2 % | – | 100.0 % · 99.2 % | 93.4 % · 82.8 % |
 | Model path p50 / p95 | 384 / 557 ms | – | 221 / 299 ms | 480 / 670 ms |
 | llama-server peak RSS (private) | 1,123 MB (222) | – | 499 MB (163) | 1,157 MB (227) |
 | File · start-up to first model answer | 986 MB · 1.6 s | – | 398 MB · 1.0 s | 1,117 MB · 13.9 s |
@@ -131,11 +131,13 @@ Latency is for the questions that reach the model, through llama-server with the
 held-out questions ([results](https://github.com/meet-png/edgecar-ai/tree/main/eval/results/rerun)). The dev numbers are optimistic: the epoch
 was chosen on them, and the rules were written against them.
 
-On the 110 blind questions (held-out and refusal test, rules + model), edgecar-1.5b gets 107 right and the few-shot Qwen2.5-1.5B it replaces 105: 3 better, 1 worse — not a statistically significant difference (exact McNemar p = 0.62). What fine-tuning clearly bought is speed, memory and start-up time.
+On the 110 blind questions (held-out and refusal test, rules + model), edgecar-1.5b gets 107 right and the few-shot Qwen2.5-1.5B it replaces 107: 1 better, 1 worse — not a statistically significant difference (exact McNemar p = 1.00). What fine-tuning clearly bought is speed, memory and start-up time.
 
 ## On ARM
 
 **GitHub Arm64 runner: Neoverse-N2, 2 cores, the whole AI zone in a 1,792 MiB cgroup** ([results](https://github.com/meet-png/edgecar-ai/tree/main/eval/results/arm/edgecar-1.5b-q4_k_m)): model path p50 0.79 s · p95 1.15 s; 100 % of 192 questions under 2 s; AI zone peak 1,416 MiB (limit 1,792); 0 OOM kills; held-out 95.7 %; model ready 4.18 s after start.
+
+**AWS t4g.small: Graviton2 (Neoverse-N1), 2 cores, 2 GiB of RAM in total, OS included** ([results](https://github.com/meet-png/edgecar-ai/tree/main/eval/results/graviton/edgecar-1.5b-q4_k_m)): model path p50 1.21 s · p95 1.57 s; 100 % of 192 questions under 2 s; 633 MiB of 1,835 MiB in use at peak, OS included; 0 OOM kills; held-out 95.7 %; model ready 10.44 s after start.
 
 ## How it was made
 

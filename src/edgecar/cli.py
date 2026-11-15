@@ -62,7 +62,7 @@ def main(argv: list[str] | None = None) -> None:
     brief.add_argument("--out", type=Path, default=None)
     for p in (ask, brief):
         p.add_argument("--store", type=Path, default=Path("data/edgecar.duckdb"))
-        p.add_argument("--model", type=Path, default=Path("models/qwen2.5-1.5b-instruct-q4_k_m.gguf"))
+        p.add_argument("--model", type=Path, default=Path("models/edgecar-0.5b-q4_k_m.gguf"))
         p.add_argument("--server", type=Path, default=None)
         p.add_argument("--threads", type=int, default=2)
         p.add_argument("--no-model", action="store_true", help="rules only")
