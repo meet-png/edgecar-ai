@@ -21,6 +21,7 @@ Intent = Literal[
     "events_before",  # what led up to an event                     "What happened before the overheat warning?"
     "anomalies",  # unusual trips / behaviour                   "Anything unusual this month?"
     "status",  # current values                              "What's my battery level?"
+    "battery_health",  # capacity and state of health over time    "Is my battery healthy?" (ADR-0011)
 ]
 
 Metric = Literal[

@@ -201,7 +201,7 @@ def render(q: Query | None) -> str:
     out = [q.intent]
     if q.metric and q.intent not in ("list_events", "events_before", "anomalies", "status"):
         out.append(f"metric={q.metric}")
-    if q.intent != "status":
+    if q.intent not in ("status", "battery_health"):
         w = q.window
         out.append(f"window={f'last_{w.days or 14}d' if w.kind == 'last_days' else w.kind}")
     if q.compare_by:
@@ -313,4 +313,6 @@ def describe(q: Query | None) -> str:
             return f"Anything unusual · {w}"
         case "status":
             return "Current status"
+        case "battery_health":
+            return "Battery health, from every long drive recorded"
     return q.intent

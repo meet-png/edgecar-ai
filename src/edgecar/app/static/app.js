@@ -7,6 +7,7 @@ const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct
 const INTENT = {
   summary: "Summary", trend: "Trend", extreme: "Peak day", compare: "Comparison", explain_change: "Why it changed",
   list_events: "Events", events_before: "Root cause", anomalies: "Health check", status: "Now",
+  battery_health: "Battery health",
 };
 const state = { meta: null, vehicle: null, role: "driver", busy: false, rec: null };
 
@@ -315,6 +316,7 @@ function fillCard(card, ans) {
     if (parts.length) meta.push(parts.join(" + "));
   }
   card.querySelector(".meta").textContent = meta.join(" · ");
+  if (ans.intent === "battery_health" && ans.facts && ans.facts.verdict === "measured") passportButton(card);
   // The driver gets a glanceable answer (and hears it); evidence is one tap away. Service and fleet see everything.
   const more = card.querySelector(".more");
   const extra = ev.length || ul.children.length > 2;
@@ -323,6 +325,41 @@ function fillCard(card, ans) {
   more.onclick = () => {
     const c = card.classList.toggle("compact");
     more.textContent = c ? "Show evidence" : "Hide evidence";
+  };
+}
+
+// A signed battery report for a buyer: the QR is drawn from the server's module rows, square by square.
+function qrSvg(rows) {
+  const n = rows.length, q = 4; // quiet zone
+  const svg = svgEl("svg", { viewBox: `0 0 ${n + 2 * q} ${n + 2 * q}`, class: "qr", role: "img", "aria-label": "Battery passport QR code" });
+  svgEl("rect", { x: 0, y: 0, width: n + 2 * q, height: n + 2 * q, fill: "#fff" }, svg);
+  rows.forEach((row, y) => {
+    for (let x = 0; x < row.length; x++) {
+      if (row[x] === "1") svgEl("rect", { x: x + q, y: y + q, width: 1.02, height: 1.02, fill: "#0b1220" }, svg);
+    }
+  });
+  return svg;
+}
+
+function passportButton(card) {
+  const b = h("button", "more", "Battery passport for a buyer");
+  b.type = "button";
+  card.querySelector("footer").prepend(b);
+  b.onclick = async () => {
+    b.disabled = true;
+    try {
+      const p = await (await api("/api/passport", { vehicle: state.vehicle })).json();
+      const box = h("figure", "passport");
+      box.append(qrSvg(p.modules));
+      const cap = h("figcaption", null, `Signed by this car (key ${p.key_id}). Scan to check it on any phone — `
+        + "the report holds health figures only: no trips, times or places.");
+      box.append(cap);
+      card.querySelector(".evidence").prepend(box);
+      card.classList.remove("compact");
+      b.remove();
+    } catch (err) {
+      b.textContent = `Could not sign: ${err.message}`;
+    }
   };
 }
 

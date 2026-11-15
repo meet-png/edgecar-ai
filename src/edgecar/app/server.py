@@ -63,6 +63,7 @@ SUGGESTIONS: dict[str, list[str]] = {
         "Compare energy consumption between city and highway driving.",
         "When did the battery get hottest?",
         "Any fault codes?",
+        "Is my battery healthy?",
     ],
     "phev-457": [
         "Show all ADAS disengagement events from yesterday.",
@@ -124,6 +125,13 @@ class Ask(BaseModel):
 
 class Speak(BaseModel):
     text: str
+
+
+class PassportRequest(BaseModel):
+    vehicle: str = "leaf-455"
+
+
+PASSPORT_KEY = Path("data/keys/vehicle-ed25519.pem")  # in a vehicle: the HSM (ADR-0011)
 
 
 class Zone:
@@ -251,6 +259,28 @@ def create_app(zone: Zone, hosts: tuple[str, ...] = LOCAL_HOSTS) -> FastAPI:
         except (wave.Error, ValueError, EOFError) as e:
             raise HTTPException(400, f"not a 16-bit PCM WAV recording: {e}") from None
         return {"text": text, "ms": round((time.perf_counter() - t0) * 1000, 1)}
+
+    @app.post("/api/passport")
+    def issue_passport(req: PassportRequest) -> dict:
+        """A signed battery report and its QR code as rows of modules (drawn by the page, no image or markup)."""
+        import segno
+
+        from edgecar import passport
+
+        with zone.lock:
+            try:
+                report = passport.build(zone.store, req.vehicle)
+            except KeyError:
+                raise HTTPException(404, "unknown vehicle") from None
+        signed = passport.sign(report, passport.load_or_create_key(PASSPORT_KEY))
+        qr = segno.make(passport.to_qr_text(signed), error="m")
+        return {
+            "sentence": passport.sentence(report),
+            "verdict": report["verdict"],
+            "key_id": signed["key_id"],
+            "modules": ["".join("1" if m else "0" for m in row) for row in qr.matrix],
+            "verify_url": passport.VERIFY_URL,
+        }
 
     @app.post("/api/speak")
     def speak(req: Speak) -> Response:

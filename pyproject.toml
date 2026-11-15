@@ -22,6 +22,8 @@ dependencies = [
     "cantools==44.2.1",
     "python-can==4.6.1",
     "psutil>=6.0",
+    "cryptography>=44",  # Ed25519 signatures on battery-health reports (ADR-0011)
+    "segno>=1.6",  # the report's QR code (pure Python)
 ]
 
 [project.optional-dependencies]

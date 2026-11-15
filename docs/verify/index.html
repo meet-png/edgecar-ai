@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
+<meta name="referrer" content="no-referrer">
+<title>Verify a battery passport — EdgeCar AI</title>
+<style>
+  :root { --bg: #0b1220; --panel: #121c2e; --text: #e6edf5; --muted: #8fa1b5; --ok: #6ee7a0; --bad: #f87171; --warn: #fbbf5b; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 28px 18px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 22px; font-size: 14.5px; }
+  .panel { background: var(--panel); border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; }
+  .verdict { font-size: 19px; font-weight: 600; display: flex; gap: 10px; align-items: center; }
+  .ok { color: var(--ok); } .bad { color: var(--bad); } .warn { color: var(--warn); }
+  .big { font-size: 44px; font-weight: 700; margin: 6px 0 0; }
+  dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 12px 0 0; }
+  dt { color: var(--muted); } dd { margin: 0; }
+  textarea { width: 100%; min-height: 90px; background: #0e1726; color: var(--text); border: 1px solid #24324a; border-radius: 10px; padding: 10px; font: 13px ui-monospace, monospace; }
+  button { margin-top: 10px; background: #2563eb; color: white; border: 0; border-radius: 9px; padding: 9px 16px; font-size: 15px; cursor: pointer; }
+  .small { color: var(--muted); font-size: 13.5px; }
+  code { font: 13px ui-monospace, monospace; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Battery passport check</h1>
+  <p class="sub">Checks the vehicle's signature on a battery report, entirely in this browser: nothing you paste or
+    scan is sent anywhere, and the report itself travels after the <code>#</code> in the link, which browsers never
+    send to a server.</p>
+
+  <div id="result" class="panel" hidden></div>
+
+  <div class="panel">
+    <label for="input" class="small">Paste the text of the QR code (it starts with <code>ECBP1:</code>) or the contents of <code>report.json</code></label>
+    <textarea id="input" spellcheck="false"></textarea>
+    <button id="check" type="button">Check</button>
+  </div>
+
+  <p class="small">What a valid signature proves: the figures were produced by the software of the vehicle holding
+    this key, from its own recorded data, and have not been changed since. Compare the key ID with the one the
+    vehicle shows (or, in production, with the manufacturer's certificate for that vehicle). It does not prove the
+    sensors were honest — that is the job of the vehicle's secure boot and hardware key store.</p>
+</main>
+<script>
+"use strict";
+const $ = (s) => document.querySelector(s);
+const unb64 = (s) => {
+  s = s.replace(/-/g, "+").replace(/_/g, "/");
+  while (s.length % 4) s += "=";
+  return Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+};
+async function inflate(bytes) {
+  const ds = new DecompressionStream("deflate");
+  const out = new Response(new Blob([bytes]).stream().pipeThrough(ds));
+  return new Uint8Array(await out.arrayBuffer());
+}
+async function parse(text) {
+  text = text.trim();
+  const i = text.indexOf("ECBP1:");
+  if (i >= 0) return JSON.parse(new TextDecoder().decode(await inflate(unb64(text.slice(i + 6)))));
+  return JSON.parse(text);
+}
+async function check(signed) {
+  const key = await crypto.subtle.importKey("raw", unb64(signed.key), { name: "Ed25519" }, false, ["verify"]);
+  return crypto.subtle.verify({ name: "Ed25519" }, key, unb64(signed.sig), new TextEncoder().encode(signed.payload));
+}
+function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+function row(dl, k, v) { if (v == null || v === "") return; dl.append(el("dt", null, k), el("dd", null, String(v))); }
+function show(ok, signed, error) {
+  const box = $("#result");
+  box.hidden = false;
+  box.replaceChildren();
+  if (error) { box.append(el("div", "verdict bad", "✗ " + error)); return; }
+  if (!ok) { box.append(el("div", "verdict bad", "✗ Signature does not match — this report was altered or is not from this key")); return; }
+  const r = JSON.parse(signed.payload), h = r.health;
+  box.append(el("div", "verdict ok", "✓ Signed by vehicle key " + signed.key_id));
+  if (r.verdict === "measured") {
+    box.append(el("p", "big", `${Math.round(h.soh_pct)} %`));
+    box.append(el("div", "small", `battery health · 95 % interval ${h.soh_pct_ci95[0]}–${h.soh_pct_ci95[1]} %`));
+  } else {
+    box.append(el("p", "verdict warn", r.verdict === "inconclusive" ? "No health figure: the measurements do not agree closely enough" : "No measurements yet"));
+  }
+  const dl = el("dl");
+  row(dl, "Vehicle", r.vehicle.model);
+  row(dl, "Battery ID", r.vehicle.battery_id || "not recorded");
+  row(dl, "Measured", r.period ? `${r.period[0]} – ${r.period[1]}` : null);
+  row(dl, "Drives measured", h.measurements);
+  row(dl, "Capacity", h.capacity_ah != null ? `${h.capacity_ah} Ah (rated ${h.rated_ah ?? "?"} Ah)` : null);
+  if (h.trend_pct_per_year != null) row(dl, "Trend", `${h.trend_pct_per_year > 0 ? "+" : ""}${h.trend_pct_per_year} % a year (interval ${h.trend_ci95.join(" to ")})`);
+  const w = r.wear || {};
+  row(dl, "Charges", w.charges);
+  row(dl, "Hours parked above 90 %", w.hours_parked_above_90);
+  row(dl, "Hours driven above 35 °C", w.hours_driven_above_35c);
+  row(dl, "Issued", `${r.issued} · ${r.software}`);
+  box.append(dl);
+  box.append(el("p", "small", "Method: " + r.method + (r.limits ? ". Limits: " + r.limits : "") + ". No trips, times of day or locations are in this report."));
+}
+async function run(text) {
+  if (!text.trim()) return;
+  let signed;
+  try { signed = await parse(text); } catch (e) { return show(false, null, "Not a battery passport"); }
+  try { show(await check(signed), signed); }
+  catch (e) { show(false, null, "This browser cannot check Ed25519 signatures (needs Chrome 137+, Safari 17+ or Firefox 129+)"); }
+}
+$("#check").addEventListener("click", () => run($("#input").value));
+function fromHash() { if (location.hash.length > 1) { $("#input").value = decodeURIComponent(location.hash.slice(1)); run($("#input").value); } }
+window.addEventListener("hashchange", fromHash);
+fromHash();
+</script>
+</body>
+</html>

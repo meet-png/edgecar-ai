@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 
 from edgecar import diagnosis
+from edgecar.analytics import battery
 from edgecar.analytics.metrics import BEV_EQUIVALENT, METRICS, MetricSpec, fmt
 from edgecar.query import Query, TimeWindow
 from edgecar.store import Store
@@ -933,6 +934,49 @@ class Engine:
             table=flagged or None,
             evidence=[f["trip_id"] for f in flagged] + list(events["event_id"]),
             window=(start, end),
+        )
+
+    def _battery_health(self, q: Query) -> Result:
+        from edgecar import passport  # the report the passport signs is exactly what is said here
+
+        report = passport.build(self.store, self.vehicle_id)
+        h, w = report["health"], report["wear"]
+        st = battery.stretches(
+            self.store.sql(
+                "SELECT ts, trip_id, soc_pct, batt_current_a, batt_voltage_v, batt_temp_c FROM frames "
+                "WHERE vehicle_id = ? ORDER BY ts",
+                [self.vehicle_id],
+            )
+        )
+        details = []
+        if w.get("hours_parked_above_90"):
+            details.append(
+                f"Parked above 90 % charge for {w['hours_parked_above_90']:,.0f} hours after "
+                f"{w['charges_to_90_plus']} of {w['charges']} charges — charging to 80 % for daily use slows ageing."
+            )
+        if w.get("hours_driven_above_35c"):
+            details.append(f"Driven with the pack above 35 °C for {w['hours_driven_above_35c']:.1f} hours.")
+        if report["verdict"] == "measured":
+            details.append("Ask for a battery passport to share a signed copy with a buyer — no trips or places in it.")
+        chart = (
+            {
+                "type": "line",
+                "x": [s.start.strftime("%Y-%m-%d") for s in st],
+                "series": {"capacity per drive": [round(s.capacity_ah, 2) for s in st]},
+                "unit": "Ah",
+            }
+            if st
+            else None
+        )
+        first = st[0].start if st else self.now
+        return Result(
+            "battery_health",
+            passport.sentence(report),
+            {"verdict": report["verdict"], **h, **{f"wear_{k}": v for k, v in w.items()}},
+            details,
+            chart=chart,
+            evidence=[s.trip_id for s in st],
+            window=(first, self.now),
         )
 
     def _status(self, q: Query) -> Result:

@@ -4,6 +4,7 @@ data/processed/
 data/interim/
 data/cache/
 data/train/
+data/keys/
 data/*.csv
 data/*.duckdb
 data/*.duckdb.wal

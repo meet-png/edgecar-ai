@@ -3,6 +3,7 @@
     edgecar ask "Why has my range dropped over the last two weeks?" --vehicle leaf-455
     edgecar brief --out eval/results/brief.json
     edgecar serve                       # the in-car app on http://127.0.0.1:8080
+    edgecar passport --vehicle i3-tum   # signed battery-health report + QR code (ADR-0011)
 
 With a model file present, llama-server is started (prompt prefix restored from ``data/cache`` after the first
 run); without one, only the rules path answers.
@@ -49,6 +50,8 @@ def main(argv: list[str] | None = None) -> None:
         from edgecar.app.server import main as serve
 
         return serve(argv[1:])
+    if argv[:1] == ["passport"]:
+        return _passport(argv[1:])
     ap = argparse.ArgumentParser(
         prog="edgecar", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -98,6 +101,26 @@ def main(argv: list[str] | None = None) -> None:
         if a.out:
             a.out.parent.mkdir(parents=True, exist_ok=True)
             a.out.write_text(json.dumps(rows, indent=2, default=str, ensure_ascii=False), encoding="utf-8")
+
+
+def _passport(argv: list[str]) -> None:
+    from edgecar import passport
+
+    ap = argparse.ArgumentParser(
+        prog="edgecar passport", description=passport.__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
+    ap.add_argument("--vehicle", default="i3-tum", choices=sorted(VEHICLES))
+    ap.add_argument("--store", type=Path, default=Path("data/edgecar.duckdb"))
+    ap.add_argument("--key", type=Path, default=Path("data/keys/vehicle-ed25519.pem"), help="created if missing")
+    ap.add_argument("--out", type=Path, default=Path("build/passport"))
+    a = ap.parse_args(argv)
+    store = Store(a.store, read_only=True)
+    key = passport.load_or_create_key(a.key)
+    signed = passport.sign(passport.build(store, a.vehicle), key)
+    assert passport.verify(signed, passport.public_raw(key))
+    paths = passport.write(signed, a.out / a.vehicle)
+    print(passport.sentence(passport.report_of(signed)))
+    print(f"signed by vehicle key {signed['key_id']} · {', '.join(str(p) for p in paths)}")
 
 
 if __name__ == "__main__":

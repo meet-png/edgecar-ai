@@ -173,6 +173,7 @@ DEFAULT_WINDOW = {
     "trend": TimeWindow(kind="last_days", days=30),
     "summary": TimeWindow(kind="last_days", days=7),
     "status": TimeWindow(kind="today"),
+    "battery_health": TimeWindow(kind="all"),
 }
 
 _DROP = r"(?:drop|dropp|declin|decreas|reduc|fell|fall|lower|worse|worst|deteriorat|went down|shrunk|shrink|less)"
@@ -198,7 +199,13 @@ def parse(question: str) -> FastResult:
     window = parse_window(t)
 
     intent, rule = None, ""
-    if event and re.search(
+    if re.search(r"\b(?:battery|pack)", t) and re.search(
+        r"\b(?:health|healthy|state of health|soh|degrad\w*|wear|worn|capacity|condition|aged?|ageing|aging|"
+        r"passport|certificate)\b",
+        t,
+    ):
+        intent, rule = "battery_health", "battery+health"
+    elif event and re.search(
         r"\b(?:before|prior to|leading up to|led (?:up )?to|lead (?:up )?to|preceded|precede|"
         r"caused|triggered|leading to)\b",
         t,
